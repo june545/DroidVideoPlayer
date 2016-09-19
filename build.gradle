@@ -22,3 +22,15 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+// 获取keystore相关参数
+def getStoreParam(key) {
+    def file = file('/home/june/Android/app_release.properties')
+    Properties p = new Properties()
+    file.withInputStream {
+        stream -> p.load(stream)
+    }
+    println key + ":" + p.getProperty(key)
+    p.getProperty(key)
+}
+// /home/june/Android/app_release.properties

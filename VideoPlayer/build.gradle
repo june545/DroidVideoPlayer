@@ -4,19 +4,31 @@ android {
     compileSdkVersion 23
     buildToolsVersion '23.0.3'
     defaultConfig {
-        applicationId "com.example.videoplayer"
+        applicationId "cn.cj.media.video.player"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
+
+    signingConfigs {
+        release {
+            storeFile file(getStoreParam('storeFile'))
+            keyAlias getStoreParam('keyAlias')
+            keyPassword getStoreParam('keyPassword')
+            storePassword getStoreParam('keyPassword')
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     productFlavors {
+
     }
 }
 
@@ -26,3 +38,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.github.june545:AndroidFloatingView:v1.0.0'
 }
+
