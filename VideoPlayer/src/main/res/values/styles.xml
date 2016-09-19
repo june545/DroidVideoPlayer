@@ -1,0 +1,20 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style
+        name="Widget.SeekBar.Custom"
+        parent="@android:style/Widget.SeekBar">
+        <item name="android:progressDrawable">@drawable/player_seekbar</item>
+        <item name="android:thumb">@drawable/seekbar_thumb_btn</item>
+        <item name="android:thumbOffset">32px</item>
+        <item name="android:paddingLeft">32px</item>
+        <item name="android:paddingRight">32px</item>
+    </style>
+</resources>

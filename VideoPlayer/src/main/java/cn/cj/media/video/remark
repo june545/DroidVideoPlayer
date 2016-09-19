@@ -1,0 +1,7 @@
+ android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY
+ 
+ 
+ setRequestedOrientation(mScreenOrientation != 100
+                    ? mScreenOrientation
+                    : getScreenOrientation());
+		

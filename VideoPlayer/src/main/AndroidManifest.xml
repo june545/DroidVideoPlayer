@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="cn.cj.media.video.player">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+
+    <application
+        tools:replace="android:label"
+        android:allowBackup="true"
+        android:icon="@mipmap/launcher"
+        android:label="@string/player_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <!--
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        -->s
+
+        <activity
+            android:name="cn.cj.ui.MainActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="cn.cj.ui.VideoPlayerActivity"
+            android:configChanges="orientation|screenSize"
+            android:icon="@drawable/launcher"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:label="@string/player_name">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:mimeType="video/*" />
+                <data android:scheme="http" />
+                <data android:scheme="httplive" />
+                <data android:scheme="file" />
+                <data android:scheme="content" />
+                <data android:mimeType="audio/*" />
+            </intent-filter>
+        </activity>
+        <service android:name="cn.cj.service.PlayerFloatingViewService"/>
+    </application>
+
+</manifest>
