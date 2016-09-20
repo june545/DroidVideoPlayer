@@ -6,9 +6,9 @@ def storeParam = { key ->
     localProperties.load(file('../local.properties').newDataInputStream())
     println "\n-------------keystore-----------------------"
     Properties keystoreParam = new Properties();
-    keystoreParam.load(file(localProperties.get('keystore.properties')).newDataInputStream())
+    keystoreParam.load(file(localProperties['keystore.properties']).newDataInputStream())
     println keystoreParam
-    keystoreParam.getProperty(key)
+    keystoreParam[key]
 }
 
 android {
@@ -19,7 +19,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
     }
 
     signingConfigs {
@@ -36,6 +36,16 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+        }
+
+        applicationVariants.all { variant ->
+            variant.outputs.each { output ->
+                def outputFile = output.outputFile
+                if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                    def fileName = outputFile.name.replace(".apk", "-v" + defaultConfig.versionName + ".apk")
+                    output.outputFile = new File(outputFile.parent, fileName)
+                }
+            }
         }
     }
     productFlavors {
