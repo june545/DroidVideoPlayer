@@ -1,5 +1,16 @@
 apply plugin: 'com.android.application'
 
+// 获取keystore相关参数
+def storeParam = { key ->
+    Properties localProperties = new Properties()
+    localProperties.load(file('../local.properties').newDataInputStream())
+    println "\n-------------keystore-----------------------"
+    Properties keystoreParam = new Properties();
+    keystoreParam.load(file(localProperties.get('keystore.properties')).newDataInputStream())
+    println keystoreParam
+    keystoreParam.getProperty(key)
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion '23.0.3'
@@ -13,10 +24,10 @@ android {
 
     signingConfigs {
         release {
-            storeFile file(getStoreParam('storeFile'))
-            keyAlias getStoreParam('keyAlias')
-            keyPassword getStoreParam('keyPassword')
-            storePassword getStoreParam('keyPassword')
+            storeFile file(storeParam('storeFile'))
+            keyAlias storeParam('keyAlias')
+            keyPassword storeParam('keyPassword')
+            storePassword storeParam('keyPassword')
         }
     }
 
@@ -38,4 +49,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.4.0'
 
 }
+
 
