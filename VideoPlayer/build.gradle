@@ -9,17 +9,16 @@ def storeParam = { key ->
     keystoreParam[key]
 }
 
-// version code
-def versionCodeByGit = {
+// for version code
+def tmpVerCodeByGit = {
     def versionNumberCmd = 'git rev-list HEAD --count'
     versionNumberCmd.execute().text.trim().toInteger()
 }
-// version name
-def versionNameByGit = {
+// for version name
+def tmpVerNameByGit = {
     def revisionDescriptionCMD = 'git describe'
     revisionDescriptionCMD.execute().text.trim()
 }
-
 
 android {
     compileSdkVersion 23
@@ -46,24 +45,25 @@ android {
 
     buildTypes {
         release {
+            shrinkResources true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
 
         applicationVariants.all { variant ->
-//            if(variant.buildType.name.equals('release')) {
-            def s = versionNameByGit().substring(1)  // remove first char 'v' of tag 'v1.0-2-afafaf'
-            def a = s.split("-") // split it with '-'
-            def v = a[0] + "." + a[1] // concatenate them for versionName
-            println ("getVersionCode:"+versionCodeByGit() + ", versionName:" + v)
-            variant.mergedFlavor.versionCode = versionCodeByGit()
-            variant.mergedFlavor.versionName = v
+            if (variant.buildType.name.equals('release')) {
+                def s = tmpVerNameByGit().substring(1)  // remove first char 'v' of tag 'v1.0-2-afafaf'
+                def a = s.split("-") // split it with '-'
+                def v = a[0] + '.' + a[1] + '.' + a[2] // concatenate them for versionName
+                println("getVersionCode:" + tmpVerCodeByGit() + ", versionName:" + v)
+                variant.mergedFlavor.versionCode = tmpVerCodeByGit()
+                variant.mergedFlavor.versionName = v
 
-            // rename apk file
-            def file = variant.outputs[0].outputFile // 低版本的gradle可能为variant.outputFile
-            variant.outputs[0].outputFile = new File(file.parent, file.name.replace('.apk', "-" + v + ".apk"))
-//            }
+                // rename apk file
+                def file = variant.outputs[0].outputFile // 低版本的gradle可能为variant.outputFile
+                variant.outputs[0].outputFile = new File(file.parent, file.name.replace('-release.apk', "-" + v + ".apk"))
+            }
         }
 
     }
