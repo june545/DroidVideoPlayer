@@ -4,12 +4,22 @@ apply plugin: 'com.android.application'
 def storeParam = { key ->
     Properties localProperties = new Properties()
     localProperties.load(file('../local.properties').newDataInputStream())
-    println "\n-------------keystore-----------------------"
     Properties keystoreParam = new Properties();
-    keystoreParam.load(file(localProperties.get('keystore.properties')).newDataInputStream())
-    println keystoreParam
-    keystoreParam.getProperty(key)
+    keystoreParam.load(file(localProperties['keystore.properties']).newDataInputStream())
+    keystoreParam[key]
 }
+
+// version code
+def versionCodeByGit = {
+    def versionNumberCmd = 'git rev-list HEAD --count'
+    versionNumberCmd.execute().text.trim().toInteger()
+}
+// version name
+def versionNameByGit = {
+    def revisionDescriptionCMD = 'git describe'
+    revisionDescriptionCMD.execute().text.trim()
+}
+
 
 android {
     compileSdkVersion 23
@@ -23,6 +33,9 @@ android {
     }
 
     signingConfigs {
+        debug {
+
+        }
         release {
             storeFile file(storeParam('storeFile'))
             keyAlias storeParam('keyAlias')
@@ -37,7 +50,24 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
+
+        applicationVariants.all { variant ->
+//            if(variant.buildType.name.equals('release')) {
+            def s = versionNameByGit().substring(1)  // remove first char 'v' of tag 'v1.0-2-afafaf'
+            def a = s.split("-") // split it with '-'
+            def v = a[0] + "." + a[1] // concatenate them for versionName
+            println ("getVersionCode:"+versionCodeByGit() + ", versionName:" + v)
+            variant.mergedFlavor.versionCode = versionCodeByGit()
+            variant.mergedFlavor.versionName = v
+
+            // rename apk file
+            def file = variant.outputs[0].outputFile // 低版本的gradle可能为variant.outputFile
+            variant.outputs[0].outputFile = new File(file.parent, file.name.replace('.apk', "-" + v + ".apk"))
+//            }
+        }
+
     }
+
     productFlavors {
 
     }
@@ -47,7 +77,4 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.4.0'
-
 }
-
-
