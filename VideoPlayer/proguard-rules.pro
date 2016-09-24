@@ -17,7 +17,7 @@
 #}
 
 -optimizationpasses 5                # 指定代码的压缩级别
--dontusemixedcaseclassnames         # 是否使用大小写混合
+-dontusemixedcaseclassnames         # 不使用大小写混合
 -dontskipnonpubliclibraryclasses   # 不跳过非公共的库类
 -verbose                               # 混淆时是否记录日志
 
