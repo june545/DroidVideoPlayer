@@ -59,3 +59,8 @@
 -keep class * implements android.os.Parcelable {
     public static final android.os.Parcelable$Creator *;
 }
+
+-dump proguard/class_files.txt       # 所有class的内部结构
+-printseeds proguard/seeds.txt      # 未混淆的类和成员
+-printusage proguard/unused.txt     # 被删除的内容
+-printmapping proguard/mapping.txt  # 混淆后类的映射
