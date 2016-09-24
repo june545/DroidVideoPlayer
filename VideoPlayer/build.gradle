@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 // 获取keystore相关参数
-def storeParam = { key ->
+def signing = { key ->
     Properties localProperties = new Properties()
     localProperties.load(file('../local.properties').newDataInputStream())
     Properties keystoreParam = new Properties();
@@ -36,10 +36,10 @@ android {
 
         }
         release {
-            storeFile file(storeParam('storeFile'))
-            keyAlias storeParam('keyAlias')
-            keyPassword storeParam('keyPassword')
-            storePassword storeParam('keyPassword')
+            storeFile file(signing('storeFile'))
+            keyAlias signing('keyAlias')
+            keyPassword signing('keyPassword')
+            storePassword signing('storePassword')
         }
     }
 
@@ -59,7 +59,7 @@ android {
                 println("getVersionCode:" + tmpVerCodeByGit() + ", versionName:" + v)
                 variant.mergedFlavor.versionCode = tmpVerCodeByGit()
                 variant.mergedFlavor.versionName = v
-                def suff = new Date().format("yyMMddmm")
+                def suff = new Date().format("yyMMddHH")
                 v = v + "." + suff
                 // rename apk file
                 def file = variant.outputs[0].outputFile // 低版本的gradle可能为variant.outputFile
