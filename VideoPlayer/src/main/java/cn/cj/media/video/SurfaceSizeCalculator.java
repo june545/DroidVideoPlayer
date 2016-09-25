@@ -5,13 +5,13 @@ import android.view.Gravity;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
 /**
  * Created by June on 2016/8/19.
  */
-public class FrameLayoutSurfaceSizeCalculator {
-	private static final String TAG                     = FrameLayoutSurfaceSizeCalculator.class.getSimpleName();
+public class SurfaceSizeCalculator {
+	private static final String TAG                     = SurfaceSizeCalculator.class.getSimpleName();
 	private static final byte   SURFACESIZE_FIT_CENTER  = 0x1;
 	private static final byte   SURFACESIZE_FILL        = 0x2;
 	private static final byte   SURFACESIZE_CENTER_CROP = 0x3;
@@ -94,7 +94,7 @@ public class FrameLayoutSurfaceSizeCalculator {
 		surfaceView.setLayoutParams(lp);
 
 		// frame size
-		LinearLayout.LayoutParams p_lp = (LinearLayout.LayoutParams) mSurfaceViewParent.getLayoutParams();
+		FrameLayout.LayoutParams p_lp = (FrameLayout.LayoutParams) mSurfaceViewParent.getLayoutParams();
 		p_lp.gravity = Gravity.CENTER;
 		p_lp.width = playerWidth;
 		p_lp.height = playerHeight;

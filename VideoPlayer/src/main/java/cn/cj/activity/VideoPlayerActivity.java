@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cn.cj.ui;
+package cn.cj.activity;
 
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -21,7 +21,7 @@ import cn.cj.util.NetworkUtil;
  * @author June Cheng
  * @date 2015年10月28日 下午10:39:13
  */
-public class VideoPlayerActivity extends BaseFragmentActivity {
+public class VideoPlayerActivity extends BaseAppActivity {
 	private final String		TAG						= "MediaPlayerActivity";
 
 	private LinearLayout		mMediaPlayerContainer;

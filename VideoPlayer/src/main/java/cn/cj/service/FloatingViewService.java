@@ -15,7 +15,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import cn.cj.media.video.player.R;
-import cn.cj.videoplayer.MainActivity;
+import cn.cj.activity.MainActivity;
 
 /**
  * Created by June on 2016/8/14.

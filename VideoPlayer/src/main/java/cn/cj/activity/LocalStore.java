@@ -1,4 +1,4 @@
-package cn.cj.ui;
+package cn.cj.activity;
 
 import android.content.Context;
 

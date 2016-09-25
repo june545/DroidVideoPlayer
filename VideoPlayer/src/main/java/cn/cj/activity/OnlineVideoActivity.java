@@ -1,4 +1,4 @@
-package cn.cj.ui;
+package cn.cj.activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -13,7 +13,7 @@ import android.widget.EditText;
 import cn.cj.media.video.player.R;
 
 
-public class MainActivity extends AppCompatActivity implements OnClickListener {
+public class OnlineVideoActivity extends AppCompatActivity implements OnClickListener {
 
 	private EditText	editText;
 	private Button		play;
@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_online_video);
 
 		editText = (EditText) findViewById(R.id.edit);
 		play = (Button) findViewById(R.id.play);

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cn.cj.ui;
+package cn.cj.activity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,7 +17,7 @@ import android.util.Log;
  * @author June Cheng
  * @date 2015年11月5日 上午12:31:29
  */
-public class BaseFragmentActivity extends FragmentActivity {
+public class BaseAppActivity extends FragmentActivity {
 	private NetworkBroadcastReceiver	mNetworkReceiver;
 
 	@Override
