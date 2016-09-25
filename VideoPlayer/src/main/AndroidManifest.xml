@@ -38,7 +38,7 @@
         <activity
             android:name="cn.cj.ui.VideoPlayerActivity"
             android:configChanges="orientation|screenSize"
-            android:icon="@drawable/launcher"
+            android:icon="@mipmap/launcher"
             android:theme="@android:style/Theme.Light.NoTitleBar"
             android:label="@string/player_name">
             <intent-filter>
