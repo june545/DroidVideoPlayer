@@ -60,7 +60,7 @@ android {
                 println("getVersionCode:" + tmpVerCodeByGit() + ", versionName:" + v)
                 variant.mergedFlavor.versionCode = tmpVerCodeByGit()
                 variant.mergedFlavor.versionName = v
-                def suff = new Date().format("MMddHH")
+                def suff = new Date().format("yyMMddHH")
                 v = v + "." + suff
                 // rename apk file
                 def file = variant.outputs[0].outputFile // 低版本的gradle可能为variant.outputFile
