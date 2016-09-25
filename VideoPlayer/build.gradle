@@ -54,17 +54,26 @@ android {
 
         applicationVariants.all { variant ->
             if (variant.buildType.name.equals('release')) {
-                def s = tmpVerNameByGit().substring(1)  // remove first char 'v' of tag 'v1.0-2-afafaf'
-                def a = s.split("-") // split it with '-'
-                def v = a[0] + '.' + a[1] // concatenate them for versionName
-                println("getVersionCode:" + tmpVerCodeByGit() + ", versionName:" + v)
-                variant.mergedFlavor.versionCode = tmpVerCodeByGit()
-                variant.mergedFlavor.versionName = v
-                def suff = new Date().format("yyMMddHH")
-                v = v + "." + suff
+                def vCode = tmpVerCodeByGit()
+                def vName = tmpVerNameByGit();
+//                println("app before converting -> VersionCode:" + vCode + ", VersionName:" + vName);
+
+                if (vName ==~ '\\d+-\\d+-') {    // regexp
+                    def s = vName.substring(1)     // remove first char 'v' of tag 'v1.0-2-afafaf'
+                    def a = s.split("-")           // split it with '-'
+                    vName = a[0] + '.' + a[1]      // concatenate them for versionName
+                } else {
+                    vName = vName + ".0";          // eg. 1.0.0
+                }
+//                println("app after converting VersionCode:" + vCode + ", VersionName:" + vName);
+                variant.mergedFlavor.versionCode = vCode
+                variant.mergedFlavor.versionName = vName
+
                 // rename apk file
+                def suff = new Date().format("yyMMddHH")
+                vName = vName + "." + suff
                 def file = variant.outputs[0].outputFile // 低版本的gradle可能为variant.outputFile
-                variant.outputs[0].outputFile = new File(file.parent, file.name.replace('-release.apk', "-" + v + ".apk"))
+                variant.outputs[0].outputFile = new File(file.parent, file.name.replace('-release.apk', "-" + vName + ".apk"))
             }
         }
 
