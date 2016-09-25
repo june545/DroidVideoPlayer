@@ -57,21 +57,21 @@ android {
                 def vCode = tmpVerCodeByGit()
                 def vName = tmpVerNameByGit();
 //                println("app before converting -> VersionCode:" + vCode + ", VersionName:" + vName);
-
-                if (vName ==~ '\\d+-\\d+-') {    // regexp
-                    def s = vName.substring(1)     // remove first char 'v' of tag 'v1.0-2-afafaf'
+                def matcher = vName =~ /\d+-\d+-/ // 判断‘v1.1' or 'v1.1-1-g123df6b'
+                if (matcher) {    // regexp
+                    def s = vName.substring(1)     // remove first char 'v' of tag 'v1.1-1-g123df6b'
                     def a = s.split("-")           // split it with '-'
                     vName = a[0] + '.' + a[1]      // concatenate them for versionName
                 } else {
-                    vName = vName + ".0";          // eg. 1.0.0
+                    vName = vName + ".0";          // eg. '1.1' + '.0' = '1.1.0'
                 }
-//                println("app after converting VersionCode:" + vCode + ", VersionName:" + vName);
+                println("app after converting VersionCode:" + vCode + ", VersionName:" + vName);
                 variant.mergedFlavor.versionCode = vCode
                 variant.mergedFlavor.versionName = vName
 
                 // rename apk file
                 def suff = new Date().format("yyMMddHH")
-                vName = vName + "." + suff
+                vName = vName + "-" + suff
                 def file = variant.outputs[0].outputFile // 低版本的gradle可能为variant.outputFile
                 variant.outputs[0].outputFile = new File(file.parent, file.name.replace('-release.apk', "-" + vName + ".apk"))
             }
