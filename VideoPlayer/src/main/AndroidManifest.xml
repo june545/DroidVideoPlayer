@@ -14,16 +14,17 @@
         android:label="@string/player_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:label">
+        tools:replace="android:label"
+        android:name="cn.cj.app.BaseApplication">
 
-        <activity android:name="cn.cj.activity.MainActivity">
+        <activity android:name="cn.cj.activity.LocalVideoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name="cn.cj.activity.LocalVideoActivity">
+        <activity android:name="cn.cj.activity.MainActivity">
         </activity>
 
         <activity
@@ -39,16 +40,19 @@
             android:theme="@android:style/Theme.Light.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
-
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-
                 <data android:mimeType="video/*"/>
                 <data android:scheme="http"/>
                 <data android:scheme="httplive"/>
                 <data android:scheme="file"/>
                 <data android:scheme="content"/>
                 <data android:mimeType="audio/*"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="cn.cj.intent.action.player"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="video/*"/>
             </intent-filter>
         </activity>
 
