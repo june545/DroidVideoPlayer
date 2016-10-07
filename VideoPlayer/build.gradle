@@ -9,15 +9,25 @@ def signing = { key ->
     keystoreParam[key]
 }
 
-// for version code
-def tmpVerCodeByGit = {
+// generate version code
+def verCodeByGit = {
     def versionNumberCmd = 'git rev-list HEAD --count'
     versionNumberCmd.execute().text.trim().toInteger()
 }
-// for version name
-def tmpVerNameByGit = {
+// generate version name
+def verNameByGit = {
     def revisionDescriptionCMD = 'git describe'
-    revisionDescriptionCMD.execute().text.trim()
+    def vName = revisionDescriptionCMD.execute().text.trim()
+//                println("app before converting -> VersionCode:" + vCode + ", VersionName:" + vName);
+    def matcher = vName =~ /\d+-\d+-/ // 判断‘v1.1' or 'v1.1-1-g123df6b'
+    if (matcher) {    // regexp
+        def s = vName.substring(1)     // remove first char 'v' of tag 'v1.1-1-g123df6b'
+        def a = s.split("-")           // split it with '-'
+        vName = a[0] + '.' + a[1]      // concatenate them for versionName
+    } else {
+        vName = vName + ".0"          // eg. '1.1' + '.0' = '1.1.0'
+    }
+    return vName
 }
 
 android {
@@ -57,22 +67,13 @@ android {
         }
 
         applicationVariants.all { variant ->
-            if (variant.buildType.name.equals('release')) {
-                def vCode = tmpVerCodeByGit()
-                def vName = tmpVerNameByGit();
-//                println("app before converting -> VersionCode:" + vCode + ", VersionName:" + vName);
-                def matcher = vName =~ /\d+-\d+-/ // 判断‘v1.1' or 'v1.1-1-g123df6b'
-                if (matcher) {    // regexp
-                    def s = vName.substring(1)     // remove first char 'v' of tag 'v1.1-1-g123df6b'
-                    def a = s.split("-")           // split it with '-'
-                    vName = a[0] + '.' + a[1]      // concatenate them for versionName
-                } else {
-                    vName = vName + ".0";          // eg. '1.1' + '.0' = '1.1.0'
-                }
-                println("app after converting VersionCode:" + vCode + ", VersionName:" + vName);
-                variant.mergedFlavor.versionCode = vCode
-                variant.mergedFlavor.versionName = vName
+            def vCode = verCodeByGit()
+            def vName = verNameByGit();
+            println("app after converting VersionCode:" + vCode + ", VersionName:" + vName)
+            variant.mergedFlavor.versionCode = vCode
+            variant.mergedFlavor.versionName = vName
 
+            if (variant.buildType.name.equals('release')) {
                 // rename apk file
                 def suff = new Date().format("yyMMddHH")
                 vName = vName + "-" + suff

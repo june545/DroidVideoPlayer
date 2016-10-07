@@ -6,4 +6,9 @@
         android:orderInCategory="100"
         android:title="online"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="100"
+        android:title="about"
+        app:showAsAction="never" />
 </menu>

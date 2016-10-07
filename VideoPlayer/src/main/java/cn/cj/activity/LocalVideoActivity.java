@@ -16,6 +16,9 @@ import android.widget.GridView;
 import cn.cj.adapter.LocalVideAdapter;
 import cn.cj.media.video.player.R;
 
+/**
+ * list local video
+ */
 public class LocalVideoActivity extends AppCompatActivity {
     private GridView gridView;
     private boolean layouted = false;
@@ -24,6 +27,7 @@ public class LocalVideoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(R.string.local_video_title);
         setContentView(R.layout.activity_local_video);
         gridView = (GridView) findViewById(R.id.grid_view);
         gridView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -50,10 +54,16 @@ public class LocalVideoActivity extends AppCompatActivity {
             case R.id.action_online:
                 startActivity(new Intent(getApplicationContext(), OnlineVideoActivity.class));
                 return true;
+            case R.id.action_about:
+                startActivity(new Intent(getApplicationContext(), AboutActivity.class));
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * asynchronously loading
+     */
     LoaderManager.LoaderCallbacks<Cursor> loaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {

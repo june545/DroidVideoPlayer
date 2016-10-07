@@ -9,14 +9,13 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
+        android:name="cn.cj.app.BaseApplication"
         android:allowBackup="true"
         android:icon="@mipmap/launcher"
         android:label="@string/player_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:label"
-        android:name="cn.cj.app.BaseApplication">
-
+        tools:replace="android:label">
         <activity android:name="cn.cj.activity.LocalVideoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -26,12 +25,10 @@
         </activity>
         <activity android:name="cn.cj.activity.MainActivity">
         </activity>
-
         <activity
             android:name="cn.cj.activity.OnlineVideoActivity"
             android:label="@string/app_name">
         </activity>
-
         <activity
             android:name="cn.cj.activity.VideoPlayerActivity"
             android:configChanges="orientation|screenSize"
@@ -40,8 +37,10 @@
             android:theme="@android:style/Theme.Light.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
+
                 <data android:mimeType="video/*"/>
                 <data android:scheme="http"/>
                 <data android:scheme="httplive"/>
@@ -51,14 +50,19 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="cn.cj.intent.action.player"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
+
                 <data android:mimeType="video/*"/>
             </intent-filter>
         </activity>
 
         <service android:name="cn.cj.service.PlayerFloatingViewService"/>
 
-
+        <activity
+            android:name="cn.cj.activity.AboutActivity"
+            android:label="@string/title_activity_about">
+        </activity>
     </application>
 
 </manifest>
