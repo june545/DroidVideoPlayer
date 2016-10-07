@@ -5,5 +5,5 @@
     <string name="player_media_default_time">--:--</string>
     <string name="title_activity_about">AboutActivity</string>
 
-    <string name="copyright">Copyright@2016 by June. All rights reserved.</string>
+    <string name="copyright">Copyright © 2016 by June. All rights reserved.</string>
 </resources>

@@ -34,7 +34,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="#88888888"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/volume_percent_tv"
@@ -42,8 +43,7 @@
             android:layout_height="wrap_content"
             android:text="0%"
             android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:visibility="gone"/>
+            android:textSize="20sp"/>
     </LinearLayout>
 
     <LinearLayout

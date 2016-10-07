@@ -35,20 +35,28 @@
                 android:textColor="@android:color/black"/>
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center|bottom"
+                android:text="@string/statement"
+                android:textColor="@android:color/holo_red_dark"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 android:gravity="center"
                 android:text="@string/copyright"
-                android:textColor="@android:color/black"/>
+                android:textColor="@android:color/black"
+                />
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 

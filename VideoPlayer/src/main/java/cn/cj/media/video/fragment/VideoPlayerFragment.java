@@ -47,13 +47,13 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import cn.cj.activity.VideoPlayerActivity;
 import cn.cj.media.video.MediaUtil;
 import cn.cj.media.video.MyOrientationEventListener;
 import cn.cj.media.video.player.R;
 import cn.cj.media.widget.VideoPlayerView;
 import cn.cj.service.FloatingViewService;
 import cn.cj.service.PlayerFloatingViewService;
-import cn.cj.activity.VideoPlayerActivity;
 import cn.cj.util.Util;
 
 /**
@@ -76,11 +76,6 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
 
     private VideoPlayerView videoPlayerView;
     private SurfaceView     mSurfaceView;
-
-    private static final byte SURFACESIZE_FIT_CENTER  = 0x1;
-    private static final byte SURFACESIZE_FILL        = 0x2;
-    private static final byte SURFACESIZE_CENTER_CROP = 0x3;
-    private              byte mCurrentSurfaceSize     = SURFACESIZE_FIT_CENTER;
 
     // 尺寸常量
     private int originalFrameWidth;
