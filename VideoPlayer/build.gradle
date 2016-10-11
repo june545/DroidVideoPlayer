@@ -93,4 +93,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.github.june545:my-droid-comm:v1.0'
+    compile 'com.github.june545:AndroidFloatingView:v1.0.0'
 }
