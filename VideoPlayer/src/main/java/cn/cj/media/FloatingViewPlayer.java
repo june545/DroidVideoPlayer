@@ -2,30 +2,31 @@ package cn.cj.media;
 
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import java.io.IOException;
 
-import cn.cj.android.extend.FloatingVideo;
-import cn.cj.android.floatingview.FloatingView;
-import cn.cj.android.floatingview.FloatingViewManager;
 import cn.cj.media.video.player.R;
+import cn.woodyjc.android.floatingview.FloatingParams;
+import cn.woodyjc.android.floatingview.FloatingView;
 
 /**
  * Created by June on 2016/8/14.
  */
 public class FloatingViewPlayer implements View.OnTouchListener {
 	private static final String TAG = FloatingViewPlayer.class.getSimpleName();
-	String path = "/storage/emulated/legacy/疯狂原始人_DVDscr中字_51rrkan.com.rmvb";
-	Context             context;
-	FloatingViewManager floatingViewManager;
-	View                view;
-	ImageView           imageButton;
+	String path = "http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_640x360.m4v";
+	Context      context;
+	FloatingView floatingView;
+	View         contentView;
+	ImageView    imageButton;
 
 	public FloatingViewPlayer(Context context) {
 		this.context = context;
@@ -33,10 +34,14 @@ public class FloatingViewPlayer implements View.OnTouchListener {
 
 	public void show(String path) {
 		this.path = path;
-		view = createView();
-		floatingViewManager = new FloatingViewManager(context);
-		FloatingView.Options options = FloatingVideo.create(context);
-		floatingViewManager.addScaleVideoViewToWindow(view, options);
+		contentView = createView();
+
+		floatingView = new FloatingView(context);
+		DisplayMetrics dm = new DisplayMetrics();
+		((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(dm);
+		floatingView.setFloatingParams(FloatingParams.getDefault(dm.widthPixels, dm.heightPixels));
+		floatingView.addView(contentView);
+		floatingView.show();
 	}
 
 	MediaPlayer player;
@@ -71,9 +76,9 @@ public class FloatingViewPlayer implements View.OnTouchListener {
 				player.stop();
 				player.release();
 				player = null;
-				if (floatingViewManager != null) {
-					floatingViewManager.removeView();
-					floatingViewManager = null;
+				if (floatingView != null) {
+					floatingView.remove();
+					floatingView = null;
 				}
 			}
 		});

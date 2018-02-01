@@ -80,14 +80,15 @@ android {
             variant.mergedFlavor.versionCode = vCode
             variant.mergedFlavor.versionName = vName
 
-            variant.outputs.all {
+            variant.outputs.all { output ->
 //                if (variant.buildType.name.equals('release')) {
                     // rename apk file
                     def suff = new Date().format("yyMMddHH")
                     vName = vName + "-" + suff
 //                def file = variant.outputs[0].outputFile // 低版本的gradle可能为variant.outputFile
 //                variant.outputs[0].outputFile = new File(file.parent, file.name.replace('-release.apk', "-" + vName + ".apk"))
-                    outputFileName = outputFileName.replace('release.apk', vName + ".apk")
+//                    outputFileName = outputFileName.replace('release.apk', vName + ".apk")
+                    outputFileName = project.name + "-" + vName + ".apk"
 //                }
             }
         }
@@ -103,5 +104,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.github.june545:my-droid-comm:v1.0'
-    implementation 'com.github.june545:AndroidFloatingView:v1.0.0'
+    implementation 'com.github.woodyhi:floating-view:0.1.0'
 }
