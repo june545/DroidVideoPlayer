@@ -5,8 +5,13 @@ def signing = { key ->
     Properties localProperties = new Properties()
     localProperties.load(file('../local.properties').newDataInputStream())
     Properties keystoreParam = new Properties();
-    keystoreParam.load(file(localProperties['keystore.properties']).newDataInputStream())
-    keystoreParam[key]
+    String propPath = localProperties['keystore.properties']
+    if(propPath != null) {
+        keystoreParam.load(file(propPath).newDataInputStream())
+        keystoreParam[key]
+    }else{
+        return null
+    }
 }
 
 // generate version code
@@ -50,10 +55,12 @@ android {
 
         }
         release {
-            storeFile file(signing('storeFile'))
-            keyAlias signing('keyAlias')
-            keyPassword signing('keyPassword')
-            storePassword signing('storePassword')
+            if(signing('storeFile') != null) {
+                storeFile file(signing('storeFile'))
+                keyAlias signing('keyAlias')
+                keyPassword signing('keyPassword')
+                storePassword signing('storePassword')
+            }
         }
     }
 
