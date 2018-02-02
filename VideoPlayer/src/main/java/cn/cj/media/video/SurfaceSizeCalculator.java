@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 /**
+ * @deprecated
  * Created by June on 2016/8/19.
  */
 public class SurfaceSizeCalculator {

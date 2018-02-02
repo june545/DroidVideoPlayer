@@ -1,0 +1,81 @@
+// 获取keystore相关参数
+def signing = { key ->
+    Properties localProperties = new Properties()
+    localProperties.load(file('../local.properties').newDataInputStream())
+    Properties keystoreParam = new Properties();
+    String propPath = localProperties['keystore.properties']
+    if (propPath != null) {
+        keystoreParam.load(file(propPath).newDataInputStream())
+        keystoreParam[key]
+    } else {
+        return null
+    }
+}
+
+// generate version code
+def verCodeByGit = {
+    def versionNumberCmd = 'git rev-list HEAD --count'
+    versionNumberCmd.execute().text.trim().toInteger()
+}
+// generate version name
+def verNameByGit = {
+    def revisionDescriptionCMD = 'git describe'
+    def vName = revisionDescriptionCMD.execute().text.trim()
+//                println("app before converting -> VersionCode:" + vCode + ", VersionName:" + vName);
+    def matcher = vName =~ /\d+-\d+-/ // 判断‘v1.1' or 'v1.1-1-g123df6b'
+    if (matcher) {    // regexp
+        def s = vName.substring(1)     // remove first char 'v' of tag 'v1.1-1-g123df6b'
+        def a = s.split("-")           // split it with '-'
+        vName = a[0] + '.' + a[1]      // concatenate them for versionName
+    } else {
+        vName = vName + ".0"          // eg. '1.1' + '.0' = '1.1.0'
+    }
+    return vName
+}
+
+ext {
+    android {
+        signingConfigs {
+            debug {
+
+            }
+            release {
+                if (signing('storeFile') != null) {
+                    storeFile file(signing('storeFile'))
+                    keyAlias signing('keyAlias')
+                    keyPassword signing('keyPassword')
+                    storePassword signing('storePassword')
+                }
+            }
+        }
+
+        buildTypes {
+            debug {
+                signingConfig signingConfigs.debug
+            }
+            release {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    android.applicationVariants.all { variant ->
+        def vCode = verCodeByGit()
+        def vName = verNameByGit();
+        println("app after converting VersionCode:" + vCode + ", VersionName:" + vName)
+//            variant.mergedFlavor.versionCode = vCode
+//            variant.mergedFlavor.versionName = vName
+
+        variant.outputs.all { output ->
+            output.setVersionNameOverride(vName)
+            output.setVersionCodeOverride(vCode)
+//                if (variant.buildType.name.equals('release')) {
+            // rename apk file
+            def suff = new Date().format("yyMMddHH")
+            vName = vName + "-" + suff
+//                def file = variant.outputs[0].outputFile // 低版本的gradle可能为variant.outputFile
+            outputFileName = project.name + "-" + vName + '-' + vCode + '-' + variant.buildType.name + ".apk"
+//                }
+        }
+    }
+}

@@ -15,7 +15,7 @@
         android:label="@string/player_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:label">
+        tools:replace="android:icon,android:label">
         <activity android:name="cn.cj.activity.LocalVideoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

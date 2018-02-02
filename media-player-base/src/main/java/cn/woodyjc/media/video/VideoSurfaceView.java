@@ -1,4 +1,4 @@
-package cn.cj.media.widget;
+package cn.woodyjc.media.video;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -7,14 +7,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 /**
- *
  * Created by June on 2016/8/21.
  */
 public class VideoSurfaceView extends SurfaceView {
-    String TAG = toString();
+    private final String TAG = VideoSurfaceView.class.getSimpleName();
 
-    int videoWidth;
-    int videoHeight;
+    private int videoWidth;
+    private int videoHeight;
 
     public VideoSurfaceView(Context context) {
         this(context, null);
@@ -30,11 +29,11 @@ public class VideoSurfaceView extends SurfaceView {
     }
 
     private void init() {
-        Log.d(TAG, "---init()");
+        Log.d(TAG, "---init()---");
         getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-        //        setFocusable(true);
-        //        setFocusableInTouchMode(true);
-        //        requestFocus();
+        setFocusable(true);
+        setFocusableInTouchMode(true);
+        requestFocus();
     }
 
     @Override

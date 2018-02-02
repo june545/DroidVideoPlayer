@@ -1,4 +1,4 @@
-package cn.cj.media.widget;
+package cn.woodyjc.media.video;
 
 import android.content.Context;
 import android.graphics.Canvas;

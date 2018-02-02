@@ -1,6 +1,3 @@
-/**
- *
- */
 package cn.cj.media.video.fragment;
 
 import android.annotation.SuppressLint;
@@ -10,29 +7,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.ImageFormat;
-import android.graphics.PixelFormat;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnBufferingUpdateListener;
-import android.media.MediaPlayer.OnCompletionListener;
-import android.media.MediaPlayer.OnErrorListener;
-import android.media.MediaPlayer.OnInfoListener;
-import android.media.MediaPlayer.OnPreparedListener;
-import android.media.MediaPlayer.OnSeekCompleteListener;
-import android.media.MediaPlayer.OnVideoSizeChangedListener;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
@@ -45,48 +29,48 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import cn.cj.activity.VideoPlayerActivity;
 import cn.cj.media.video.MediaUtil;
 import cn.cj.media.video.MyOrientationEventListener;
 import cn.cj.media.video.player.R;
-import cn.cj.media.widget.VideoPlayerView;
 import cn.cj.service.FloatingViewService;
 import cn.cj.service.PlayerFloatingViewService;
 import cn.cj.util.Util;
+import cn.woodyjc.media.video.VideoPlayerView;
 
 /**
  * @author June Cheng
  * @date 2015年10月28日 下午10:28:47
  */
-public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callback {
-    private final String TAG = "MediaPlayerFragment";
+public class VideoPlayerFragment extends Fragment {
+    private final String TAG = VideoPlayerFragment.class.getSimpleName();
+    /**
+     * 手势
+     */
+    public static final byte   GESTURE_NON                   = 0x0;
+    public static final byte   GESTURE_HORIZONTAL           = 0x1; // 水平方向手势
+    public static final byte   GESTURE_VERTICAL             = 0x2; // 垂直方向手势
 
-    private final int  DELAY_DISMISS_POPUP_TIME       = 10000;
-    private final byte HANDLER_HIDE_PLAYER_BOTTOM_BAR = 0x6;
-    private final byte REFRESH_PLAYBACK_PROGRESS      = 0x1;
-    private Context mContext;
+    //  延迟时间
+    private static final int  HIDE_CONTROL_BAR_DELAY_TIME      = 10000;
 
+    private final       byte   HANDLER_SHOW_CONTROL_BAR          = 1;
+    private final       byte   HANDLER_HIDE_CONTROL_BAR          = 2;
+    private final       byte   HANDLER_UPDATE_PLAYBACK_PROGRESS = 3;
 
-    private View rootView;
-    //surfaceview's container
 //    private int         mPlayerWidth;                                                //播放器尺寸
 //    private int         mPlayerHeight;
+    public        byte gestureOrientaion         = GESTURE_NON;
 
+    private Context         mContext;
+    private View            rootView;
     private VideoPlayerView videoPlayerView;
-    private SurfaceView     mSurfaceView;
 
     // 尺寸常量
-    private int originalFrameWidth;
-    private int originalFrameHeight;
-    private int mScreenWidth;
-    private int mScreenHeight;
-
-    // 视频尺寸
-    private int mVideoWidth;
-    private int mVideoHeight;
-
+    private int          originalFrameWidth;
+    private int          originalFrameHeight;
+    private int          mScreenWidth;
+    private int          mScreenHeight;
     /**
      * center popup
      */
@@ -99,10 +83,9 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
     // 快进/快退
     private LinearLayout mFastForwardProgressLayout;
     private TextView     mFastForwardProgresText;
-
-    /* player bottom bar */
-    private LinearLayout mPlayerBottomBar;
-    private boolean      mShowing;
+    /* player control bar */
+    private LinearLayout playerControlBar;
+    private boolean      isControlBarShowing = true;
     private ImageView    playPauseBtn;
     private LinearLayout mSeekBarLayout;
     private TextView     mCurrentTime;
@@ -110,12 +93,9 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
     private TextView     mDurationTime;
     private ImageView    openCloseFullscreenBtn;
     private boolean mSeeking = false;
-    private ImageView floatingView;
-
-    private MediaPlayer mMediaPlayer;
-    private String      mMediaPath;
+    private ImageView floatingViewIv;
+    private String    mMediaPath;
     private boolean playingOnSurface = false;
-    private boolean completed;
     private int     duration;
     private int     lastPosition;
 
@@ -124,14 +104,29 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
      */
     private MyOrientationEventListener myOrientationEventListener;
     private GestureDetector            mGestureDetector;
-    /**
-     * 手势
-     */
-    public static final byte GESTURE_NON        = 0x0;
-    public static final byte GESTURE_HORIZONTAL = 0x1;
-    public static final byte GESTURE_VERTICAL   = 0x2;
-    public              byte gestureOrientaion  = GESTURE_NON;
-    private int positionToSeek;                                            //手势控制播放位置
+    private int                        positionToSeek;                                            //手势控制播放位置
+
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+                case HANDLER_SHOW_CONTROL_BAR:
+                    showOverlay();
+
+                    break;
+                case HANDLER_HIDE_CONTROL_BAR:
+                    hideOverlay();
+
+                    break;
+                case HANDLER_UPDATE_PLAYBACK_PROGRESS:
+                    updateProgress();
+                    sendEmptyMessageDelayed(HANDLER_UPDATE_PLAYBACK_PROGRESS,1000 - lastPosition % 1000);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     public VideoPlayerFragment() {
     }
@@ -155,7 +150,7 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
         initView(rootView);
-        initVideoPlayer();
+        videoPlayerView.play(mMediaPath, 0);
         return rootView;
     }
 
@@ -163,6 +158,7 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mContext = getActivity();
+
         // 获取屏幕尺寸
         DisplayMetrics dm = new DisplayMetrics();
         ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -178,7 +174,8 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
             Log.d(TAG, "can not Detect Orientation");
         }
         mGestureDetector = new GestureDetector(mContext, new MySimpleGestureListener());
-        showOverlay(true);
+        showOverlayHideDelayed(true);
+        mHandler.sendEmptyMessage(HANDLER_UPDATE_PLAYBACK_PROGRESS);
     }
 
     @Override
@@ -198,13 +195,13 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
     public void onWindowFocusChanged(boolean hasFocus) {
         Log.d(TAG, "onWindowFocusChanged : " + hasFocus);
         if (hasFocus) {
-            if (playingOnSurface && !mMediaPlayer.isPlaying()) {
-                mMediaPlayer.start();
+            if (playingOnSurface && !videoPlayerView.isPlaying()) {
+                videoPlayerView.playback();
                 playPauseBtn.setBackgroundResource(R.drawable.media_pause);
             }
         } else {
-            if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.pause();
+            if (videoPlayerView.isPlaying()) {
+                videoPlayerView.pause();
                 playPauseBtn.setBackgroundResource(R.drawable.media_play);
             }
         }
@@ -214,8 +211,8 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
     public void onPause() {
         super.onPause();
         Log.d(TAG, "onPause() ");
-        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-            mMediaPlayer.pause();
+        if (videoPlayerView.isPlaying()) {
+            videoPlayerView.pause();
             Log.e(TAG, this.getClass().getName() + " pause, toggle playback button : pause");
             playPauseBtn.setBackgroundResource(R.drawable.media_play);
         }
@@ -234,11 +231,7 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mMediaPlayer != null) {
-            mMediaPlayer.reset();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-        }
+        videoPlayerView.release();
     }
 
     private void initView(View view) {
@@ -249,14 +242,14 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
         mVolumePercent = (TextView) view.findViewById(R.id.volume_percent_tv);
         mFastForwardProgressLayout = (LinearLayout) view.findViewById(R.id.fast_forward_progress_layout);
         mFastForwardProgresText = (TextView) view.findViewById(R.id.fast_forward_progress_text);
-        mPlayerBottomBar = (LinearLayout) view.findViewById(R.id.player_bottom_bar);
+        playerControlBar = (LinearLayout) view.findViewById(R.id.player_control_bar);
         playPauseBtn = (ImageView) view.findViewById(R.id.play_pause_btn);
         mSeekBarLayout = (LinearLayout) view.findViewById(R.id.seekbar_layout);
         mCurrentTime = (TextView) view.findViewById(R.id.video_playtime);
         mSeekBar = (SeekBar) view.findViewById(R.id.seekbar);
         mDurationTime = (TextView) view.findViewById(R.id.video_durationtime);
         openCloseFullscreenBtn = (ImageView) view.findViewById(R.id.open_close_fullscreen);
-        floatingView = (ImageView) view.findViewById(R.id.player_flotingview);
+        floatingViewIv = (ImageView) view.findViewById(R.id.show_flotingview);
 
         videoPlayerView.setOnTouchListener(new MyTouchListener());
 
@@ -284,7 +277,7 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
                 }
             }
         });
-        floatingView.setOnClickListener(new OnClickListener() {
+        floatingViewIv.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PlayerFloatingViewService.class);
@@ -296,182 +289,17 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
         });
     }
 
-    private void initVideoPlayer() {
-        mSurfaceView = videoPlayerView.getSurfaceView();
-        mSurfaceView.getHolder().addCallback(this);
-    }
-
-    private void loadMedia(SurfaceHolder holder) {
-        Log.e(TAG, "loadingMedia");
-        if (mMediaPlayer == null) {
-            Log.d(TAG, "the mediaplayer instance is null, and creating");
-            playPauseBtn.setBackgroundResource(R.drawable.media_pause);
-            mMediaPlayer = createMediaPlayer(holder, mMediaPath);
-
-        } else {
-            Log.d(TAG, "mediaplayer instance is existsing");
-            try {
-                mMediaPlayer.setDisplay(holder);// reset surface
-                if (playingOnSurface) {
-                    mLoadingView.setVisibility(View.VISIBLE);
-                    playPauseBtn.setBackgroundResource(R.drawable.media_pause);
-                    mMediaPlayer.seekTo(lastPosition);
-                }
-                showOverlay(playingOnSurface);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private MediaPlayer createMediaPlayer(SurfaceHolder holder, String cur) {
-        final String tagPrefix = "player -> ";
-        final MediaPlayer mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setDisplay(holder);
-        mMediaPlayer.setScreenOnWhilePlaying(true);// works when setDisplay invoked
-
-        mMediaPlayer.setOnPreparedListener(new OnPreparedListener() {
-
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                Log.d(TAG, tagPrefix + "onPrepared");
-                if (lastPosition > 0) {
-                    Log.i(TAG, tagPrefix + "seekTo " + lastPosition);
-                    mMediaPlayer.seekTo(lastPosition);
-                } else {
-                    Log.i(TAG, tagPrefix + "mediaplayer start");
-                    mMediaPlayer.start();
-                }
-                playingOnSurface = true;
-                playPauseBtn.setEnabled(true);
-                mSeekBar.setEnabled(true);
-                showOverlay(true);
-            }
-        });
-        mMediaPlayer.setOnVideoSizeChangedListener(new OnVideoSizeChangedListener() {
-
-            @Override
-            public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-                Log.d(TAG, tagPrefix + "video size changed width=" + width + ", height=" + height);
-                if (width * height == 0) {
-                    return;
-                }
-                mVideoWidth = width;
-                mVideoHeight = height;
-                videoPlayerView.setVideoSize(width, height);
-//				changeSurfaceViewSize(mSurfaceView, mPlayerWidth, mPlayerHeight, mVideoWidth, mVideoHeight);
-            }
-        });
-        mMediaPlayer.setOnBufferingUpdateListener(new OnBufferingUpdateListener() {
-
-            @Override
-            public void onBufferingUpdate(MediaPlayer mp, int percent) {
-                Log.d(TAG, tagPrefix + "mediaplayer buffered progress : " + percent + "%");
-                mSeekBar.setSecondaryProgress(mSeekBar.getMax() * percent / 100);
-            }
-        });
-        mMediaPlayer.setOnSeekCompleteListener(new OnSeekCompleteListener() {
-
-            @Override
-            public void onSeekComplete(MediaPlayer mp) {
-                Log.d(TAG, tagPrefix + "onSeekComplete");
-                mLoadingView.setVisibility(View.GONE);
-            }
-        });
-        mMediaPlayer.setOnCompletionListener(new OnCompletionListener() {
-
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                Log.d(TAG, tagPrefix + "onCompletion " + mp.toString());
-                completed = true;
-            }
-        });
-        mMediaPlayer.setOnInfoListener(new OnInfoListener() {
-
-            @Override
-            public boolean onInfo(MediaPlayer mp, int what, int extra) {
-                Log.d(TAG, tagPrefix + "onInfo what = " + what + ", extra = " + extra);
-                switch (what) {
-                    case MediaPlayer.MEDIA_INFO_BAD_INTERLEAVING:
-                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_BAD_INTERLEAVING");
-                        break;
-                    case MediaPlayer.MEDIA_INFO_BUFFERING_END:
-                        if (mLoadingView.getVisibility() == View.VISIBLE)
-                            mLoadingView.setVisibility(View.GONE);
-                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_BUFFERING_END");
-                        break;
-                    case MediaPlayer.MEDIA_INFO_BUFFERING_START:
-                        if (mLoadingView.getVisibility() == View.GONE)
-                            mLoadingView.setVisibility(View.VISIBLE);
-                        ((VideoPlayerActivity) mContext).m();
-                    /* 偶尔这个事件被回调后，视频一直不动，mediaplayer状态是playing、网络正常，不知道是不是视频流的问题 */
-                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_BUFFERING_START");
-                        break;
-                    case MediaPlayer.MEDIA_INFO_METADATA_UPDATE:
-                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_METADATA_UPDATE");
-                        break;
-                    case MediaPlayer.MEDIA_INFO_NOT_SEEKABLE:
-                        mSeekBar.setEnabled(false);
-                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_NOT_SEEKABLE");
-                        mSeekBarLayout.setVisibility(View.INVISIBLE);
-                        break;
-                    case MediaPlayer.MEDIA_INFO_UNKNOWN:
-                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_UNKNOWN");
-                        break;
-                    case MediaPlayer.MEDIA_INFO_VIDEO_TRACK_LAGGING:
-                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_VIDEO_TRACK_LAGGING");
-                        break;
-                }
-                return false;
-            }
-        });
-        mMediaPlayer.setOnErrorListener(new OnErrorListener() {
-
-            @Override
-            public boolean onError(MediaPlayer mp, int what, int extra) {
-                Log.e(TAG, tagPrefix + "onError what = " + what + ", extra = " + extra);
-                switch (what) {
-                    case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
-                        Log.e(TAG, tagPrefix + "error MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK");
-                        break;
-                    case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-                        Log.e(TAG, tagPrefix + "error MEDIA_ERROR_SERVER_DIED");
-                        break;
-                    case MediaPlayer.MEDIA_ERROR_UNKNOWN:
-                        Log.e(TAG, tagPrefix + "error MEDIA_ERROR_UNKNOWN");
-                        mLoadingView.setVisibility(View.GONE);
-                        playPauseBtn.setEnabled(true);
-                        Toast.makeText(mContext, "未知错误", Toast.LENGTH_SHORT).show();
-                        break;
-                }
-                return false;
-            }
-        });
-
-        //设置显示视频显示在SurfaceView上
-        try {
-            mMediaPlayer.setDataSource(cur);
-            mMediaPlayer.prepareAsync();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return mMediaPlayer;
-    }
-
     public void playPausePlayer() {
-        if (mMediaPlayer != null) {
-            if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.pause();
-                playingOnSurface = false;
-                playPauseBtn.setBackgroundResource(R.drawable.media_play);
-            } else {
-                mMediaPlayer.start();
-                playingOnSurface = true;
-                playPauseBtn.setBackgroundResource(R.drawable.media_pause);
-            }
+        if (videoPlayerView.isPlaying()) {
+            videoPlayerView.pause();
+            playingOnSurface = false;
+            playPauseBtn.setBackgroundResource(R.drawable.media_play);
+        } else {
+            videoPlayerView.playback();
+            playingOnSurface = true;
+            playPauseBtn.setBackgroundResource(R.drawable.media_pause);
         }
-        showOverlay(true);
+        showOverlayHideDelayed(true);
     }
 
     @Override
@@ -505,79 +333,62 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
 //                mPlayerHeight = mScreenWidth;
                 break;
         }
-
-//		changeSurfaceViewSize(mSurfaceView, mPlayerWidth, mPlayerHeight, mVideoWidth, mVideoHeight);
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        String _format = "other/unknown";
-        if (format == PixelFormat.RGBX_8888)
-            _format = "RGBX_8888";
-        else if (format == PixelFormat.RGB_565)
-            _format = "RGB_565";
-        else if (format == ImageFormat.YV12)
-            _format = "YV12";
-
-        Log.d(TAG, "surfaceChanged -> PixelFormat is " + _format + ", width = " + width + ", height = " + height);
-
-//		changeSurfaceViewSize(mSurfaceView, mPlayerWidth, mPlayerHeight, mVideoWidth, mVideoHeight);
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceCreated");
-        loadMedia(holder);
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        Log.d(TAG, "surfaceDestroyed");
     }
 
     /**
-     * 显示进度条
+     * 显示控制栏并设置延迟隐藏
      */
-    private void showOverlay(boolean fadeout) {
-        Log.d(TAG, "showOverlay() : visible");
-        myHandler.sendEmptyMessage(REFRESH_PLAYBACK_PROGRESS);
-        if (!mShowing) {
-            mShowing = true;
-            mPlayerBottomBar.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.slide_up));
-            mPlayerBottomBar.setVisibility(View.VISIBLE);
+    private void showOverlayHideDelayed(boolean dismissWithDelay) {
+        if(!isControlBarShowing){
+            mHandler.sendEmptyMessage(HANDLER_SHOW_CONTROL_BAR);
+            mHandler.sendEmptyMessageDelayed(HANDLER_HIDE_CONTROL_BAR, HIDE_CONTROL_BAR_DELAY_TIME);
+        }else {
+            mHandler.removeMessages(HANDLER_HIDE_CONTROL_BAR);
+            mHandler.sendEmptyMessageDelayed(HANDLER_HIDE_CONTROL_BAR, HIDE_CONTROL_BAR_DELAY_TIME);
         }
-        myHandler.removeMessages(HANDLER_HIDE_PLAYER_BOTTOM_BAR);
-        if (fadeout)
-            myHandler.sendEmptyMessageDelayed(HANDLER_HIDE_PLAYER_BOTTOM_BAR, DELAY_DISMISS_POPUP_TIME);
+        if(!dismissWithDelay){
+            mHandler.removeMessages(HANDLER_HIDE_CONTROL_BAR);
+        }
     }
 
     /**
-     * 隐藏进度条
+     * 显示控制栏
+     */
+    private void showOverlay(){
+        if(!isControlBarShowing) {
+            isControlBarShowing = true;
+            playerControlBar.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.slide_up));
+            playerControlBar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * 隐藏控制栏
      */
     private void hideOverlay() {
-        Log.d(TAG, "hideOverlay() : hiden");
-        if (mShowing) {
-            mShowing = false;
-            mPlayerBottomBar.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.slide_down));
-            mPlayerBottomBar.setVisibility(View.GONE);
+        if (isControlBarShowing) {
+            isControlBarShowing = false;
+            playerControlBar.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.slide_down));
+            playerControlBar.setVisibility(View.GONE);
         }
     }
 
     /**
-     * refresh playback progress
+     * update playback progress
      */
-    private void refreshProgress() {
-        Log.e(TAG, "refresh progress ffffff");
-        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-            Log.e(TAG, "refresh progress xxxx");
-            duration = mMediaPlayer.getDuration();
-            int currentPosition = mMediaPlayer.getCurrentPosition();
+    private void updateProgress() {
+        Log.v(TAG, "update progress");
+        if (videoPlayerView.isPlaying()) {
+            if (mLoadingView.getVisibility() != View.GONE)
+                mLoadingView.setVisibility(View.GONE);
+
+            duration = videoPlayerView.getDuration();
+            int currentPosition = videoPlayerView.getCurrentPosition();
             lastPosition = currentPosition;
             Log.v(TAG, "duration=" + duration + ", currentPosition=" + currentPosition);
 
             if (duration > 0 && currentPosition <= duration) {
                 if (!mSeeking) {
-                    Log.e(TAG, "vvvvvvvvvvvvvvvvvvvvvv");
                     mSeekBar.setMax(duration);
                     mSeekBar.setProgress(currentPosition);
                 }
@@ -588,51 +399,28 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
             if (duration == 0) {
                 mSeekBarLayout.setVisibility(View.INVISIBLE);
             }
-            if (mLoadingView.getVisibility() != View.GONE)
-                mLoadingView.setVisibility(View.GONE);
 
             lastPosition = currentPosition;
         }
     }
 
-    Handler myHandler = new Handler() {
-        @Override
-        public void handleMessage(android.os.Message msg) {
-            switch (msg.what) {
-                case HANDLER_HIDE_PLAYER_BOTTOM_BAR:
-                    hideOverlay();
-                    break;
-                case REFRESH_PLAYBACK_PROGRESS:
-                    removeMessages(REFRESH_PLAYBACK_PROGRESS);// avoid multi messge in the queue
-                    refreshProgress();
-                    Log.i(TAG, "REFRESH_PLAYBACK_PROGRESS sssssss msg.hashCode():" + msg.hashCode());
-                    if (mShowing && mMediaPlayer != null && mMediaPlayer.isPlaying()) {
-                        if (mPlayerBottomBar.getVisibility() == View.VISIBLE) {
-                            Message m = obtainMessage(REFRESH_PLAYBACK_PROGRESS);
-                            myHandler.sendMessageDelayed(m, 1000 - lastPosition % 1000);
-                        }
-                    } else {
-                        Log.e(TAG, " cant refresh progress");
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
+    private void updateProgress(int currentPosition){
+        mCurrentTime.setText(MediaUtil.formatMillisTime(currentPosition));
+        mSeekBar.setProgress(currentPosition);
+    }
 
     private class PlaybackSeekBarChangeListener implements OnSeekBarChangeListener {
         int tmpSeekProgress = 0;
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-            if (tmpSeekProgress >= 0 && mMediaPlayer != null) {
+            if (tmpSeekProgress >= 0) {
                 Log.d(TAG, "seek To " + tmpSeekProgress);
-                mMediaPlayer.seekTo(tmpSeekProgress);
+                videoPlayerView.seekTo(tmpSeekProgress);
             }
             mSeeking = false;
             mLoadingView.setVisibility(View.VISIBLE);
-            showOverlay(true);
+            showOverlayHideDelayed(true);
         }
 
         @Override
@@ -664,10 +452,9 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
                 mFastForwardProgressLayout.setVisibility(View.GONE);
 
                 if (gestureOrientaion == GESTURE_HORIZONTAL) {
-                    if (mMediaPlayer != null) {
-                        showOverlay(true);
-                        mMediaPlayer.seekTo(positionToSeek);
-                    }
+                    showOverlayHideDelayed(true);
+                    videoPlayerView.seekTo(positionToSeek);
+
                 } else if (gestureOrientaion == GESTURE_VERTICAL) {
                 }
                 gestureOrientaion = GESTURE_NON;
@@ -704,12 +491,12 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
 
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
-            Log.d(TAG, "onSingleTapConfirmed " + e.getAction());
+            Log.d(TAG, "isControlBarShowing=" + isControlBarShowing + " , onSingleTapConfirmed -> " + e.getAction());
             if (e.getAction() == MotionEvent.ACTION_DOWN) {
-                if (mShowing) {
+                if (isControlBarShowing) {
                     hideOverlay();
                 } else {
-                    showOverlay(true);
+                    showOverlayHideDelayed(true);
                 }
             }
             return super.onSingleTapConfirmed(e);
@@ -747,7 +534,6 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
                     gestureOrientaion = GESTURE_VERTICAL;
                     mVolumenLayout.setVisibility(View.VISIBLE);
                 } else if (Math.abs(X) - Math.abs(Y) > 1) {
-                    Log.e(TAG, "xxxxxxxx" + (mSeekBar.isEnabled()));
                     if (mSeekBarLayout.getVisibility() == View.VISIBLE) {
                         gestureOrientaion = GESTURE_HORIZONTAL;
                         mFastForwardProgressLayout.setVisibility(View.VISIBLE);
@@ -807,7 +593,7 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
         @Override
         public boolean onDown(MotionEvent e) {
             Log.d(TAG, "onDown X=" + e.getX() + ", Y=" + e.getY() + ", rawX=" + e.getRawX() + ", rawY=" + e.getRawY());
-            int delta = mPlayerBottomBar.getHeight();
+            int delta = playerControlBar.getHeight();
             Log.d(TAG, "PlayerBottomBar.getHeight() " + delta);
             // 设置手势有效区域 if nessesary
 //			if (e.getX() > delta && e.getY() > delta && mPlayerWidth - e.getX() > delta && mPlayerHeight - e.getY() > delta) {
@@ -822,13 +608,12 @@ public class VideoPlayerFragment extends Fragment implements SurfaceHolder.Callb
         }
     }
 
+
     public void next(String path) {
-        mMediaPlayer.release();
+        videoPlayerView.play(path, 0);
         mMediaPath = path;
         lastPosition = 0;
-        mMediaPlayer = null;
         mLoadingView.setVisibility(View.VISIBLE);
-        loadMedia(mSurfaceView.getHolder());
     }
 
 }

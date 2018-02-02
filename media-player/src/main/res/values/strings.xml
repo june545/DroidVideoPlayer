@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">media-player</string>
+    <string name="media_player_name">mediaplayer</string>
+    <string name="video_player_time_format">--:--</string>
+</resources>
