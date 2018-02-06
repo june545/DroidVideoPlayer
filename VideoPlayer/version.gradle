@@ -12,26 +12,6 @@ def signing = { key ->
     }
 }
 
-// generate version code
-def verCodeByGit = {
-    def versionNumberCmd = 'git rev-list HEAD --count'
-    versionNumberCmd.execute().text.trim().toInteger()
-}
-// generate version name
-def verNameByGit = {
-    def revisionDescriptionCMD = 'git describe'
-    def vName = revisionDescriptionCMD.execute().text.trim()
-//                println("app before converting -> VersionCode:" + vCode + ", VersionName:" + vName);
-    def matcher = vName =~ /\d+-\d+-/ // 判断‘v1.1' or 'v1.1-1-g123df6b'
-    if (matcher) {    // regexp
-        def s = vName.substring(1)     // remove first char 'v' of tag 'v1.1-1-g123df6b'
-        def a = s.split("-")           // split it with '-'
-        vName = a[0] + '.' + a[1]      // concatenate them for versionName
-    } else {
-        vName = vName + ".0"          // eg. '1.1' + '.0' = '1.1.0'
-    }
-    return vName
-}
 
 ext {
     android {
@@ -60,22 +40,100 @@ ext {
     }
 
     android.applicationVariants.all { variant ->
-        def vCode = verCodeByGit()
-        def vName = verNameByGit();
-        println("app after converting VersionCode:" + vCode + ", VersionName:" + vName)
-//            variant.mergedFlavor.versionCode = vCode
-//            variant.mergedFlavor.versionName = vName
+        def vCode = generateVerCode()
+        def vName = generateVerName();
+        println("generated VersionCode:" + vCode + ", VersionName:" + vName)
 
         variant.outputs.all { output ->
-            output.setVersionNameOverride(vName)
-            output.setVersionCodeOverride(vCode)
-//                if (variant.buildType.name.equals('release')) {
-            // rename apk file
-            def suff = new Date().format("yyMMddHH")
-            vName = vName + "-" + suff
-//                def file = variant.outputs[0].outputFile // 低版本的gradle可能为variant.outputFile
-            outputFileName = project.name + "-" + vName + '-' + vCode + '-' + variant.buildType.name + ".apk"
-//                }
+//            output.setVersionNameOverride(vName)
+//            output.setVersionCodeOverride(vCode)
+            output.processManifest.doLast {
+                String manifestPath = "$manifestOutputDirectory/AndroidManifest.xml"
+                def manifestContent = file(manifestPath).getText()
+                manifestContent = replaceVerName(manifestContent, vName)
+                manifestContent = replaceVerCode(manifestContent, vCode)
+                file(manifestPath).write(manifestContent)
+            }
+
+            def bTime = new Date().format("yyMMddHH")
+            outputFileName = project.name + "-" + vName + '-' + vCode + '-' + bTime + '-' + variant.name + ".apk"
+            println("apk file name -> " + outputFileName)
         }
     }
+}
+
+// generate version name
+def generateVerName(){
+    def revisionDescriptionCMD = 'git describe'
+    def vName = revisionDescriptionCMD.execute().text.trim()
+//                println("app before converting -> VersionCode:" + vCode + ", VersionName:" + vName);
+    def matcher = vName =~ /\d+-\d+-/ // 判断‘v1.1' or 'v1.1-1-g123df6b'
+    if (matcher) {    // regexp
+        def s = vName.substring(1)     // remove first char 'v' of tag 'v1.1-1-g123df6b'
+        def a = s.split("-")           // split it with '-'
+        vName = a[0] + '.' + a[1]      // concatenate them for versionName
+    } else {
+        vName = vName + ".0"          // eg. '1.1' + '.0' = '1.1.0'
+    }
+    return vName
+}
+
+// generate version code
+def generateVerCode(){
+    def versionNumberCmd = 'git rev-list HEAD --count'
+    return versionNumberCmd.execute().text.trim().toInteger()
+}
+
+/**
+ *
+ * @param manifestContent
+ * @param verName
+ * @return modified manifestContent
+ */
+def replaceVerName(String manifestContent, verName){
+    def result
+    def replacement = String.format('android:versionName="%s"', verName)
+    def m = manifestContent =~ /android:versionName="[\d\.]+"/
+    if(m.find()){
+        result =  manifestContent.replace(m.group(), replacement)
+    }else{
+        result = insertVer(manifestContent, replacement)
+    }
+    return result
+}
+
+/**
+ *
+ * @param manifestContent
+ * @param verCode
+ * @return modified manifestContent
+ */
+def replaceVerCode(String manifestContent, verCode){
+    def result
+    def replacement = String.format('android:versionCode="%s"', verCode)
+    def m = manifestContent =~ /android:versionCode="\d+"/
+    if(m.find()){
+        result = manifestContent.replace(m.group(), replacement)
+    } else {
+        result = insertVer(manifestContent, replacement)
+    }
+    return result
+}
+
+/**
+ * 插入版本信息
+ * @param manifestContent
+ * @param ver [android:versionName="x.x"] or [android:versionCode="x"]
+ * @return modified manifestContent
+ */
+def insertVer(String manifestContent, ver){
+    def result
+    def m = manifestContent =~ /<manifest[\s\S]+?>/
+    if(m.find()){
+        def a = m.group() // 找到manifest开始标签<manifest ... package="xxx">
+        StringBuilder sb = new StringBuilder(a)
+        sb.insert(a.length() - 1, ' ' + ver) // 在开始标签中插入版本信息(属性之间加空格或换行)
+        result = manifestContent.replace(a, sb) // 替换原来的manifest开始标签
+    }
+    return result
 }
