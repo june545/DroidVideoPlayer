@@ -1,17 +1,3 @@
-// 获取keystore相关参数
-def signing = { key ->
-    Properties localProperties = new Properties()
-    localProperties.load(file('../local.properties').newDataInputStream())
-    Properties keystoreParam = new Properties();
-    String propPath = localProperties['keystore.properties']
-    if (propPath != null) {
-        keystoreParam.load(file(propPath).newDataInputStream())
-        keystoreParam[key]
-    } else {
-        return null
-    }
-}
-
 
 ext {
     android {
@@ -59,6 +45,20 @@ ext {
             outputFileName = project.name + "-" + vName + '-' + vCode + '-' + bTime + '-' + variant.name + ".apk"
             println("apk file name -> " + outputFileName)
         }
+    }
+}
+
+// 获取keystore相关参数
+def signing(key){
+    Properties localProperties = new Properties()
+    localProperties.load(file('../local.properties').newDataInputStream())
+    Properties keystoreParam = new Properties();
+    String propPath = localProperties['keystore.properties']
+    if (propPath != null) {
+        keystoreParam.load(file(propPath).newDataInputStream())
+        keystoreParam[key]
+    } else {
+        return null
     }
 }
 
