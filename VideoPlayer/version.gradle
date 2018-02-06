@@ -6,11 +6,12 @@ ext {
 
             }
             release {
-                if (signing('storeFile') != null) {
-                    storeFile file(signing('storeFile'))
-                    keyAlias signing('keyAlias')
-                    keyPassword signing('keyPassword')
-                    storePassword signing('storePassword')
+                def signInfo = signingInfo()
+                if (signInfo != null) {
+                    storeFile file(signInfo['storeFile'])
+                    keyAlias signInfo['keyAlias']
+                    keyPassword signInfo['keyPassword']
+                    storePassword signInfo['storePassword']
                 }
             }
         }
@@ -48,15 +49,19 @@ ext {
     }
 }
 
-// 获取keystore相关参数
-def signing(key){
+/**
+ * 获取keystore相关参数
+ * @return a Properties
+ */
+def signingInfo(){
     Properties localProperties = new Properties()
     localProperties.load(file('../local.properties').newDataInputStream())
+
     Properties keystoreParam = new Properties();
     String propPath = localProperties['keystore.properties']
     if (propPath != null) {
         keystoreParam.load(file(propPath).newDataInputStream())
-        keystoreParam[key]
+        return keystoreParam
     } else {
         return null
     }
@@ -66,7 +71,6 @@ def signing(key){
 def generateVerName(){
     def revisionDescriptionCMD = 'git describe'
     def vName = revisionDescriptionCMD.execute().text.trim()
-//                println("app before converting -> VersionCode:" + vCode + ", VersionName:" + vName);
     def matcher = vName =~ /\d+-\d+-/ // 判断‘v1.1' or 'v1.1-1-g123df6b'
     if (matcher) {    // regexp
         def s = vName.substring(1)     // remove first char 'v' of tag 'v1.1-1-g123df6b'
