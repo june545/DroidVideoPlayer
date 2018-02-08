@@ -1,17 +1,13 @@
-/**
- *
- */
 package cn.woodyjc.media.video.player;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.util.DisplayMetrics;
 
 /**
  * @author June Cheng
  * @date 2015年10月30日 上午12:13:35
  */
-public class Util {
+public class DisplayUtil {
 
     public static int px2dip(Context context, int px) {
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
@@ -26,12 +22,4 @@ public class Util {
         return px;
     }
 
-    public static String getVersionName(Context context) {
-        try {
-            return context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

@@ -32,8 +32,6 @@ ext {
         println("generated VersionCode:" + vCode + ", VersionName:" + vName)
 
         variant.outputs.all { output ->
-//            output.setVersionNameOverride(vName)
-//            output.setVersionCodeOverride(vCode)
             output.processManifest.doLast {
                 String manifestPath = "$manifestOutputDirectory/AndroidManifest.xml"
                 def manifestContent = file(manifestPath).getText()

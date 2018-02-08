@@ -390,8 +390,8 @@ public class VideoPlayerFragment extends Fragment {
                     mSeekBar.setProgress(currentPosition);
                 }
 
-                mCurrentTime.setText(MediaUtil.formatMillisTime(currentPosition));
-                mDurationTime.setText(MediaUtil.formatMillisTime(duration));
+                mCurrentTime.setText(TimeFormater.formatMillisTime(currentPosition));
+                mDurationTime.setText(TimeFormater.formatMillisTime(duration));
             }
             if (duration == 0) {
                 mSeekBarLayout.setVisibility(View.INVISIBLE);
@@ -402,7 +402,7 @@ public class VideoPlayerFragment extends Fragment {
     }
 
     private void updateProgress(int currentPosition){
-        mCurrentTime.setText(MediaUtil.formatMillisTime(currentPosition));
+        mCurrentTime.setText(TimeFormater.formatMillisTime(currentPosition));
         mSeekBar.setProgress(currentPosition);
     }
 
@@ -541,7 +541,7 @@ public class VideoPlayerFragment extends Fragment {
 
                 // 垂直方向
                 if (gestureOrientaion == GESTURE_VERTICAL) {
-                    int y = Util.px2dip(mContext, (int) Y); // 优化滑动的流畅性
+                    int y = DisplayUtil.px2dip(mContext, (int) Y); // 优化滑动的流畅性
                     Log.d(TAG, "yyyyyyyy " + y);
                     if (0 <= volumePercent && volumePercent <= 100) {
                         volumePercent -= y / 50;
@@ -566,10 +566,10 @@ public class VideoPlayerFragment extends Fragment {
                 // 水平
                 else if (gestureOrientaion == GESTURE_HORIZONTAL) {
                     if (positionToSeek >= 0 || positionToSeek <= duration) {
-                        int x = Util.px2dip(mContext, (int) X); // 优化滑动的流畅性
+                        int x = DisplayUtil.px2dip(mContext, (int) X); // 优化滑动的流畅性
                         Log.d(TAG, "xxxxxxx " + x);
                         positionToSeek = lastPosition + x * 1000; //根据X计算快进/后退时间
-                        String b = MediaUtil.formatMillisTime(positionToSeek) + "/" + MediaUtil.formatMillisTime(duration);
+                        String b = TimeFormater.formatMillisTime(positionToSeek) + "/" + TimeFormater.formatMillisTime(duration);
                         mFastForwardProgresText.setText(b);
                     }
                 }
