@@ -182,6 +182,9 @@ public class VideoPlayerView extends VideoFrameLayout implements SurfaceHolder.C
             public void onBufferingUpdate(MediaPlayer mp, int percent) {
                 Log.d(TAG, tagPrefix + "mediaplayer buffered progress : " + percent + "%");
 //                mSeekBar.setSecondaryProgress(mSeekBar.getMax() * percent / 100);
+                if(onBufferingUpdateListener != null){
+                    onBufferingUpdateListener.onBufferingUpdate(mp, percent);
+                }
             }
         });
         mMediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
@@ -343,5 +346,9 @@ public class VideoPlayerView extends VideoFrameLayout implements SurfaceHolder.C
 //            mLoadingView.setVisibility(View.VISIBLE);
             loadMedia(getSurfaceView().getHolder());
         }
+    }
+
+    public void setOnBufferingUpdateListener(MediaPlayer.OnBufferingUpdateListener listener){
+        this.onBufferingUpdateListener = listener;
     }
 }

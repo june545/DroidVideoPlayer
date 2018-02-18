@@ -75,7 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#33333333"
+        android:background="#aa000000"
         android:gravity="center"
         android:orientation="horizontal"
         android:padding="5dp">
@@ -105,7 +105,7 @@
 
             <SeekBar
                 android:id="@+id/seekbar"
-                style="@style/Widget.SeekBar.Custom"
+                style="@style/Widget.SeekBar.VideoPlayer.Progress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>

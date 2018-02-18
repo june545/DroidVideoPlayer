@@ -9,6 +9,7 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -286,6 +287,7 @@ public class VideoPlayerFragment extends Fragment {
         floatingViewIv = (ImageView) view.findViewById(R.id.show_flotingview);
 
         videoPlayerView.setOnTouchListener(new MyTouchListener());
+        videoPlayerView.setOnBufferingUpdateListener(onBufferingUpdateListener);
 
         playPauseBtn.setOnClickListener(new OnClickListener() {
 
@@ -380,7 +382,7 @@ public class VideoPlayerFragment extends Fragment {
     private void showOverlay(){
         if(!isControlBarShowing) {
             isControlBarShowing = true;
-            playerControlBar.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.slide_up));
+            playerControlBar.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.slide_up_in));
             playerControlBar.setVisibility(View.VISIBLE);
         }
     }
@@ -391,7 +393,7 @@ public class VideoPlayerFragment extends Fragment {
     private void hideOverlay() {
         if (isControlBarShowing) {
             isControlBarShowing = false;
-            playerControlBar.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.slide_down));
+            playerControlBar.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.slide_down_out));
             playerControlBar.setVisibility(View.GONE);
         }
     }
@@ -407,7 +409,6 @@ public class VideoPlayerFragment extends Fragment {
             duration = videoPlayerView.getDuration();
             int currentPosition = videoPlayerView.getCurrentPosition();
             lastPosition = currentPosition;
-            Log.v(TAG, "duration=" + duration + ", currentPosition=" + currentPosition);
 
             if (duration > 0 && currentPosition <= duration) {
                 if (!mSeeking) {
@@ -545,10 +546,9 @@ public class VideoPlayerFragment extends Fragment {
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            Log.i(TAG, "e1:x=" + e1.getRawX() + ",y=" + e1.getRawY() + ", e2:x=" + e2.getRawX() + ",y=" + e2.getRawY() + ",  distanceX=" + distanceX + ", distanceY=" + distanceY);
+//            Log.i(TAG, "e1:x=" + e1.getRawX() + ",y=" + e1.getRawY() + ", e2:x=" + e2.getRawX() + ",y=" + e2.getRawY() + ",  distanceX=" + distanceX + ", distanceY=" + distanceY);
             float x = e2.getRawX() - e1.getRawX();
             float y = e2.getRawY() - e1.getRawY();
-            Log.i(TAG, "x dis = " + x + ", y dis = " + y);
             if (gestureDown) {// 1、首先，判定此次手势方向
                 Log.d(TAG, "onScroll gestureDown");
                 if (Math.abs(y) - Math.abs(x) > 1) {
@@ -565,7 +565,9 @@ public class VideoPlayerFragment extends Fragment {
 
                 // 上下方向手势
                 if (gestureOrientaion == GESTURE_VERTICAL) {
-                    if(lastVolume == -1){
+                    int currentVolume = audioMgr.getStreamVolume(AudioManager.STREAM_MUSIC);
+                    Log.d(TAG, " last " + lastVolume + ", current  " + currentVolume);
+                    if((int) lastVolume != currentVolume){
                         lastVolume = audioMgr.getStreamVolume(AudioManager.STREAM_MUSIC);
                     }
                     float volume = lastVolume + (distanceY * volumePerPixel);
@@ -610,6 +612,7 @@ public class VideoPlayerFragment extends Fragment {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            Log.d(TAG, "onFling ");
             return false;
         }
 
@@ -630,6 +633,13 @@ public class VideoPlayerFragment extends Fragment {
             return true;
         }
     }
+
+    MediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener = new MediaPlayer.OnBufferingUpdateListener() {
+        @Override
+        public void onBufferingUpdate(MediaPlayer mp, int percent) {
+            mSeekBar.setSecondaryProgress(mSeekBar.getMax() * percent / 100);
+        }
+    };
 
     public void next(String path) {
         videoPlayerView.play(path, 0);
