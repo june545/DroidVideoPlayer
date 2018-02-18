@@ -31,7 +31,7 @@ public class OnlineVideoActivity extends AppCompatActivity implements OnClickLis
 		findViewById(R.id.zjtv).setOnClickListener(this);
 
 		editText.setText(LocalStore.getUrl(getApplicationContext()));
-		editText.setText("http://vod3.nty.tv189.cn/6/mobi/vod/st02/2016/08/19/Q600_9eb19c03-2aa7-41af-949f-ea721a126432.3gp?sign=6ff9cbecc1d96d18f7453045c6a15d50&tm=57b66133&vw=2&ver=v1.1&t=57b67d53&qualityCode=1328&version=1&guid=fe9cf6e1-b670-7313-faf3-ae3f3b1e5047&app=115020310221&cookie=57b65ff423792&session=57b65ff423792&uid=104300052488646160804&uname=17721050902&time=20160819093027&videotype=2&cid=C38674909&cname=&cateid=&dev=000001&ep=500&os=30&ps=0099&clienttype=GT-I9500&appver=5.3.4.7&res=1080%2A1920&channelid=059999&pid=1000000432&orderid=1100481092331&nid=&cp=00000014&sp=00000014&ip=180.168.5.182&ipSign=daf3113b927827ab7b6e7e6fda786b71&cdntoken=api_57b6613345a13&a=UTgmIEWkcitbX4gHzTRf2EgcZKVH70iOWA7CtAyLPig%3D&pvv=0");
+		editText.setText("http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4");
 	}
 
 	@Override

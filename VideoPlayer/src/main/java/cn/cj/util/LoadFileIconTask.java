@@ -19,17 +19,18 @@ import cn.cj.media.video.player.R;
  * Created by June on 2016/8/15.
  */
 public class LoadFileIconTask extends AsyncTask<String, Void, Object> {
-	Context                  context;
-	WeakReference<ImageView> imgWeakReference;
-	String                   logString; // for debug
-	static  int count ;
+	private final String TAG = LoadFileIconTask.class.getSimpleName();
+	private Context                  context;
+	private WeakReference<ImageView> imgWeakReference;
+	private String                   logString; // for debug
+	private static  int count ;
 	public LoadFileIconTask(Context context, ImageView img) {
 		this.context = context;
 		imgWeakReference = new WeakReference<ImageView>(img);
 		//			logString = "---" + toString() + "--- constructor ";
 		//			System.out.println(logString);
 		img.setImageResource(R.drawable.touchFeedback); // 默认背景
-		Log.d("===", "---now " + ++count + " --- " + toString());
+		Log.d(TAG, "task count: " + ++count + ", task address : " + toString());
 	}
 
 	@Override
@@ -84,7 +85,6 @@ public class LoadFileIconTask extends AsyncTask<String, Void, Object> {
 	}
 
 	private Object load(String s){
-
 
 		return null;
 	}

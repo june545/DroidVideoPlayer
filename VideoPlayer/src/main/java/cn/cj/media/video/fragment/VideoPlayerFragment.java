@@ -29,13 +29,13 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import cn.cj.media.video.MediaUtil;
 import cn.cj.media.video.MyOrientationEventListener;
 import cn.cj.media.video.player.R;
 import cn.cj.service.FloatingViewService;
 import cn.cj.service.PlayerFloatingViewService;
-import cn.cj.util.Util;
 import cn.woodyjc.media.video.VideoPlayerView;
 
 /**
@@ -234,73 +234,6 @@ public class VideoPlayerFragment extends Fragment {
         videoPlayerView.release();
     }
 
-    private void initView(View view) {
-        videoPlayerView = (VideoPlayerView) view.findViewById(R.id.video_player_view);
-        mLoadingView = (LinearLayout) view.findViewById(R.id.loading_view);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progressbar);
-        mVolumenLayout = (LinearLayout) view.findViewById(R.id.volume_layout);
-        mVolumePercent = (TextView) view.findViewById(R.id.volume_percent_tv);
-        mFastForwardProgressLayout = (LinearLayout) view.findViewById(R.id.fast_forward_progress_layout);
-        mFastForwardProgresText = (TextView) view.findViewById(R.id.fast_forward_progress_text);
-        playerControlBar = (LinearLayout) view.findViewById(R.id.player_control_bar);
-        playPauseBtn = (ImageView) view.findViewById(R.id.play_pause_btn);
-        mSeekBarLayout = (LinearLayout) view.findViewById(R.id.seekbar_layout);
-        mCurrentTime = (TextView) view.findViewById(R.id.video_playtime);
-        mSeekBar = (SeekBar) view.findViewById(R.id.seekbar);
-        mDurationTime = (TextView) view.findViewById(R.id.video_durationtime);
-        openCloseFullscreenBtn = (ImageView) view.findViewById(R.id.open_close_fullscreen);
-        floatingViewIv = (ImageView) view.findViewById(R.id.show_flotingview);
-
-        videoPlayerView.setOnTouchListener(new MyTouchListener());
-
-        playPauseBtn.setEnabled(false);
-        playPauseBtn.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                playPausePlayer();
-            }
-        });
-        mSeekBar.setEnabled(false);
-        mSeekBar.setOnSeekBarChangeListener(new PlaybackSeekBarChangeListener());
-        openCloseFullscreenBtn.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                int orientaion = getResources().getConfiguration().orientation;
-                if (orientaion == Configuration.ORIENTATION_PORTRAIT) {
-                    ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    openCloseFullscreenBtn.setBackgroundResource(R.drawable.fullscreen_exit);
-                } else if (orientaion == Configuration.ORIENTATION_LANDSCAPE) {
-                    ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    openCloseFullscreenBtn.setBackgroundResource(R.drawable.fullscreen_exit);
-                }
-            }
-        });
-        floatingViewIv.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), PlayerFloatingViewService.class);
-                intent.putExtra(FloatingViewService.PARAM_KEY, FloatingViewService.PARAM_VALUE);
-                intent.putExtra("MEDIAPATH", mMediaPath);
-                getActivity().startService(intent);
-                getActivity().finish();
-            }
-        });
-    }
-
-    public void playPausePlayer() {
-        if (videoPlayerView.isPlaying()) {
-            videoPlayerView.pause();
-            playingOnSurface = false;
-            playPauseBtn.setBackgroundResource(R.drawable.media_play);
-        } else {
-            videoPlayerView.playback();
-            playingOnSurface = true;
-            playPauseBtn.setBackgroundResource(R.drawable.media_pause);
-        }
-        showOverlayHideDelayed(true);
-    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -333,6 +266,96 @@ public class VideoPlayerFragment extends Fragment {
 //                mPlayerHeight = mScreenWidth;
                 break;
         }
+    }
+
+    private void initView(View view) {
+        videoPlayerView = (VideoPlayerView) view.findViewById(R.id.video_player_view);
+        mLoadingView = (LinearLayout) view.findViewById(R.id.loading_view);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progressbar);
+        mVolumenLayout = (LinearLayout) view.findViewById(R.id.volume_layout);
+        mVolumePercent = (TextView) view.findViewById(R.id.volume_percent_tv);
+        mFastForwardProgressLayout = (LinearLayout) view.findViewById(R.id.fast_forward_progress_layout);
+        mFastForwardProgresText = (TextView) view.findViewById(R.id.fast_forward_progress_text);
+        playerControlBar = (LinearLayout) view.findViewById(R.id.player_control_bar);
+        playPauseBtn = (ImageView) view.findViewById(R.id.play_pause_btn);
+        mSeekBarLayout = (LinearLayout) view.findViewById(R.id.seekbar_layout);
+        mCurrentTime = (TextView) view.findViewById(R.id.video_playtime);
+        mSeekBar = (SeekBar) view.findViewById(R.id.seekbar);
+        mDurationTime = (TextView) view.findViewById(R.id.video_durationtime);
+        openCloseFullscreenBtn = (ImageView) view.findViewById(R.id.open_close_fullscreen);
+        floatingViewIv = (ImageView) view.findViewById(R.id.show_flotingview);
+
+        videoPlayerView.setOnTouchListener(new MyTouchListener());
+
+        playPauseBtn.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                playPausePlayer();
+            }
+        });
+        mSeekBar.setOnSeekBarChangeListener(new PlaybackSeekBarChangeListener());
+        openCloseFullscreenBtn.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+            toggleFullScreen();
+            }
+        });
+        floatingViewIv.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), PlayerFloatingViewService.class);
+                intent.putExtra(FloatingViewService.PARAM_KEY, FloatingViewService.PARAM_VALUE);
+                intent.putExtra(PlayerFloatingViewService.INTENT_PARAM_MEDIA_PATH, mMediaPath);
+                getActivity().startService(intent);
+                getActivity().finish();
+            }
+        });
+    }
+
+    public void toggleFullScreen(){
+        int orientaion = getResources().getConfiguration().orientation;
+        if (orientaion == Configuration.ORIENTATION_PORTRAIT) {
+            ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            openCloseFullscreenBtn.setBackgroundResource(R.drawable.fullscreen_exit);
+        } else if (orientaion == Configuration.ORIENTATION_LANDSCAPE) {
+            ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            openCloseFullscreenBtn.setBackgroundResource(R.drawable.fullscreen_exit);
+        }
+    }
+
+    public void playPausePlayer() {
+        if (videoPlayerView.isPlaying()) {
+            Toast.makeText(getActivity(), "is playing", Toast.LENGTH_LONG).show();
+            videoPlayerView.pause();
+            playingOnSurface = false;
+            playPauseBtn.setBackgroundResource(R.drawable.media_play);
+        } else {
+            Toast.makeText(getActivity(), "not playing", Toast.LENGTH_LONG).show();
+            videoPlayerView.playback();
+            playingOnSurface = true;
+            playPauseBtn.setBackgroundResource(R.drawable.media_pause);
+        }
+        showOverlayHideDelayed(true);
+    }
+
+    public void playbackViedeo(){
+        if(! videoPlayerView.isPlaying()){
+            videoPlayerView.playback();
+            playingOnSurface = true;
+            playPauseBtn.setBackgroundResource(R.drawable.media_pause);
+        }
+        showOverlayHideDelayed(true);
+    }
+
+    public void pauseVideo(){
+        if(videoPlayerView.isPlaying()){
+            videoPlayerView.pause();
+            playingOnSurface = false;
+            playPauseBtn.setBackgroundResource(R.drawable.media_play);
+        }
+        showOverlayHideDelayed(true);
     }
 
     /**
@@ -377,7 +400,6 @@ public class VideoPlayerFragment extends Fragment {
      * update playback progress
      */
     private void updateProgress() {
-        Log.v(TAG, "update progress");
         if (videoPlayerView.isPlaying()) {
             if (mLoadingView.getVisibility() != View.GONE)
                 mLoadingView.setVisibility(View.GONE);
@@ -443,7 +465,7 @@ public class VideoPlayerFragment extends Fragment {
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            Log.i(TAG, " MyTouchListener " + event.getAction());
+            Log.i(TAG, "event action : " + event.getAction());
             if (event.getAction() == MotionEvent.ACTION_POINTER_DOWN) {
                 // avoid multi point action causing confusion
                 return true;
@@ -470,17 +492,16 @@ public class VideoPlayerFragment extends Fragment {
     }
 
     private class MySimpleGestureListener extends SimpleOnGestureListener {
-        private AudioManager audioMgr;
-        private int          maxVolume;
-        private int          currentVolume;
         private boolean gestureDown = false;
-        private float volumePercent;
+        private AudioManager audioMgr;
+        private int maxVolume; // 音量最大值
+        private float volumePerPixel; // 每个像素表示的音量值
+        private float lastVolume = -1; // 以此表示变化后的音量值
 
         public MySimpleGestureListener() {
             audioMgr = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
             maxVolume = audioMgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-            currentVolume = audioMgr.getStreamVolume(AudioManager.STREAM_MUSIC);
-            volumePercent = (float) currentVolume / (float) maxVolume;
+            volumePerPixel = (float) maxVolume / MediaUtil.getDM(getContext()).widthPixels; // 以屏幕宽度为最大滑动距离
         }
 
         @Override
@@ -525,15 +546,15 @@ public class VideoPlayerFragment extends Fragment {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             Log.i(TAG, "e1:x=" + e1.getRawX() + ",y=" + e1.getRawY() + ", e2:x=" + e2.getRawX() + ",y=" + e2.getRawY() + ",  distanceX=" + distanceX + ", distanceY=" + distanceY);
-            float X = e2.getRawX() - e1.getRawX();
-            float Y = e2.getRawY() - e1.getRawY();
-            Log.i(TAG, "X = " + X + ", Y = " + Y);
+            float x = e2.getRawX() - e1.getRawX();
+            float y = e2.getRawY() - e1.getRawY();
+            Log.i(TAG, "x dis = " + x + ", y dis = " + y);
             if (gestureDown) {// 1、首先，判定此次手势方向
                 Log.d(TAG, "onScroll gestureDown");
-                if (Math.abs(Y) - Math.abs(X) > 1) {
+                if (Math.abs(y) - Math.abs(x) > 1) {
                     gestureOrientaion = GESTURE_VERTICAL;
                     mVolumenLayout.setVisibility(View.VISIBLE);
-                } else if (Math.abs(X) - Math.abs(Y) > 1) {
+                } else if (Math.abs(x) - Math.abs(y) > 1) {
                     if (mSeekBarLayout.getVisibility() == View.VISIBLE) {
                         gestureOrientaion = GESTURE_HORIZONTAL;
                         mFastForwardProgressLayout.setVisibility(View.VISIBLE);
@@ -542,39 +563,41 @@ public class VideoPlayerFragment extends Fragment {
                 gestureDown = false;
             } else { // 2、然后，处理
 
-                // 垂直方向
+                // 上下方向手势
                 if (gestureOrientaion == GESTURE_VERTICAL) {
-                    int y = Util.px2dip(mContext, (int) Y); // 优化滑动的流畅性
-                    Log.d(TAG, "yyyyyyyy " + y);
-                    if (0 <= volumePercent && volumePercent <= 100) {
-                        volumePercent -= y / 50;
-                        if (volumePercent < 0) {
-                            volumePercent = 0;
-                        }
-                        if (volumePercent > 100) {
-                            volumePercent = 100;
-                        }
+                    if(lastVolume == -1){
+                        lastVolume = audioMgr.getStreamVolume(AudioManager.STREAM_MUSIC);
                     }
-                    if (volumePercent > 0) {
+                    float volume = lastVolume + (distanceY * volumePerPixel);
+                    if(volume < 0){
+                        volume = 0;
+                    }
+                    if(volume > maxVolume){
+                        volume = maxVolume;
+                    }
+                    if (volume > 0) {
                         mVolumePercent.setCompoundDrawablesWithIntrinsicBounds(mContext.getResources().getDrawable(R.drawable.ic_lock_silent_mode_off), null,
                                 null, null);
                     } else {
                         mVolumePercent.setCompoundDrawablesWithIntrinsicBounds(mContext.getResources().getDrawable(R.drawable.ic_lock_silent_mode), null, null,
                                 null);
                     }
-                    mVolumePercent.setText((int) volumePercent + "%");
-                    int volume = (int) (volumePercent / 100 * maxVolume);
-                    audioMgr.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
+                    mVolumePercent.setText((int) (volume / maxVolume * 100) + "%");
+                    audioMgr.setStreamVolume(AudioManager.STREAM_MUSIC, (int) volume, 0);
+                    lastVolume = volume;
                 }
-                // 水平
+                // 左右方向手势
                 else if (gestureOrientaion == GESTURE_HORIZONTAL) {
-                    if (positionToSeek >= 0 || positionToSeek <= duration) {
-                        int x = Util.px2dip(mContext, (int) X); // 优化滑动的流畅性
-                        Log.d(TAG, "xxxxxxx " + x);
-                        positionToSeek = lastPosition + x * 1000; //根据X计算快进/后退时间
-                        String b = MediaUtil.formatMillisTime(positionToSeek) + "/" + MediaUtil.formatMillisTime(duration);
-                        mFastForwardProgresText.setText(b);
+                    int timePerPixel = duration / MediaUtil.getDM(getContext()).widthPixels; // 每个像素代表的播放时长
+                    positionToSeek = lastPosition + (int) x * timePerPixel; //根据X计算快进/后退时间
+                    if(positionToSeek < 0){
+                        positionToSeek = 0;
                     }
+                    if(positionToSeek > duration){
+                        positionToSeek = duration;
+                    }
+                    String b = MediaUtil.formatMillisTime(positionToSeek) + "/" + MediaUtil.formatMillisTime(duration);
+                    mFastForwardProgresText.setText(b);
                 }
             }
 
@@ -607,7 +630,6 @@ public class VideoPlayerFragment extends Fragment {
             return true;
         }
     }
-
 
     public void next(String path) {
         videoPlayerView.play(path, 0);

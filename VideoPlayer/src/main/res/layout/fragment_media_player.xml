@@ -59,7 +59,7 @@
             android:id="@+id/fast_forward_progress_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="--:--/--:--"
+            android:text="00:00/00:00"
             android:textColor="@android:color/white"
             android:textSize="20sp"/>
     </LinearLayout>

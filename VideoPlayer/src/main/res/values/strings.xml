@@ -2,8 +2,10 @@
     <string name="app_name">JunePlayer</string>
 
     <string name="player_name">JunePlayer</string>
-    <string name="player_media_default_time">--:--</string>
+    <string name="player_media_default_time">00:00</string>
     <string name="title_activity_about">AboutActivity</string>
 
     <string name="copyright">Copyright © 2016 by June. All rights reserved.</string>
+    <string name="local_video_title">我的视频</string>
+    <string name="statement">注：本软件仅作研究使用，请勿用于其他非法及商业用途，否则后果自负。</string>
 </resources>

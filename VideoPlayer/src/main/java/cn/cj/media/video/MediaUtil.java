@@ -6,6 +6,8 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
 
 /**
  * @author June Cheng
@@ -85,4 +87,11 @@ public class MediaUtil {
 		intent.putExtra("command", "stop");
 		context.sendBroadcast(intent);
 	}
+
+	public static DisplayMetrics getDM(Context context){
+		DisplayMetrics dm = new DisplayMetrics();
+		((WindowManager) context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(dm);
+		return dm;
+	}
+
 }

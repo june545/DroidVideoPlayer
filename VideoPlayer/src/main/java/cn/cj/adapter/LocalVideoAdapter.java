@@ -20,10 +20,11 @@ import cn.cj.util.LoadFileIconTask;
  * Created by June on 2016/10/5.
  */
 
-public class LocalVideAdapter extends CursorAdapter {
-    int gridViewWidth;
+public class LocalVideoAdapter extends CursorAdapter {
+    private final String TAG = LocalVideoAdapter.class.getSimpleName();
+    private int gridViewWidth;
 
-    public LocalVideAdapter(Context context, Cursor c) {
+    public LocalVideoAdapter(Context context, Cursor c) {
         super(context, c, false);
     }
 
@@ -48,12 +49,12 @@ public class LocalVideAdapter extends CursorAdapter {
         String _title = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.TITLE));
         String _display_name = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DISPLAY_NAME));
         final String _data = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATA));
-        String _mime_type = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.MIME_TYPE));
+        String _mimeType = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.MIME_TYPE));
 
-        Log.d("---", "title:" + _title + "\n");
-        Log.d("---", "display_name:" + _display_name + "\n");
-        Log.d("---", "data:" + _data + "\n");
-        Log.d("---", "mime_type:" + _mime_type + "\n");
+        Log.d(TAG, "title: " + _title + "\n");
+        Log.d(TAG, "display_name: " + _display_name + "\n");
+        Log.d(TAG, "data: " + _data + "\n");
+        Log.d(TAG, "mimeType: " + _mimeType + "\n");
 
         ViewHolder holder = (ViewHolder) view.getTag();
         holder.setViewValue(_data, _title);
@@ -84,7 +85,6 @@ public class LocalVideAdapter extends CursorAdapter {
 
         /** 给item中的内容赋值 */
         public void setViewValue(String _data, String _title){
-            Log.d("===", "---- " + _data);
             if (task != null){
                 task.cancel(true);
                 task = null;

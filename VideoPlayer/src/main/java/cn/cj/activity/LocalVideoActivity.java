@@ -13,7 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridView;
 
-import cn.cj.adapter.LocalVideAdapter;
+import cn.cj.adapter.LocalVideoAdapter;
 import cn.cj.media.video.player.R;
 
 /**
@@ -80,7 +80,7 @@ public class LocalVideoActivity extends AppCompatActivity {
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-            LocalVideAdapter adapter = new LocalVideAdapter(getApplicationContext(), cursor);
+            LocalVideoAdapter adapter = new LocalVideoAdapter(getApplicationContext(), cursor);
             adapter.setGridViewWidth(columnWidth);
             gridView.setAdapter(adapter);
         }

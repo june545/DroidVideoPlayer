@@ -17,7 +17,7 @@ import android.widget.Toast;
 /**
  * Created by June on 2016/8/22.
  */
-public class VideoPlayerView extends VideoFrameLayout implements SurfaceHolder.Callback, Function{
+public class VideoPlayerView extends VideoFrameLayout implements SurfaceHolder.Callback, PlayerControl {
     private final String TAG = VideoPlayerView.class.getSimpleName();
 
     private MediaPlayer.OnPreparedListener         onPreparedListener;
@@ -287,12 +287,16 @@ public class VideoPlayerView extends VideoFrameLayout implements SurfaceHolder.C
 
     @Override
     public void playback() {
-
+        if(mMediaPlayer != null && !mMediaPlayer.isPlaying()){
+            mMediaPlayer.start();
+        }
     }
 
     @Override
     public void pause() {
-
+        if(mMediaPlayer != null && mMediaPlayer.isPlaying()){
+            mMediaPlayer.pause();
+        }
     }
 
     @Override
@@ -302,13 +306,13 @@ public class VideoPlayerView extends VideoFrameLayout implements SurfaceHolder.C
     }
 
     @Override
-    public void fastforward() {
-
+    public void fastforward(int msec) {
+        seekTo(msec);
     }
 
     @Override
-    public void rewind() {
-
+    public void rewind(int msec) {
+        seekTo(msec);
     }
 
     @Override
