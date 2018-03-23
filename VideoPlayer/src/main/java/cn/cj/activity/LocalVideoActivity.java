@@ -73,7 +73,8 @@ public class LocalVideoActivity extends AppCompatActivity {
                     MediaStore.Video.VideoColumns.TITLE,
                     MediaStore.Video.VideoColumns.DISPLAY_NAME,
                     MediaStore.Video.VideoColumns.DATA,
-                    MediaStore.Video.VideoColumns.MIME_TYPE};
+                    MediaStore.Video.VideoColumns.MIME_TYPE,
+                    MediaStore.Video.VideoColumns.DURATION};
             loader.setProjection(projection);
             return loader;
         }

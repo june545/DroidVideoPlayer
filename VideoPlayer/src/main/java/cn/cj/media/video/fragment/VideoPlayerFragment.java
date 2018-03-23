@@ -176,7 +176,7 @@ public class VideoPlayerFragment extends Fragment {
         }
         mGestureDetector = new GestureDetector(mContext, new MySimpleGestureListener());
         showOverlayHideDelayed(true);
-        mHandler.sendEmptyMessage(HANDLER_UPDATE_PLAYBACK_PROGRESS);
+        mHandler.sendEmptyMessageDelayed(HANDLER_UPDATE_PLAYBACK_PROGRESS, 200);
     }
 
     @Override

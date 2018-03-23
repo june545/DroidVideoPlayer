@@ -3,7 +3,6 @@ package cn.cj.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -46,10 +45,12 @@ public class LocalVideoAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, final Context context, Cursor cursor) {
+        int _id = cursor.getInt(cursor.getColumnIndex(MediaStore.Video.VideoColumns._ID));
         String _title = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.TITLE));
         String _display_name = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DISPLAY_NAME));
         final String _data = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DATA));
         String _mimeType = cursor.getString(cursor.getColumnIndex(MediaStore.Video.VideoColumns.MIME_TYPE));
+        int duration = cursor.getInt(cursor.getColumnIndex(MediaStore.Video.VideoColumns.DURATION));
 
         Log.d(TAG, "title: " + _title + "\n");
         Log.d(TAG, "display_name: " + _display_name + "\n");
@@ -57,7 +58,7 @@ public class LocalVideoAdapter extends CursorAdapter {
         Log.d(TAG, "mimeType: " + _mimeType + "\n");
 
         ViewHolder holder = (ViewHolder) view.getTag();
-        holder.setViewValue(_data, _title);
+        holder.setViewValue(_id, _data, _title, duration);
 
         view.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,31 +74,27 @@ public class LocalVideoAdapter extends CursorAdapter {
     class ViewHolder {
         ImageView img;
         TextView title;
-        TextView duration;
+        TextView durationTV;
 
         LoadFileIconTask task;
 
         ViewHolder(View view){
             img = (ImageView) view.findViewById(R.id.image);
             title = (TextView) view.findViewById(R.id.title);
-            duration = (TextView) view.findViewById(R.id.duration);
+            durationTV = (TextView) view.findViewById(R.id.duration);
         }
 
         /** 给item中的内容赋值 */
-        public void setViewValue(String _data, String _title){
+        public void setViewValue(int _id, String _data, String _title, int duration){
             if (task != null){
                 task.cancel(true);
                 task = null;
             }
             task = new LoadFileIconTask(img.getContext(), img);
             task.execute(_data);
-            title.setText(_title);
 
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-            mmr.setDataSource(_data);
-            String _duration_s = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            mmr.release();
-            duration.setText(formatMillisTime(Integer.parseInt(_duration_s)));
+            title.setText(_title);
+            durationTV.setText(formatMillisTime(duration));
         }
     }
 
