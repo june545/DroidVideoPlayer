@@ -41,7 +41,7 @@ ext {
             }
 
             def bTime = new Date().format("yyMMddHH")
-            outputFileName = project.name + "-" + vName + '-' + vCode + '-' + bTime + '-' + variant.name + ".apk"
+            outputFileName = "${project.name}-${variant.name}-${vName}-${vCode}-${bTime}.apk"
             println("apk file name -> " + outputFileName)
         }
     }
