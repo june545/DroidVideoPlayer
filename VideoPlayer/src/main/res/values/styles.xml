@@ -10,12 +10,14 @@
 
     <style
         name="Widget.SeekBar.VideoPlayer.Progress"
-        parent="@android:style/Widget.SeekBar">
-        <item name="android:progressDrawable">@drawable/player_seekbar</item>
+        parent="@android:style/Widget.Holo.SeekBar">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/scrubber_progress_horizontal_holo_dark</item>
+        <item name="android:minHeight">13dip</item>
+        <item name="android:maxHeight">13dip</item>
         <item name="android:thumb">@drawable/seekbar_thumb_btn</item>
-        <item name="android:thumbOffset">32px</item>
-        <item name="android:paddingLeft">32px</item>
-        <item name="android:paddingRight">32px</item>
+        <item name="android:thumbOffset">10dip</item>
+        <item name="android:focusable">true</item>
     </style>
 
 </resources>

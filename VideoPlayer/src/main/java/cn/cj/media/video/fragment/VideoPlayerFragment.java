@@ -152,6 +152,8 @@ public class VideoPlayerFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
         initView(rootView);
         videoPlayerView.play(mMediaPath, 0);
+        mHandler.removeMessages(HANDLER_UPDATE_PLAYBACK_PROGRESS);
+        mHandler.sendEmptyMessageDelayed(HANDLER_UPDATE_PLAYBACK_PROGRESS, 200);
         return rootView;
     }
 
@@ -176,7 +178,6 @@ public class VideoPlayerFragment extends Fragment {
         }
         mGestureDetector = new GestureDetector(mContext, new MySimpleGestureListener());
         showOverlayHideDelayed(true);
-        mHandler.sendEmptyMessageDelayed(HANDLER_UPDATE_PLAYBACK_PROGRESS, 200);
     }
 
     @Override
@@ -199,6 +200,8 @@ public class VideoPlayerFragment extends Fragment {
             if (playingOnSurface && !videoPlayerView.isPlaying()) {
                 videoPlayerView.playback();
                 playPauseBtn.setBackgroundResource(R.drawable.media_pause);
+                mHandler.removeMessages(HANDLER_UPDATE_PLAYBACK_PROGRESS);
+                mHandler.sendEmptyMessage(HANDLER_UPDATE_PLAYBACK_PROGRESS);
             }
         } else {
             if (videoPlayerView.isPlaying()) {
@@ -288,6 +291,7 @@ public class VideoPlayerFragment extends Fragment {
 
         videoPlayerView.setOnTouchListener(new MyTouchListener());
         videoPlayerView.setOnBufferingUpdateListener(onBufferingUpdateListener);
+        videoPlayerView.setOnCompletionListener(onCompletionListener);
 
         playPauseBtn.setOnClickListener(new OnClickListener() {
 
@@ -403,12 +407,14 @@ public class VideoPlayerFragment extends Fragment {
      */
     private void updateProgress() {
         if (videoPlayerView.isPlaying()) {
-            if (mLoadingView.getVisibility() != View.GONE)
+            if (mLoadingView.getVisibility() != View.GONE) {
                 mLoadingView.setVisibility(View.GONE);
+            }
 
             duration = videoPlayerView.getDuration();
             int currentPosition = videoPlayerView.getCurrentPosition();
             lastPosition = currentPosition;
+            Log.v(TAG, "duration=" + duration + ", currentPosition=" + currentPosition);
 
             if (duration > 0 && currentPosition <= duration) {
                 if (!mSeeking) {
@@ -638,6 +644,16 @@ public class VideoPlayerFragment extends Fragment {
         @Override
         public void onBufferingUpdate(MediaPlayer mp, int percent) {
             mSeekBar.setSecondaryProgress(mSeekBar.getMax() * percent / 100);
+        }
+    };
+
+    MediaPlayer.OnCompletionListener onCompletionListener = new MediaPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            mHandler.removeMessages(HANDLER_UPDATE_PLAYBACK_PROGRESS);
+            mSeekBar.setProgress(mSeekBar.getMax());
+            mCurrentTime.setText(MediaUtil.formatMillisTime(duration));
+            mDurationTime.setText(MediaUtil.formatMillisTime(duration));
         }
     };
 
