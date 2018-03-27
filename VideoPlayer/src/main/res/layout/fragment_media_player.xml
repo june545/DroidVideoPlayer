@@ -108,7 +108,9 @@
                 style="@style/Widget.SeekBar.VideoPlayer.Progress"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"/>
 
             <TextView
                 android:id="@+id/video_durationtime"

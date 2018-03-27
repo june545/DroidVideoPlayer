@@ -340,6 +340,8 @@ public class VideoPlayerFragment extends Fragment {
         } else {
             Toast.makeText(getActivity(), "not playing", Toast.LENGTH_LONG).show();
             videoPlayerView.playback();
+            mHandler.removeMessages(HANDLER_UPDATE_PLAYBACK_PROGRESS);
+            mHandler.sendEmptyMessage(HANDLER_UPDATE_PLAYBACK_PROGRESS);
             playingOnSurface = true;
             playPauseBtn.setBackgroundResource(R.drawable.media_pause);
         }
