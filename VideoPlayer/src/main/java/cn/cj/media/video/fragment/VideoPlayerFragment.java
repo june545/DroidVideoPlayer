@@ -656,6 +656,7 @@ public class VideoPlayerFragment extends Fragment {
             mSeekBar.setProgress(mSeekBar.getMax());
             mCurrentTime.setText(MediaUtil.formatMillisTime(duration));
             mDurationTime.setText(MediaUtil.formatMillisTime(duration));
+            playPauseBtn.setBackgroundResource(R.drawable.media_play);
         }
     };
 
