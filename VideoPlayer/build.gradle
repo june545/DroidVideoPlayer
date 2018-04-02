@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
+apply from:'version.gradle'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion versions.build_versions.compile_sdk
+
     defaultConfig {
         applicationId "cn.cj.media.video.player"
-        minSdkVersion 16
-        targetSdkVersion 22
+        minSdkVersion versions.build_versions.min_sdk
+        targetSdkVersion versions.build_versions.target_sdk
     }
 
     lintOptions {
@@ -31,11 +32,10 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    testImplementation 'junit:junit:4.12'
-    implementation 'com.android.support:appcompat-v7:26.1.0'
+    testImplementation deps.junit
+    implementation deps.support.app_compat
+
     implementation 'com.github.june545:my-droid-comm:v1.0'
     implementation 'com.github.woodyhi:floating-view:0.1.0'
     implementation project(':media-player-base')
 }
-
-apply from:'version.gradle'

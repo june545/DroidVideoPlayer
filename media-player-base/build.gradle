@@ -2,13 +2,13 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.3"
+    compileSdkVersion versions.build_versions.compile_sdk
+    buildToolsVersion versions.build_versions.build_tools
 
 
     defaultConfig {
-        minSdkVersion 15
-        targetSdkVersion 26
+        minSdkVersion versions.build_versions.min_sdk
+        targetSdkVersion versions.build_versions.target_sdk
         versionCode 1
         versionName "1.0"
 
@@ -27,10 +27,11 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.1', {
+    implementation deps.support.app_compat
+    implementation deps.constraint_layout
+
+    testImplementation deps.junit
+    androidTestImplementation(deps.espresso.core, {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
