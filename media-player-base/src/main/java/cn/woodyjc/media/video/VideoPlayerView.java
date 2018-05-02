@@ -201,6 +201,9 @@ public class VideoPlayerView extends VideoFrameLayout implements SurfaceHolder.C
             public void onCompletion(MediaPlayer mp) {
                 Log.d(TAG, tagPrefix + "onCompletion " + mp.toString());
 //                completed = true;
+                if(onCompletionListener != null){
+                    onCompletionListener.onCompletion(mp);
+                }
             }
         });
         mMediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
@@ -350,5 +353,9 @@ public class VideoPlayerView extends VideoFrameLayout implements SurfaceHolder.C
 
     public void setOnBufferingUpdateListener(MediaPlayer.OnBufferingUpdateListener listener){
         this.onBufferingUpdateListener = listener;
+    }
+
+    public void setOnCompletionListener(MediaPlayer.OnCompletionListener listener) {
+        this.onCompletionListener = listener;
     }
 }
