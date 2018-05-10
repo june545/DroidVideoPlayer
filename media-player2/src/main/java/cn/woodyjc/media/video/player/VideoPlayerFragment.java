@@ -462,6 +462,8 @@ public class VideoPlayerFragment extends Fragment {
             public void onEnd() {
                 Log.d(TAG, "LeftToRight ------- end");
                 mFastForwardProgressLayout.setVisibility(View.GONE);
+//                showOverlayHideDelayed(true);
+                videoPlayerView.seekTo(positionToSeek);
             }
         });
 
@@ -489,6 +491,8 @@ public class VideoPlayerFragment extends Fragment {
             public void onEnd() {
                 Log.d(TAG, "RightToLeft ------- end");
                 mFastForwardProgressLayout.setVisibility(View.GONE);
+//                showOverlayHideDelayed(true);
+                videoPlayerView.seekTo(positionToSeek);
             }
         });
 
