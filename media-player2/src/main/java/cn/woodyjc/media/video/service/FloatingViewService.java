@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 /**
@@ -49,8 +48,8 @@ public class FloatingViewService extends Service {
         Log.d(TAG, "---onCreate");
         if (notification == null) {
             // build a notification to show nothing just to keep this service alive
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this.getApplicationContext());
-            notification = builder.build();
+//            NotificationCompat.Builder builder = new NotificationCompat.Builder(this.getApplicationContext());
+//            notification = builder.build();
 
             // 常駐起動
 //            startForeground(33333, notification);

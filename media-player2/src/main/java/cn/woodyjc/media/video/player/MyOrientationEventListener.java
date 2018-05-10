@@ -16,7 +16,7 @@ import android.view.OrientationEventListener;
 public class MyOrientationEventListener extends OrientationEventListener {
     private final String TAG = MyOrientationEventListener.class.getSimpleName();
 
-    private static final int deltaDegrees = 10;
+    private static final int DELTA_DEGREES = 10;
 
     private int mLastScreenOrientation = -1;
     private int mCurrentScreenOrientation;
@@ -36,32 +36,38 @@ public class MyOrientationEventListener extends OrientationEventListener {
     @Override
     public void onOrientationChanged(int orientation) {
         //	Log.v(TAG, "onOrientationChanged to orientation in " + orientation + " degrees");
-        // 当接近水平位置时，可能传递的值
+
+        // 阻止微小旋转时屏幕跟着旋转
         if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN) {
+            // ▲当orientation 接近水平位置时，可能传递的值
             return;
-        } else if (deltaDegrees < orientation && orientation < 90 - deltaDegrees) {
+        } else if (DELTA_DEGREES < orientation && orientation < 90 - DELTA_DEGREES) {
             return;
-        } else if (90 + deltaDegrees < orientation && orientation < 180 - deltaDegrees) {
+        } else if (90 + DELTA_DEGREES < orientation && orientation < 180 - DELTA_DEGREES) {
             return;
-        } else if (180 + deltaDegrees < orientation && orientation < 270 - deltaDegrees) {
+        } else if (180 + DELTA_DEGREES < orientation && orientation < 270 - DELTA_DEGREES) {
             return;
-        } else if (270 + deltaDegrees < orientation && orientation < 360 - deltaDegrees) {
+        } else if (270 + DELTA_DEGREES < orientation && orientation < 360 - DELTA_DEGREES) {
             return;
         }
 
+        // 允许屏幕旋转的角度
         if (360 - 15 < orientation || orientation < 15) {
             mCurrentScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
             Log.v(TAG, "SCREEN_ORIENTATION_PORTRAIT " + mCurrentScreenOrientation);
+
         } else if (270 - 15 < orientation && orientation < 270 + 15) {
             mCurrentScreenOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
             Log.v(TAG, "SCREEN_ORIENTATION_LANDSCAPE " + mCurrentScreenOrientation);
+
         } else if (180 - 15 < orientation && orientation < 180 + 15) {
-            mCurrentScreenOrientation = Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO ? ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT
-                    : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+            mCurrentScreenOrientation = Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO
+                    ? ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
             Log.v(TAG, "SCREEN_ORIENTATION_REVERSE_PORTRAIT " + mCurrentScreenOrientation);
+
         } else if (90 - 15 < orientation && orientation < 90 + 15) {
-            mCurrentScreenOrientation = Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO ? ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-                    : ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+            mCurrentScreenOrientation = Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO
+                    ? ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
             Log.v(TAG, "SCREEN_ORIENTATION_REVERSE_LANDSCAPE " + mCurrentScreenOrientation);
         }
 
