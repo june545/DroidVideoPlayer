@@ -31,9 +31,9 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import cn.woodyjc.media.video.R;
+import cn.woodyjc.media.video.VideoPlayerView;
 import cn.woodyjc.media.video.service.FloatingViewService;
 import cn.woodyjc.media.video.service.PlayerFloatingViewService;
-import cn.woodyjc.media.video.VideoPlayerView;
 
 /**
  * @author June Cheng
@@ -53,7 +53,6 @@ public class VideoPlayerFragment extends Fragment {
 
     private final       byte   HANDLER_SHOW_CONTROL_BAR          = 1;
     private final       byte   HANDLER_HIDE_CONTROL_BAR          = 2;
-    private final       byte   HANDLER_UPDATE_PLAYBACK_PROGRESS = 3;
 
 //    private int         mPlayerWidth;                                                //播放器尺寸
 //    private int         mPlayerHeight;
@@ -115,10 +114,6 @@ public class VideoPlayerFragment extends Fragment {
                     hideOverlay();
 
                     break;
-                case HANDLER_UPDATE_PLAYBACK_PROGRESS:
-                    updateProgress();
-                    sendEmptyMessageDelayed(HANDLER_UPDATE_PLAYBACK_PROGRESS,1000 - lastPosition % 1000);
-                    break;
                 default:
                     break;
             }
@@ -172,7 +167,20 @@ public class VideoPlayerFragment extends Fragment {
         }
         mGestureDetector = new GestureDetector(mContext, new MySimpleGestureListener());
         showOverlayHideDelayed(true);
-        mHandler.sendEmptyMessage(HANDLER_UPDATE_PLAYBACK_PROGRESS);
+
+        setUpTimer();
+    }
+
+    /** 定时刷新播放进度 */
+    private void setUpTimer(){
+        PlayerTimer playerTimer = new PlayerTimer();
+        playerTimer.setCallback(new PlayerTimer.Callback() {
+            @Override
+            public void onTick(long ms) {
+                updateProgress();
+            }
+        });
+        playerTimer.start();
     }
 
     @Override

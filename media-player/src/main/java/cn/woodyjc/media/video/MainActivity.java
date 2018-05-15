@@ -7,7 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import cn.woodyjc.media.video.player.VideoPlayerFragment;
 
 public class MainActivity extends AppCompatActivity {
-    String path = Environment.getExternalStorageDirectory().getPath() + "/test.3gp";
+//    String path = Environment.getExternalStorageDirectory().getPath() + "/test.3gp";
+    String path = "http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4";
 
     VideoPlayerFragment videoPlayerFragment;
 
