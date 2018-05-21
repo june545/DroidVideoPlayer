@@ -83,5 +83,15 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        simpleExoPlayer.setPlayWhenReady(true);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        simpleExoPlayer.setPlayWhenReady(false);
+    }
 }
