@@ -2,44 +2,64 @@ package com.woodyhi.player.b;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.offline.FilteringManifestParser;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
+import com.google.android.exoplayer2.source.dash.manifest.DashManifestParser;
+import com.google.android.exoplayer2.source.dash.manifest.RepresentationKey;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistParser;
+import com.google.android.exoplayer2.source.hls.playlist.RenditionKey;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
+import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsManifestParser;
+import com.google.android.exoplayer2.source.smoothstreaming.manifest.StreamKey;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import java.util.List;
+
 /**
- * Created by June on 2018/5/11.
+ * Created by June on 2018/5/21.
  */
-public class PlayerManager {
+public class SimpleMediaSourceCreator {
+
+    private String userAgent;
 
     private final DataSource.Factory manifestDataSourceFactory;
     private final DataSource.Factory mediaDataSourceFactory;
 
+    private Context context;
 
-    public PlayerManager(Context context) {
+    public SimpleMediaSourceCreator(Context context) {
+        this.context = context;
+
+        this.userAgent = Util.getUserAgent(context, "application_name");
+
         manifestDataSourceFactory =
                 new DefaultDataSourceFactory(
-                        context, Util.getUserAgent(context, "application_name"));
+                        context, userAgent);
         mediaDataSourceFactory =
                 new DefaultDataSourceFactory(
                         context,
-                        Util.getUserAgent(context, "application_name"),
+                        userAgent,
                         new DefaultBandwidthMeter());
     }
 
 
-    // Internal methods.
-    public MediaSource buildMediaSource(Uri uri) {
-        @C.ContentType int type = Util.inferContentType(uri);
+    /**
+     * @param uri
+     * @return
+     */
+    public MediaSource buildMediaSource(Uri uri, String overrideExtension) {
+        @C.ContentType int type = Util.inferContentType(uri, overrideExtension);
         switch (type) {
             case C.TYPE_DASH:
                 return new DashMediaSource.Factory(

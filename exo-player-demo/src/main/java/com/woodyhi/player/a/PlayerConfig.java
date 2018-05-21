@@ -26,46 +26,46 @@ import java.util.ConcurrentModificationException;
 public class PlayerConfig {
 //
 //    private static final String DOWNLOAD_CONTENT_DIRECTORY = "downloads";
-//
-//    private Context context;
-//
-//    protected String userAgent;
-//
-//    private File downloadDirectory;
-//    private Cache downloadCache;
-//    private DownloadManager downloadManager;
+
+    private Context context;
+
+    protected String userAgent;
+
+    private File downloadDirectory;
+    private Cache downloadCache;
+    private DownloadManager downloadManager;
 //    private DownloadTracker downloadTracker;
-//
-//
-//    private static PlayerConfig instance;
-//
-//    public static PlayerConfig getInstance(Context c){
-//        if(instance == null){
-//            instance = new PlayerConfig(c, null);
-//        }
-//        return instance;
-//    }
-//
-//
-//    public PlayerConfig(Context context, String userAgent) {
-//        this.context = context;
-//        this.userAgent = userAgent;
-//    }
-//
-//    /** Returns a {@link HttpDataSource.Factory}. */
-//    public HttpDataSource.Factory buildHttpDataSourceFactory(
-//            TransferListener<? super DataSource> listener) {
-//        return new DefaultHttpDataSourceFactory(userAgent, listener);
-//    }
-//
-//    /** Returns a {@link DataSource.Factory}. */
-//    public DataSource.Factory buildDataSourceFactory(TransferListener<? super DataSource> listener) {
-//        DefaultDataSourceFactory upstreamFactory =
-//                new DefaultDataSourceFactory(context, listener, buildHttpDataSourceFactory(listener));
-//        return buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache());
-//    }
-//
-//
+
+
+    private static PlayerConfig instance;
+
+    public static PlayerConfig getInstance(Context c){
+        if(instance == null){
+            instance = new PlayerConfig(c, null);
+        }
+        return instance;
+    }
+
+
+    public PlayerConfig(Context context, String userAgent) {
+        this.context = context;
+        this.userAgent = userAgent;
+    }
+
+    /** Returns a {@link HttpDataSource.Factory}. */
+    public HttpDataSource.Factory buildHttpDataSourceFactory(
+            TransferListener<? super DataSource> listener) {
+        return new DefaultHttpDataSourceFactory(userAgent, listener);
+    }
+
+    /** Returns a {@link DataSource.Factory}. */
+    public DataSource.Factory buildDataSourceFactory(TransferListener<? super DataSource> listener) {
+        DefaultDataSourceFactory upstreamFactory =
+                new DefaultDataSourceFactory(context, listener, buildHttpDataSourceFactory(listener));
+        return buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache());
+    }
+
+
 //    public DownloadTracker getDownloadTracker() {
 //        initDownloadManager();
 //        return downloadTracker;
@@ -102,23 +102,23 @@ public class PlayerConfig {
 //        }
 //        return downloadDirectory;
 //    }
-//
-//    private synchronized Cache getDownloadCache() {
-//        if (downloadCache == null) {
+
+    private synchronized Cache getDownloadCache() {
+        if (downloadCache == null) {
 //            File downloadContentDirectory = new File(getDownloadDirectory(), DOWNLOAD_CONTENT_DIRECTORY);
 //            downloadCache = new SimpleCache(downloadContentDirectory, new NoOpCacheEvictor());
-//        }
-//        return downloadCache;
-//    }
-//
-//    private static CacheDataSourceFactory buildReadOnlyCacheDataSource(
-//            DefaultDataSourceFactory upstreamFactory, Cache cache) {
-//        return new CacheDataSourceFactory(
-//                cache,
-//                upstreamFactory,
-//                new FileDataSourceFactory(),
-//                /* cacheWriteDataSinkFactory= */ null,
-//                CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
-//                /* eventListener= */ null);
-//    }
+        }
+        return downloadCache;
+    }
+
+    private static CacheDataSourceFactory buildReadOnlyCacheDataSource(
+            DefaultDataSourceFactory upstreamFactory, Cache cache) {
+        return new CacheDataSourceFactory(
+                cache,
+                upstreamFactory,
+                new FileDataSourceFactory(),
+                /* cacheWriteDataSinkFactory= */ null,
+                CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
+                /* eventListener= */ null);
+    }
 }
