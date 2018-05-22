@@ -4,8 +4,12 @@
 package cn.cj.activity;
 
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -13,8 +17,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import cn.cj.media.video.fragment.VideoPlayerFragment;
 import cn.cj.media.video.player.R;
+import cn.cj.util.MediaUtil;
 import cn.cj.util.NetworkUtil;
 
 /**
@@ -46,6 +54,13 @@ public class VideoPlayerActivity extends BaseAppActivity {
         Intent intent = getIntent();
         String action = intent.getAction();
         if (Intent.ACTION_VIEW.equals(action)) {
+
+            if ("content".equals(intent.getScheme())) {
+                String path = MediaUtil.getPath(getApplicationContext(), intent.getData());
+                mMediaPath = path;
+                return;
+            }
+
             String path = intent.getDataString();
             mMediaPath = path;
             Log.d(TAG, "action path -> " + path);
@@ -80,6 +95,7 @@ public class VideoPlayerActivity extends BaseAppActivity {
     }
 
     private void initFragment() {
+        Log.d(TAG, "playurl : " + mMediaPath);
         mMediaPlayerFragment = new VideoPlayerFragment();
         mMediaPlayerFragment.setMediaPath(mMediaPath, (int) mPlayedTime);
         FragmentTransaction ft = getFragmentManager().beginTransaction();
