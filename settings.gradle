@@ -1,2 +1,2 @@
-include ':VideoPlayer', ':media-player-base', ':media-player', ':exo-player-demo', ':gl'
+include ':VideoPlayer', ':media-player-base', ':media-player', ':exo-player-demo', ':gl', ':multimediautil'
 include ':media-player2'
