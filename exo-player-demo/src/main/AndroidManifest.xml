@@ -19,7 +19,9 @@
         </activity>
         <activity android:name=".SimplePlayerActivity">
         </activity>
-        <activity android:name=".PlayerActivity">
+        <activity
+            android:name=".PlayerActivity"
+            android:configChanges="orientation|screenSize">
         </activity>
     </application>
 
