@@ -88,4 +88,9 @@ public class PlayerActivity extends AppCompatActivity {
         super.onPause();
         simpleExoPlayer.setPlayWhenReady(false);
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
 }

@@ -3,6 +3,7 @@ package com.woodyhi.player.b;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.offline.DownloadAction;
@@ -121,7 +122,7 @@ public class MediaSourceCreator {
     }
 
     private File downloadDirectory;
-    private Cache downloadCache;
+    private static Cache downloadCache; // 应用全局变量
     private DownloadManager downloadManager;
     private DownloadTracker downloadTracker;
 
@@ -163,6 +164,10 @@ public class MediaSourceCreator {
         if (downloadCache == null) {
             File downloadContentDirectory = new File(getDownloadDirectory(), DOWNLOAD_CONTENT_DIRECTORY);
             downloadCache = new SimpleCache(downloadContentDirectory, new NoOpCacheEvictor());
+
+            Log.d("MediaSourceCreator", " simpleCache is null -------------");
+        }else {
+            Log.d("MediaSourceCreator", " simpleCache is not null -------------");
         }
         return downloadCache;
     }
