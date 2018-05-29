@@ -9,6 +9,8 @@ import android.opengl.Matrix;
 import android.util.Log;
 import android.view.Surface;
 
+import com.woodyhi.gl.screenshot.ScreenShot;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -129,11 +131,25 @@ public class VideoRender
             checkGlError("glDrawArrays");
             GLES20.glFinish();
 
+            if(shot){
+                shot = false;
+                ScreenShot.shotNew(width, height);
+            }
+
         }
+
+        static volatile boolean shot;
+        // 截屏
+        public void shot(){
+            shot =  true;
+        }
+
+        int width, height;
 
         @Override
         public void onSurfaceChanged(GL10 glUnused, int width, int height) {
-
+            this.width = width;
+            this.height = height;
         }
 
         @Override

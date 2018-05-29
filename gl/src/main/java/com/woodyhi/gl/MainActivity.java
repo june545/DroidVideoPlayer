@@ -2,15 +2,16 @@ package com.woodyhi.gl;
 
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.effect.Effect;
-import android.media.effect.EffectContext;
-import android.media.effect.EffectFactory;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.woodyhi.gl.screenshot.ScreenShot;
 
 import java.io.IOException;
 
@@ -37,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
         mGLView.setPreserveEGLContextOnPause(true);
 //        mGLView.setRenderer(new Render01());
 //        mGLView.setRenderer(new MyRender(this));
-        VideoRender videoRender = new VideoRender(this);
-        MediaPlayer mp = new MediaPlayer();
+        final VideoRender videoRender = new VideoRender(this);
+        final MediaPlayer mp = new MediaPlayer();
         try {
             mp.setDataSource(videoPath);
             videoRender.setMediaPlayer(mp);
@@ -48,6 +49,20 @@ public class MainActivity extends AppCompatActivity {
         mGLView.setRenderer(videoRender);
         setContentView(mGLView);
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mp.pause();
+            }
+        }, 30000);
+
+        mGLView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                videoRender.shot();
+                ScreenShot.shotNew(320, 480);
+            }
+        });
 
     }
 
@@ -86,4 +101,5 @@ public class MainActivity extends AppCompatActivity {
         }
         mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
     }
+
 }

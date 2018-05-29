@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.TextureView;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -18,9 +21,11 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.woodyhi.player.b.MediaSourceCreator;
+import com.woodyhi.player.b.ScreenShot;
 
 public class PlayerActivity extends AppCompatActivity {
 
+    private Button shotBtn;
     private PlayerView playerView;
 
     private SimpleExoPlayer simpleExoPlayer;
@@ -38,7 +43,8 @@ public class PlayerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
 
-
+        shotBtn = findViewById(R.id.btn);
+        shotBtn.setOnClickListener(listener);
         playerView = findViewById(R.id.player_view);
 
 
@@ -58,7 +64,21 @@ public class PlayerActivity extends AppCompatActivity {
         // play automaticly when ready
         simpleExoPlayer.setPlayWhenReady(true);
 
+
     }
+
+    View.OnClickListener listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+//            Log.d("xxx", "w " + simpleExoPlayer.getVideoFormat().width + ",  h " + simpleExoPlayer.getVideoFormat().height);
+//            ScreenShot.shot(simpleExoPlayer.getVideoFormat().width, simpleExoPlayer.getVideoFormat().height);
+
+            TextureView tv = (TextureView) playerView.getVideoSurfaceView();
+            ScreenShot.getBitmap(getApplicationContext(), tv);
+        }
+    };
+
+
 
 
     private SimpleExoPlayer creatingPlayer(Context context){
