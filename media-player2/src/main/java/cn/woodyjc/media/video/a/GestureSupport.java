@@ -7,7 +7,6 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import cn.woodyjc.media.video.player.DisplayUtil;
-import cn.woodyjc.media.video.player.MyOrientationEventListener;
 
 
 /**
@@ -58,11 +57,6 @@ public class GestureSupport {
     private GestureFromTopToBottomListener mGestureFromTopToBottomListener;
     private GestureFromBottomToTopListener mGestureFromBottomToTopListener;
 
-
-    /**
-     * 屏幕旋转事件监听
-     */
-    private MyOrientationEventListener myOrientationEventListener;
     private GestureDetector mGestureDetector;
 
 

@@ -17,4 +17,16 @@
         <item name="android:paddingLeft">32px</item>
         <item name="android:paddingRight">32px</item>
     </style>
+
+
+
+    <style name="leftSideDialogAnim" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/left_side_in</item>
+        <item name="android:windowExitAnimation">@anim/left_side_out</item>
+    </style>
+
+    <style name="bottomSideDialogAnim" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/bottom_side_in</item>
+        <item name="android:windowExitAnimation">@anim/bottom_side_out</item>
+    </style>
 </resources>

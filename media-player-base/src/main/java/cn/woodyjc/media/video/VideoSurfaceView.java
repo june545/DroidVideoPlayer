@@ -101,4 +101,10 @@ public class VideoSurfaceView extends SurfaceView {
         this.videoHeight = videoHeight;
     }
 
+    public void updateViewSizeByVideoSize(int videoWidth, int videoHeight) {
+        setVideoSize(videoWidth, videoHeight);
+        requestLayout();
+        invalidate();
+    }
+
 }

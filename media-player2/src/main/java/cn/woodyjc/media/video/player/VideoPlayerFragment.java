@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,6 +25,7 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import cn.woodyjc.media.video.R;
 import cn.woodyjc.media.video.VideoPlayerView;
@@ -86,11 +86,10 @@ public class VideoPlayerFragment extends Fragment {
     private int duration;
     private int lastPosition;
 
-    /**
-     * 屏幕旋转事件监听
-     */
-    private MyOrientationEventListener myOrientationEventListener;
     private int positionToSeek;                                            //手势控制播放位置
+
+
+    private ControllerFragment controllerFragment;
 
     Handler mHandler = new Handler() {
         @Override
@@ -125,17 +124,13 @@ public class VideoPlayerFragment extends Fragment {
         this.lastPosition = playedTime;
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
-
     @SuppressLint("InflateParams")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
         initView(rootView);
         videoPlayerView.play(mMediaPath, 0);
+
         return rootView;
     }
 
@@ -150,21 +145,14 @@ public class VideoPlayerFragment extends Fragment {
         mScreenWidth = dm.widthPixels;
         mScreenHeight = dm.heightPixels;
 
-        // 屏幕旋转
-        myOrientationEventListener = new MyOrientationEventListener(mContext, SensorManager.SENSOR_DELAY_NORMAL);
-        if (myOrientationEventListener.canDetectOrientation()) {
-            Log.d(TAG, "can Detect Orientation");
-            //			myOrientationEventListener.enable();
-        } else {
-            Log.d(TAG, "can not Detect Orientation");
-        }
-
-
         gesture();
 
         showControllerView(true);
 
         mHandler.sendEmptyMessage(HANDLER_UPDATE_PLAYBACK_PROGRESS);
+
+        controllerFragment = new ControllerFragment();
+        controllerFragment.showNow(getChildFragmentManager(), ControllerFragment.class.getSimpleName());
     }
 
 
@@ -306,8 +294,6 @@ public class VideoPlayerFragment extends Fragment {
 
                 // change player size
                 openCloseFullscreenBtn.setBackgroundResource(R.drawable.fullscreen);
-                //                mPlayerWidth = originalFrameWidth;
-                //                mPlayerHeight = originalFrameHeight;
                 break;
             case Configuration.ORIENTATION_LANDSCAPE:
                 // 设置全屏(hide taskbar)
@@ -317,10 +303,9 @@ public class VideoPlayerFragment extends Fragment {
 
                 // change player size
                 openCloseFullscreenBtn.setBackgroundResource(R.drawable.fullscreen_exit);
-                //                mPlayerWidth = mScreenHeight;
-                //                mPlayerHeight = mScreenWidth;
                 break;
         }
+
     }
 
 

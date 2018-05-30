@@ -68,13 +68,6 @@ public class VideoPlayerView extends VideoFrameLayout implements SurfaceHolder.C
         return surfaceView;
     }
 
-    public void updateSurfaceViewSize(int w, int h) {
-        // 根据视频分辨率计算SurfaceView尺寸大小
-        surfaceView.setVideoSize(w, h);
-        surfaceView.requestLayout();
-        surfaceView.invalidate();
-    }
-
     public int getVideoWidth() {
         return videoWidth;
     }
@@ -173,7 +166,7 @@ public class VideoPlayerView extends VideoFrameLayout implements SurfaceHolder.C
                 }
                 videoWidth = width;
                 videoHeight = height;
-                updateSurfaceViewSize(width, height);
+                surfaceView.updateViewSizeByVideoSize(width, height);
             }
         });
         mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
