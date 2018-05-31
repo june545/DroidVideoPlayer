@@ -16,20 +16,19 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <cn.woodyjc.media.a.AspectRatioLayout
-        android:id="@+id/aspect_ratio_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
-
-    </cn.woodyjc.media.a.AspectRatioLayout>
-    <!--<fragment-->
-        <!--class="cn.woodyjc.media.video.player.VideoPlayerFragment"-->
-        <!--android:id="@+id/video_payer_fragment"-->
+    <!--<cn.woodyjc.media.view.AspectRatioLayout-->
+        <!--android:id="@+id/aspect_ratio_layout"-->
         <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="@color/colorAccent"-->
+        <!--app:layout_constraintLeft_toLeftOf="parent"-->
+        <!--app:layout_constraintRight_toRightOf="parent">-->
+    <!--</cn.woodyjc.media.view.AspectRatioLayout>-->
 
-    <!--</fragment>-->
+    <fragment
+        class="cn.woodyjc.media.video.player.VideoPlayerFragment"
+        android:id="@+id/video_payer_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </fragment>
 </android.support.constraint.ConstraintLayout>

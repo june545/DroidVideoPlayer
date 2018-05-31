@@ -1,4 +1,4 @@
-package cn.woodyjc.media.a;
+package cn.woodyjc.media.view;
 
 import android.content.Context;
 import android.support.annotation.IntDef;
@@ -11,23 +11,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * CENTER /center  按图片的原来size居中显示，当图片长/宽超过View的长/宽，则截取图片的居中部分显示
  * <p>
- * CENTER_CROP / centerCrop  按比例扩大图片的size居中显示，使得图片长(宽)等于或大于View的长(宽)
- * <p>
- * CENTER_INSIDE / centerInside  将图片的内容完整居中显示，通过按比例缩小或原来的size使得图片长/宽等于或小于View的长/宽
- * <p>
- * FIT_CENTER / fitCenter  把图片按比例扩大/缩小到View的宽度，居中显示
- * <p>
- * FIT_END / fitEnd   把图片按比例扩大/缩小到View的宽度，显示在View的下部分位置
- * <p>
- * FIT_START / fitStart  把图片按比例扩大/缩小到View的宽度，显示在View的上部分位置
- * <p>
- * FIT_XY / fitXY  把图片不按比例扩大/缩小到View的大小显示
- * <p>
- * MATRIX / matrix 用矩阵来绘制
- * <p>
- * <p>
+ *     缩放类型：
+ * </p>
  * <ul>
  * <li>{@link #RESIZE_TYPE_FIT_CENTER}</li>
  * <li>{@link #RESIZE_TYPE_FILL}</li>
@@ -47,9 +33,13 @@ public class AspectRatioLayout extends FrameLayout {
     private @interface ResizeType {
     }
 
+    /** 按比例缩放至 宽（高）等于或小于父view宽（高），并居中显示 */
     public static final int RESIZE_TYPE_FIT_CENTER = 1;
+    /** 不考虑纵横比，使得宽（高）等于父view宽（高），相当于填满父view */
     public static final int RESIZE_TYPE_FILL = 2;
+    /** 按此比例缩放至宽（高）等于或大于父view宽（高），超出的被裁剪 */
     public static final int RESIZE_TYPE_CENTER_CROP = 3;
+    /** 纵横比为固定值 16 / 9， 按此比例缩放至宽（高）等于或小于父view宽（高），且居中 */
     public static final int RESIZE_TYPE_16_9 = 4;
 
     @ResizeType

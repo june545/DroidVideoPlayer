@@ -7,11 +7,11 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <cn.woodyjc.media.video.VideoPlayerView
+    <cn.woodyjc.media.view.VideoPlayerViewNew
         android:id="@+id/video_player_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </cn.woodyjc.media.video.VideoPlayerView>
+    </cn.woodyjc.media.view.VideoPlayerViewNew>
 
     <LinearLayout
         android:id="@+id/loading_view"

@@ -32,6 +32,7 @@ import cn.woodyjc.media.video.VideoPlayerView;
 import cn.woodyjc.media.video.a.GestureSupport;
 import cn.woodyjc.media.video.service.FloatingViewService;
 import cn.woodyjc.media.video.service.PlayerFloatingViewService;
+import cn.woodyjc.media.view.VideoPlayerViewNew;
 
 /**
  * @author June Cheng
@@ -52,7 +53,7 @@ public class VideoPlayerFragment extends Fragment {
 
     private Context mContext;
     private View rootView;
-    private VideoPlayerView videoPlayerView;
+    private VideoPlayerViewNew videoPlayerView;
 
     // 尺寸常量
     private int originalFrameWidth;
@@ -213,7 +214,7 @@ public class VideoPlayerFragment extends Fragment {
     }
 
     private void initView(View view) {
-        videoPlayerView = (VideoPlayerView) view.findViewById(R.id.video_player_view);
+        videoPlayerView = (VideoPlayerViewNew) view.findViewById(R.id.video_player_view);
         mLoadingView = (LinearLayout) view.findViewById(R.id.loading_view);
         mProgressBar = (ProgressBar) view.findViewById(R.id.progressbar);
         mVolumenLayout = (LinearLayout) view.findViewById(R.id.volume_layout);
