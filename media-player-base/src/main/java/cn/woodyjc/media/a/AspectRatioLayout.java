@@ -26,22 +26,31 @@ import java.lang.annotation.RetentionPolicy;
  * FIT_XY / fitXY  把图片不按比例扩大/缩小到View的大小显示
  * <p>
  * MATRIX / matrix 用矩阵来绘制
+ * <p>
+ * <p>
+ * <ul>
+ * <li>{@link #RESIZE_TYPE_FIT_CENTER}</li>
+ * <li>{@link #RESIZE_TYPE_FILL}</li>
+ * <li>{@link #RESIZE_TYPE_CENTER_CROP}</li>
+ * <li>{@link #RESIZE_TYPE_16_9}</li>
+ * </ul>
+ * </p>
  * Created by June on 2018/5/31.
  */
 public class AspectRatioLayout extends FrameLayout {
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({RESIZE_TYPE_FILL,
-            RESIZE_TYPE_FIT_CENTER,
+    @IntDef({RESIZE_TYPE_FIT_CENTER,
+            RESIZE_TYPE_FILL,
             RESIZE_TYPE_CENTER_CROP,
             RESIZE_TYPE_16_9})
     private @interface ResizeType {
     }
 
-    public static final int RESIZE_TYPE_16_9 = 4;
     public static final int RESIZE_TYPE_FIT_CENTER = 1;
     public static final int RESIZE_TYPE_FILL = 2;
     public static final int RESIZE_TYPE_CENTER_CROP = 3;
+    public static final int RESIZE_TYPE_16_9 = 4;
 
     @ResizeType
     private int resizeType;
@@ -61,49 +70,58 @@ public class AspectRatioLayout extends FrameLayout {
         super(context, attrs, defStyleAttr);
     }
 
+    public int getResizeType() {
+        return resizeType;
+    }
 
-    public void setResizeType(int resizeType) {
-        this.resizeType = resizeType;
+    public void setResizeType(@ResizeType int resizeType) {
+        if (this.resizeType != resizeType) {
+            this.resizeType = resizeType;
+            requestLayout();
+        }
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (videoWidth * videoHeight <= 0) {
-            return;
-        }
 
-        float videoAspectRatio = (float) videoWidth / videoHeight;
+        float aspectRatio;
+        if (resizeType == RESIZE_TYPE_16_9) {
+            aspectRatio = 16F / 9;
+        } else {
+            if (videoWidth * videoHeight <= 0) {
+                return;
+            }
+            aspectRatio = (float) videoWidth / videoHeight;
+        }
 
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
         float viewAspectRatio = (float) width / height;
 
         switch (resizeType) {
-
             case RESIZE_TYPE_FIT_CENTER:
-                if (videoAspectRatio > viewAspectRatio) {
-                    height = (int) (width / videoAspectRatio);
+                if (aspectRatio > viewAspectRatio) {
+                    height = (int) (width / aspectRatio);
                 } else {
-                    width = (int) (height * videoAspectRatio);
+                    width = (int) (height * aspectRatio);
                 }
 
                 break;
 
             case RESIZE_TYPE_CENTER_CROP:
-                if (videoAspectRatio > viewAspectRatio) {
-                    width = (int) (height * videoAspectRatio);
+                if (aspectRatio > viewAspectRatio) {
+                    width = (int) (height * aspectRatio);
                 } else {
-                    height = (int) (width / videoAspectRatio);
+                    height = (int) (width / aspectRatio);
                 }
 
                 break;
             case RESIZE_TYPE_16_9:
-                float desiredAspectRatio = 16F / 9;
-                if (desiredAspectRatio > viewAspectRatio) {
-                    height = (int) (width / desiredAspectRatio);
+                if (aspectRatio > viewAspectRatio) {
+                    width = (int) (height * aspectRatio);
                 } else {
-                    width = (int) (height * desiredAspectRatio);
+                    height = (int) (width / aspectRatio);
                 }
                 break;
             case RESIZE_TYPE_FILL:

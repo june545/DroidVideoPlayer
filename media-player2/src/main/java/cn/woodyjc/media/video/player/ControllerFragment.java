@@ -30,15 +30,15 @@ public class ControllerFragment extends BottomSideDialogFragment {
     public void onStart() {
         super.onStart();
 //        getDialog().setCanceledOnTouchOutside(false);
-        getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                if (keyCode == KeyEvent.KEYCODE_BACK) {
-                    return true;
-                }
-                return false;
-            }
-        });
+//        getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
+//            @Override
+//            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+//                if (keyCode == KeyEvent.KEYCODE_BACK) {
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
     }
 
     @Nullable
