@@ -37,7 +37,7 @@ build_versions.target_sdk = 22
 build_versions.build_tools = "27.0.3"
 versions.build_versions = build_versions
 
-versions.support = "27.1.0"
+versions.support = "27.1.1"
 def support = [:]
 support.annotations = "com.android.support:support-annotations:$versions.support"
 support.app_compat = "com.android.support:appcompat-v7:$versions.support"
@@ -49,7 +49,7 @@ support.core_utils = "com.android.support:support-core-utils:$versions.support"
 deps.support = support
 
 
-versions.espresso = "3.0.1"
+versions.espresso = "3.0.2"
 def espresso = [:]
 espresso.core = "com.android.support.test.espresso:espresso-core:$versions.espresso"
 espresso.contrib = "com.android.support.test.espresso:espresso-contrib:$versions.espresso"
@@ -59,5 +59,5 @@ deps.espresso = espresso
 versions.junit = "4.12"
 deps.junit = "junit:junit:$versions.junit"
 
-versions.constraint_layout = "1.0.2"
+versions.constraint_layout = "1.1.0"
 deps.constraint_layout = "com.android.support.constraint:constraint-layout:$versions.constraint_layout"
