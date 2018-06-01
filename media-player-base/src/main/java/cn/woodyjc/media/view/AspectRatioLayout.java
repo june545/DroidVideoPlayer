@@ -5,6 +5,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 import java.lang.annotation.Retention;
@@ -12,7 +13,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * <p>
- *     缩放类型：
+ * 缩放类型：
  * </p>
  * <ul>
  * <li>{@link #RESIZE_TYPE_FIT_CENTER}</li>
@@ -33,13 +34,21 @@ public class AspectRatioLayout extends FrameLayout {
     private @interface ResizeType {
     }
 
-    /** 按比例缩放至 宽（高）等于或小于父view宽（高），并居中显示 */
+    /**
+     * 按比例缩放至 宽（高）等于或小于父view宽（高），并居中显示
+     */
     public static final int RESIZE_TYPE_FIT_CENTER = 1;
-    /** 不考虑纵横比，使得宽（高）等于父view宽（高），相当于填满父view */
+    /**
+     * 不考虑纵横比，使得宽（高）等于父view宽（高），相当于填满父view
+     */
     public static final int RESIZE_TYPE_FILL = 2;
-    /** 按此比例缩放至宽（高）等于或大于父view宽（高），超出的被裁剪 */
+    /**
+     * 按此比例缩放至宽（高）等于或大于父view宽（高），超出的被裁剪
+     */
     public static final int RESIZE_TYPE_CENTER_CROP = 3;
-    /** 纵横比为固定值 16 / 9， 按此比例缩放至宽（高）等于或小于父view宽（高），且居中 */
+    /**
+     * 纵横比为固定值 16 / 9， 按此比例缩放至宽（高）等于或小于父view宽（高），且居中
+     */
     public static final int RESIZE_TYPE_16_9 = 4;
 
     @ResizeType
@@ -108,10 +117,14 @@ public class AspectRatioLayout extends FrameLayout {
 
                 break;
             case RESIZE_TYPE_16_9:
-                if (aspectRatio > viewAspectRatio) {
+                if (width == 0 && height != 0) {
                     width = (int) (height * aspectRatio);
-                } else {
+                } else if (height == 0 && width != 0) {
                     height = (int) (width / aspectRatio);
+                } else if (aspectRatio > viewAspectRatio) {
+                    height = (int) (width / aspectRatio);
+                } else {
+                    width = (int) (height * aspectRatio);
                 }
                 break;
             case RESIZE_TYPE_FILL:
@@ -119,6 +132,7 @@ public class AspectRatioLayout extends FrameLayout {
                 break;
         }
 
+        Log.d("22222", "width " + width + " ,  height " + height);
         super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
                 MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
     }

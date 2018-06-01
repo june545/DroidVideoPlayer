@@ -9,21 +9,21 @@ import android.view.SurfaceView;
 /**
  * Created by June on 2016/8/21.
  */
-public class VideoSurfaceView extends SurfaceView {
-    private final String TAG = VideoSurfaceView.class.getSimpleName();
+public class AutoFitSurfaceView extends SurfaceView {
+    private final String TAG = AutoFitSurfaceView.class.getSimpleName();
 
     private int videoWidth;
     private int videoHeight;
 
-    public VideoSurfaceView(Context context) {
+    public AutoFitSurfaceView(Context context) {
         this(context, null);
     }
 
-    public VideoSurfaceView(Context context, AttributeSet attrs) {
+    public AutoFitSurfaceView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public VideoSurfaceView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public AutoFitSurfaceView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }

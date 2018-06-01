@@ -1,6 +1,7 @@
 package cn.woodyjc.media.video.player;
 
 import android.content.DialogInterface;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.KeyEvent;
@@ -29,16 +30,18 @@ public class ControllerFragment extends BottomSideDialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-//        getDialog().setCanceledOnTouchOutside(false);
-//        getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
-//            @Override
-//            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-//                if (keyCode == KeyEvent.KEYCODE_BACK) {
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
+        // getDialog().setCanceledOnTouchOutside(false);
+        getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(0xffffffff));
+        getDialog().setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    getActivity().dispatchKeyEvent(event);
+                    return true;
+                }
+                return false;
+            }
+        });
     }
 
     @Nullable

@@ -17,7 +17,7 @@ import android.widget.Toast;
 /**
  * Created by June on 2016/8/22.
  */
-public class VideoPlayerView extends VideoFrameLayout implements SurfaceHolder.Callback, PlayerControl {
+public class VideoPlayerView extends BorderedFrameLayout implements SurfaceHolder.Callback, PlayerControl {
     private final String TAG = VideoPlayerView.class.getSimpleName();
 
     private MediaPlayer.OnPreparedListener         onPreparedListener;
@@ -34,7 +34,7 @@ public class VideoPlayerView extends VideoFrameLayout implements SurfaceHolder.C
     private String mediaPath;
     private int    lastPosition;
 
-    private VideoSurfaceView surfaceView;
+    private AutoFitSurfaceView surfaceView;
 
     private int videoWidth; // 视频分辨率-宽
     private int videoHeight; // 视频分辨率-高
@@ -56,7 +56,7 @@ public class VideoPlayerView extends VideoFrameLayout implements SurfaceHolder.C
 
     private void init() {
         Log.d(TAG, "---init()---");
-        surfaceView = new VideoSurfaceView(getContext());
+        surfaceView = new AutoFitSurfaceView(getContext());
         LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         lp.gravity = Gravity.CENTER;
         this.addView(surfaceView, lp);

@@ -7,7 +7,6 @@ import cn.woodyjc.media.view.AspectRatioLayout;
 import cn.woodyjc.media.video.player.VideoPlayerFragment;
 
 public class MainActivity extends AppCompatActivity {
-//    String path = Environment.getExternalStorageDirectory().getPath() + "/test.3gp";
     String path = "http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4";
 
     VideoPlayerFragment videoPlayerFragment;
@@ -19,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
         videoPlayerFragment = (VideoPlayerFragment) getSupportFragmentManager().findFragmentById(R.id.video_payer_fragment);
         videoPlayerFragment.play(path);
+
 //        AspectRatioLayout aspectRatioLayout = findViewById(R.id.aspect_ratio_layout);
 //        aspectRatioLayout.setResizeType(AspectRatioLayout.RESIZE_TYPE_16_9);
     }

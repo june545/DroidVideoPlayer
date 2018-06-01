@@ -7,23 +7,21 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import cn.woodyjc.media.R;
+import cn.woodyjc.media.video.BorderedFrameLayout;
 import cn.woodyjc.media.video.PlayerControl;
-import cn.woodyjc.media.video.VideoFrameLayout;
-import cn.woodyjc.media.video.VideoSurfaceView;
 
 
 /**
  * Created by June on 2016/8/22.
  */
-public class VideoPlayerViewNew extends VideoFrameLayout implements SurfaceHolder.Callback, PlayerControl {
+public class VideoPlayerViewNew extends BorderedFrameLayout implements SurfaceHolder.Callback, PlayerControl {
     private final String TAG = VideoPlayerViewNew.class.getSimpleName();
 
     private MediaPlayer.OnPreparedListener         onPreparedListener;
@@ -62,7 +60,8 @@ public class VideoPlayerViewNew extends VideoFrameLayout implements SurfaceHolde
     private void init(Context context) {
         Log.d(TAG, "---init()---");
         LayoutInflater.from(context).inflate(R.layout.simple_player_view, this);
-        aspectRatioLayout = findViewById(R.id.woodyhi_aspect_ratio_frame);
+        aspectRatioLayout = findViewById(R.id.aspect_ratio_layout);
+        aspectRatioLayout.setResizeType(AspectRatioLayout.RESIZE_TYPE_FIT_CENTER);
 
         surfaceView = new SurfaceView(context);
         aspectRatioLayout.addView(surfaceView, 0);
@@ -99,7 +98,7 @@ public class VideoPlayerViewNew extends VideoFrameLayout implements SurfaceHolde
     public void surfaceCreated(SurfaceHolder holder) {
         Log.d(TAG, "surfaceCreated");
         isSurfaceValid = true;
-        loadMedia(holder);
+        loadMedia(holder.getSurface());
     }
 
     @Override
@@ -112,29 +111,28 @@ public class VideoPlayerViewNew extends VideoFrameLayout implements SurfaceHolde
         return mMediaPlayer;
     }
 
-    private void loadMedia(SurfaceHolder holder) {
+    private void loadMedia(Surface surface) {
         Log.e(TAG, "loadingMedia");
         if (mMediaPlayer == null) {
             Log.d(TAG, "the mediaplayer instance is null, and creating");
-            mMediaPlayer = createMediaPlayer(holder);
+            mMediaPlayer = createMediaPlayer(surface);
 
         } else {
             Log.d(TAG, "mediaplayer instance is existsing");
             try {
-                mMediaPlayer.setDisplay(holder);// reset surface
+                mMediaPlayer.setSurface(surface);// reset surface
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private MediaPlayer createMediaPlayer(SurfaceHolder holder) {
+    private MediaPlayer createMediaPlayer(Surface surface) {
         final String tagPrefix = "player -> ";
         final MediaPlayer mMediaPlayer = new MediaPlayer();
-//        final MediaPlayer mMediaPlayer = MediaPlayer.create(getContext(), Uri.parse(mediaPath));
 
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setDisplay(holder);
+        mMediaPlayer.setSurface(surface);
         mMediaPlayer.setScreenOnWhilePlaying(true);// works when setDisplay invoked
 
         mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -323,7 +321,7 @@ public class VideoPlayerViewNew extends VideoFrameLayout implements SurfaceHolde
             mMediaPlayer = null;
         }
         if (isSurfaceValid) {
-            loadMedia(getSurfaceView().getHolder());
+            loadMedia(surfaceView.getHolder().getSurface());
         }
     }
 
