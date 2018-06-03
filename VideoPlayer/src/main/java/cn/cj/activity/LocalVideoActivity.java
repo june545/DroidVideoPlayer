@@ -62,7 +62,7 @@ public class LocalVideoActivity extends AppCompatActivity {
     }
 
     /**
-     * asynchronously loading
+     * asynchronously player_loading
      */
     LoaderManager.LoaderCallbacks<Cursor> loaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override

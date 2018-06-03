@@ -11,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import cn.woodyjc.media.R;
 import cn.woodyjc.media.video.BorderedFrameLayout;
@@ -23,26 +25,35 @@ import cn.woodyjc.media.video.PlayerControl;
  */
 public class VideoPlayerViewNew extends BorderedFrameLayout implements SurfaceHolder.Callback, PlayerControl {
     private final String TAG = VideoPlayerViewNew.class.getSimpleName();
+    public static final boolean DEUBG = true;
 
-    private MediaPlayer.OnPreparedListener         onPreparedListener;
+    private MediaPlayer.OnPreparedListener onPreparedListener;
     private MediaPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener;
-    private MediaPlayer.OnBufferingUpdateListener  onBufferingUpdateListener;
-    private MediaPlayer.OnSeekCompleteListener     onSeekCompleteListener;
-    private MediaPlayer.OnCompletionListener       onCompletionListener;
-    private MediaPlayer.OnInfoListener             onInfoListener;
-    private MediaPlayer.OnErrorListener            onErrorListener;
+    private MediaPlayer.OnBufferingUpdateListener onBufferingUpdateListener;
+    private MediaPlayer.OnSeekCompleteListener onSeekCompleteListener;
+    private MediaPlayer.OnCompletionListener onCompletionListener;
+    private MediaPlayer.OnInfoListener onInfoListener;
+    private MediaPlayer.OnErrorListener onErrorListener;
 
     private MediaPlayer mMediaPlayer;
-    private boolean     isSurfaceValid;
+    private boolean isSurfaceValid;
 
     private String mediaPath;
-    private int    lastPosition;
+    private int lastPosition;
 
     private AspectRatioLayout aspectRatioLayout;
     private SurfaceView surfaceView;
+    private ProgressBar loadingView;
+    private TextView errorMsgTextView;
 
     private int videoWidth; // 视频宽
     private int videoHeight; // 视频高
+
+    private boolean isSeekable = true;
+
+    public boolean isSeekable(){
+        return isSeekable;
+    }
 
     public VideoPlayerViewNew(Context context) {
         this(context, null);
@@ -58,10 +69,11 @@ public class VideoPlayerViewNew extends BorderedFrameLayout implements SurfaceHo
     }
 
     private void init(Context context) {
-        Log.d(TAG, "---init()---");
         LayoutInflater.from(context).inflate(R.layout.simple_player_view, this);
         aspectRatioLayout = findViewById(R.id.aspect_ratio_layout);
         aspectRatioLayout.setResizeType(AspectRatioLayout.RESIZE_TYPE_FIT_CENTER);
+        loadingView = findViewById(R.id.player_loading_view);
+        errorMsgTextView = findViewById(R.id.error_msg);
 
         surfaceView = new SurfaceView(context);
         aspectRatioLayout.addView(surfaceView, 0);
@@ -107,7 +119,7 @@ public class VideoPlayerViewNew extends BorderedFrameLayout implements SurfaceHo
         isSurfaceValid = false;
     }
 
-    public MediaPlayer getMediaPlayer(){
+    public MediaPlayer getMediaPlayer() {
         return mMediaPlayer;
     }
 
@@ -159,7 +171,7 @@ public class VideoPlayerViewNew extends BorderedFrameLayout implements SurfaceHo
                 }
                 videoWidth = width;
                 videoHeight = height;
-                aspectRatioLayout.setVideoSize(width, height);
+                aspectRatioLayout.setAspectRatioByVideoSize(width, height);
             }
         });
         mMediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
@@ -167,7 +179,7 @@ public class VideoPlayerViewNew extends BorderedFrameLayout implements SurfaceHo
             @Override
             public void onBufferingUpdate(MediaPlayer mp, int percent) {
                 Log.d(TAG, tagPrefix + "mediaplayer buffered progress : " + percent + "%");
-                if(onBufferingUpdateListener != null){
+                if (onBufferingUpdateListener != null) {
                     onBufferingUpdateListener.onBufferingUpdate(mp, percent);
                 }
             }
@@ -184,12 +196,15 @@ public class VideoPlayerViewNew extends BorderedFrameLayout implements SurfaceHo
             @Override
             public void onCompletion(MediaPlayer mp) {
                 Log.d(TAG, tagPrefix + "onCompletion " + mp.toString());
-                if(onCompletionListener != null){
+                if (onCompletionListener != null) {
                     onCompletionListener.onCompletion(mp);
                 }
             }
         });
         mMediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+            private boolean startFlag;
+            private long start;
+            private long end;
 
             @Override
             public boolean onInfo(MediaPlayer mp, int what, int extra) {
@@ -198,18 +213,27 @@ public class VideoPlayerViewNew extends BorderedFrameLayout implements SurfaceHo
                     case MediaPlayer.MEDIA_INFO_BAD_INTERLEAVING:
                         Log.d(TAG, tagPrefix + "info MEDIA_INFO_BAD_INTERLEAVING");
                         break;
-                    case MediaPlayer.MEDIA_INFO_BUFFERING_END:
-                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_BUFFERING_END");
+                    case MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
+                        updateLoadingState(false);
                         break;
                     case MediaPlayer.MEDIA_INFO_BUFFERING_START:
-                    /* 偶尔这个事件被回调后，视频一直不动，mediaplayer状态是playing、网络正常，不知道是不是视频流的问题 */
+                        /* 遇到过这个事件，视频一直不动，mediaplayer状态是playing、网络正常，不知道是不是视频流的问题 */
                         Log.d(TAG, tagPrefix + "info MEDIA_INFO_BUFFERING_START");
+                        updateLoadingState(true);
+                        start = System.currentTimeMillis();
+                        break;
+                    case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_BUFFERING_END");
+                        updateLoadingState(false);
+                        end = System.currentTimeMillis();
+
                         break;
                     case MediaPlayer.MEDIA_INFO_METADATA_UPDATE:
                         Log.d(TAG, tagPrefix + "info MEDIA_INFO_METADATA_UPDATE");
                         break;
                     case MediaPlayer.MEDIA_INFO_NOT_SEEKABLE:
                         Log.d(TAG, tagPrefix + "info MEDIA_INFO_NOT_SEEKABLE");
+                        isSeekable = false;
                         break;
                     case MediaPlayer.MEDIA_INFO_UNKNOWN:
                         Log.d(TAG, tagPrefix + "info MEDIA_INFO_UNKNOWN");
@@ -235,7 +259,9 @@ public class VideoPlayerViewNew extends BorderedFrameLayout implements SurfaceHo
                         break;
                     case MediaPlayer.MEDIA_ERROR_UNKNOWN:
                         Log.e(TAG, tagPrefix + "error MEDIA_ERROR_UNKNOWN");
-                        Toast.makeText(getContext(), "未知错误", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(getContext(), "未知错误", Toast.LENGTH_SHORT).show();
+                        errorMsgTextView.setText("未知错误");
+                        updateLoadingState(false);
                         break;
                 }
                 return false;
@@ -252,15 +278,23 @@ public class VideoPlayerViewNew extends BorderedFrameLayout implements SurfaceHo
         return mMediaPlayer;
     }
 
-    public int getDuration(){
-        if(mMediaPlayer != null){
+    private void updateLoadingState(boolean loading) {
+        if (loading) {
+            loadingView.setVisibility(View.VISIBLE);
+        } else {
+            loadingView.setVisibility(View.GONE);
+        }
+    }
+
+    public int getDuration() {
+        if (mMediaPlayer != null) {
             return mMediaPlayer.getDuration();
         }
         return 0;
     }
 
-    public int getCurrentPosition(){
-        if(mMediaPlayer != null){
+    public int getCurrentPosition() {
+        if (mMediaPlayer != null) {
             return mMediaPlayer.getCurrentPosition();
         }
         return 0;
@@ -268,21 +302,21 @@ public class VideoPlayerViewNew extends BorderedFrameLayout implements SurfaceHo
 
     @Override
     public void playback() {
-        if(mMediaPlayer != null && !mMediaPlayer.isPlaying()){
+        if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
         }
     }
 
     @Override
     public void pause() {
-        if(mMediaPlayer != null && mMediaPlayer.isPlaying()){
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
             mMediaPlayer.pause();
         }
     }
 
     @Override
     public void seekTo(int msec) {
-        if(mMediaPlayer != null)
+        if (mMediaPlayer != null)
             mMediaPlayer.seekTo(msec);
     }
 
@@ -297,8 +331,8 @@ public class VideoPlayerViewNew extends BorderedFrameLayout implements SurfaceHo
     }
 
     @Override
-    public boolean isPlaying(){
-        if(mMediaPlayer != null && mMediaPlayer.isPlaying()){
+    public boolean isPlaying() {
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
             return true;
         }
         return false;
@@ -325,7 +359,7 @@ public class VideoPlayerViewNew extends BorderedFrameLayout implements SurfaceHo
         }
     }
 
-    public void setOnBufferingUpdateListener(MediaPlayer.OnBufferingUpdateListener listener){
+    public void setOnBufferingUpdateListener(MediaPlayer.OnBufferingUpdateListener listener) {
         this.onBufferingUpdateListener = listener;
     }
 

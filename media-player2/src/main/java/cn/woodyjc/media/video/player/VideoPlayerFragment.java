@@ -19,16 +19,14 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import cn.woodyjc.media.video.R;
-import cn.woodyjc.media.video.VideoPlayerView;
 import cn.woodyjc.media.video.a.GestureSupport;
 import cn.woodyjc.media.video.service.FloatingViewService;
 import cn.woodyjc.media.video.service.PlayerFloatingViewService;
@@ -55,17 +53,13 @@ public class VideoPlayerFragment extends Fragment {
     private View rootView;
     private VideoPlayerViewNew videoPlayerView;
 
+    private int systemUiVisibilityWhenPortrait;
+
     // 尺寸常量
     private int originalFrameWidth;
     private int originalFrameHeight;
     private int mScreenWidth;
     private int mScreenHeight;
-    /**
-     * center popup
-     */
-    // 加载中
-    private LinearLayout mLoadingView;
-    private ProgressBar mProgressBar;
     // 音量
     private LinearLayout mVolumenLayout;
     private TextView mVolumePercent;
@@ -88,9 +82,6 @@ public class VideoPlayerFragment extends Fragment {
     private int lastPosition;
 
     private int positionToSeek;                                            //手势控制播放位置
-
-
-    private ControllerFragment controllerFragment;
 
     Handler mHandler = new Handler() {
         @Override
@@ -139,7 +130,8 @@ public class VideoPlayerFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mContext = getActivity();
-
+        systemUiVisibilityWhenPortrait = getActivity().getWindow().getDecorView()
+                .getSystemUiVisibility();
         // 获取屏幕尺寸
         DisplayMetrics dm = new DisplayMetrics();
         ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -152,8 +144,8 @@ public class VideoPlayerFragment extends Fragment {
 
         mHandler.sendEmptyMessage(HANDLER_UPDATE_PLAYBACK_PROGRESS);
 
-        controllerFragment = new ControllerFragment();
-        controllerFragment.showNow(getChildFragmentManager(), ControllerFragment.class.getSimpleName());
+//        ControllerFragment controllerFragment = new ControllerFragment();
+//        controllerFragment.showNow(getChildFragmentManager(), ControllerFragment.class.getSimpleName());
     }
 
 
@@ -198,7 +190,7 @@ public class VideoPlayerFragment extends Fragment {
         if (duration - lastPosition < 5000) {// almost completed
             lastPosition = 0;
         } else {
-            // currentPosition -= 3000;// go back few seconds, to compensate loading time
+            // currentPosition -= 3000;// go back few seconds, to compensate player_loading time
         }
     }
 
@@ -215,8 +207,6 @@ public class VideoPlayerFragment extends Fragment {
 
     private void initView(View view) {
         videoPlayerView = (VideoPlayerViewNew) view.findViewById(R.id.video_player_view);
-        mLoadingView = (LinearLayout) view.findViewById(R.id.loading_view);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.progressbar);
         mVolumenLayout = (LinearLayout) view.findViewById(R.id.volume_layout);
         mVolumePercent = (TextView) view.findViewById(R.id.volume_percent_tv);
         mFastForwardProgressLayout = (LinearLayout) view.findViewById(R.id.fast_forward_progress_layout);
@@ -279,34 +269,68 @@ public class VideoPlayerFragment extends Fragment {
         showControllerView(true);
     }
 
+    private int portraitWidth;
+    private int portraintHeight;
+
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         Log.d(TAG, "onConfigurationChanged() " + newConfig.orientation);
         super.onConfigurationChanged(newConfig);
 
-        WindowManager.LayoutParams params = ((Activity) mContext).getWindow().getAttributes();
+//        WindowManager.LayoutParams params = ((Activity) mContext).getWindow().getAttributes();
 
         switch (newConfig.orientation) {
             case Configuration.ORIENTATION_PORTRAIT:
                 // 设置非全屏(show taskbar)
-                params.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                ((Activity) mContext).getWindow().setAttributes(params);
-                ((Activity) mContext).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+//                params.flags &= (~WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//                ((Activity) mContext).getWindow().setAttributes(params);
+//                ((Activity) mContext).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
+                ((Activity) mContext).getWindow().getDecorView().setSystemUiVisibility(systemUiVisibilityWhenPortrait);
 
                 // change player size
                 openCloseFullscreenBtn.setBackgroundResource(R.drawable.fullscreen);
                 break;
             case Configuration.ORIENTATION_LANDSCAPE:
                 // 设置全屏(hide taskbar)
-                params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-                ((Activity) mContext).getWindow().setAttributes(params);
-                ((Activity) mContext).getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+//                params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+//                ((Activity) mContext).getWindow().setAttributes(params);
+//                ((Activity) mContext).getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
+                // 全屏设置
+                ((Activity) mContext).getWindow().getDecorView().setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LOW_PROFILE
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
                 // change player size
                 openCloseFullscreenBtn.setBackgroundResource(R.drawable.fullscreen_exit);
                 break;
         }
+    }
 
+
+    private void bigPlayerLandscape(){
+        portraitWidth = videoPlayerView.getWidth();
+        portraintHeight = videoPlayerView.getHeight();
+
+        Log.d(TAG, "xxxxx portraintWidth " + portraitWidth + ", portraintHeight " + portraintHeight);
+        DisplayMetrics dm = new DisplayMetrics();
+        ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int landscapeWidth = dm.widthPixels;
+        int landscapeHeight = dm.heightPixels;
+
+        Log.d(TAG, "xxxxx landscapeWidth " + landscapeWidth + ", landscapeHeight " + landscapeHeight);
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) videoPlayerView.getLayoutParams();
+        lp.width = landscapeWidth;
+        lp.height = landscapeHeight;
+        videoPlayerView.setLayoutParams(lp);
+        videoPlayerView.requestLayout();
+        videoPlayerView.invalidate();
     }
 
 
@@ -333,9 +357,6 @@ public class VideoPlayerFragment extends Fragment {
      */
     private void updateProgress() {
         if (videoPlayerView.isPlaying()) {
-            if (mLoadingView.getVisibility() != View.GONE)
-                mLoadingView.setVisibility(View.GONE);
-
             duration = videoPlayerView.getDuration();
             int currentPosition = videoPlayerView.getCurrentPosition();
             lastPosition = currentPosition;
@@ -373,7 +394,6 @@ public class VideoPlayerFragment extends Fragment {
                 videoPlayerView.seekTo(tmpSeekProgress);
             }
             mSeeking = false;
-            mLoadingView.setVisibility(View.VISIBLE);
             showControllerView(true);
         }
 
@@ -397,7 +417,6 @@ public class VideoPlayerFragment extends Fragment {
         videoPlayerView.play(path, 0);
         mMediaPath = path;
         lastPosition = 0;
-        mLoadingView.setVisibility(View.VISIBLE);
     }
 
 

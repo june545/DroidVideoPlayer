@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion versions.build_versions.compile_sdk
 
+
     defaultConfig {
         applicationId "cn.woodyjc.media.video"
         minSdkVersion versions.build_versions.min_sdk
@@ -27,12 +28,9 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation deps.support.app_compat
     implementation deps.constraint_layout
-
     testImplementation deps.junit
-//    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    //    androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation deps.espresso.core
-
     implementation project(':media-player-base')
     implementation 'com.github.woodyhi:floating-view:0.1.0'
-
 }

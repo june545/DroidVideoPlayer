@@ -141,7 +141,7 @@ public class AspectRatioLayout extends FrameLayout {
      * @param videoWidth
      * @param videoHeight
      */
-    public void setVideoSize(int videoWidth, int videoHeight) {
+    public void setAspectRatioByVideoSize(int videoWidth, int videoHeight) {
         this.videoWidth = videoWidth;
         this.videoHeight = videoHeight;
         requestLayout();

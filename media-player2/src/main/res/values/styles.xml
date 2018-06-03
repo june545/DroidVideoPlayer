@@ -20,6 +20,7 @@
 
 
 
+
     <style name="leftSideDialogAnim" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/left_side_in</item>
         <item name="android:windowExitAnimation">@anim/left_side_out</item>

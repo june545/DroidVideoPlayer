@@ -223,7 +223,7 @@ public class VideoPlayerFragment extends Fragment {
         if (duration - lastPosition < 5000) {// almost completed
             lastPosition = 0;
         } else {
-            // currentPosition -= 3000;// go back few seconds, to compensate loading time
+            // currentPosition -= 3000;// go back few seconds, to compensate player_loading time
         }
     }
 

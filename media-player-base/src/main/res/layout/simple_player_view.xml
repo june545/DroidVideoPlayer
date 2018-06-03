@@ -7,6 +7,20 @@
         android:layout_height="match_parent"
         android:layout_gravity="center">
 
+
+        <!--style="?android:attr/progressBarStyleSmall"-->
+        <ProgressBar
+            android:id="@+id/player_loading_view"
+            android:indeterminateDrawable="@drawable/player_loading_anim"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/error_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
     </cn.woodyjc.media.view.AspectRatioLayout>
 
 

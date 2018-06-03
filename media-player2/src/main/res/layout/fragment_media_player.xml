@@ -14,21 +14,6 @@
     </cn.woodyjc.media.view.VideoPlayerViewNew>
 
     <LinearLayout
-        android:id="@+id/loading_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
-        <!--style="?android:attr/progressBarStyleSmall"-->
-        <ProgressBar
-            android:id="@+id/progressbar"
-            android:indeterminateDrawable="@drawable/loading_a"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"/>
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/volume_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

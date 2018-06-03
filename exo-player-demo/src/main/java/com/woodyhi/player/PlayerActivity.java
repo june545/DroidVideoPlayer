@@ -35,6 +35,7 @@ public class PlayerActivity extends AppCompatActivity {
 
 //    Uri uri = Uri.parse("http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4");
     Uri uri = Uri.parse("rtmp://live.hkstv.hk.lxdns.com/live/hks");
+//    Uri uri = Uri.parse("http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8");
 //    Uri uri = Uri.parse("rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov");
 //    Uri uri = Uri.parse("https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8");
 
