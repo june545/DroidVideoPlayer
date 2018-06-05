@@ -20,14 +20,15 @@
     <cn.woodyjc.media.view.AspectRatioLayout
         android:id="@+id/aspect_ratio_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:background="@color/colorAccent">
         <!-- fragment 中必须设置match_parent 旋转才能全屏播放 -->
         <fragment
             class="cn.woodyjc.media.video.player.VideoPlayerFragment"
             android:id="@+id/video_payer_fragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
         </fragment>
     </cn.woodyjc.media.view.AspectRatioLayout>
 
