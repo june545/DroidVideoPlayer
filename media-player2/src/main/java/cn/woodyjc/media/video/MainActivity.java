@@ -3,8 +3,8 @@ package cn.woodyjc.media.video;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import cn.woodyjc.media.view.AspectRatioLayout;
 import cn.woodyjc.media.video.player.VideoPlayerFragment;
+import cn.woodyjc.media.view.AspectRatioLayout;
 
 public class MainActivity extends AppCompatActivity {
 //    String path = "http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4";
