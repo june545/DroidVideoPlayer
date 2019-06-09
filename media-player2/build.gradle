@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "cn.woodyjc.media.video"
         minSdkVersion versions.build_versions.min_sdk
-        targetSdkVersion versions.build_versions.garget_sdk
+        targetSdkVersion versions.build_versions.target_sdk
         versionCode 1
         versionName "1.0"
 
@@ -22,15 +22,33 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
+
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation deps.support.app_compat
     implementation deps.constraint_layout
+    implementation deps.support.annotations
+
     testImplementation deps.junit
-    //    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation deps.runner
     androidTestImplementation deps.espresso.core
+
+
     implementation project(':media-player-base')
     implementation 'com.github.woodyhi:floating-view:0.1.0'
+
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    api 'tv.danmaku.ijk.media:ijkplayer-java:0.8.8'
+    api 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.8.8'
+    api 'tv.danmaku.ijk.media:ijkplayer-x86:0.8.8'
+
+    implementation project(path: ':video_player_base')
 }

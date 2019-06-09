@@ -1,23 +1,21 @@
 package cn.woodyjc.media.video.player;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.Configuration;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -26,83 +24,91 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import java.io.FileDescriptor;
+import java.lang.ref.WeakReference;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.woodyjc.media.video.R;
-import cn.woodyjc.media.video.a.GestureSupport;
 import cn.woodyjc.media.video.service.FloatingViewService;
 import cn.woodyjc.media.video.service.PlayerFloatingViewService;
 import cn.woodyjc.media.view.VideoPlayerViewNew;
 
 /**
- * @author June Cheng
- * @date 2015年10月28日 下午10:28:47
+ * @author June
  */
 public class VideoPlayerFragment extends Fragment {
     private final String TAG = VideoPlayerFragment.class.getSimpleName();
 
     //  延迟时间
-    private static final int HIDE_CONTROL_BAR_DELAY_TIME = 10000;
-
-    private final byte HANDLER_SHOW_CONTROL_BAR = 1;
-    private final byte HANDLER_HIDE_CONTROL_BAR = 2;
-    private final byte HANDLER_UPDATE_PLAYBACK_PROGRESS = 3;
-
-    //    private int         mPlayerWidth;                                                //播放器尺寸
-    //    private int         mPlayerHeight;
+    private static final int AUTO_HIDE_CONTROL_DELAY_TIME = 10000;
 
     private Context mContext;
     private View rootView;
-    private VideoPlayerViewNew videoPlayerView;
+    @BindView(R.id.video_player_view) VideoPlayerViewNew videoPlayerView;
 
     private int systemUiVisibilityWhenPortrait;
 
-    // 尺寸常量
-    private int originalFrameWidth;
-    private int originalFrameHeight;
-    private int mScreenWidth;
-    private int mScreenHeight;
     // 音量
-    private LinearLayout mVolumenLayout;
-    private TextView mVolumePercent;
+    @BindView(R.id.volume_layout) LinearLayout mVolumenLayout;
+    @BindView(R.id.volume_percent_tv) TextView mVolumePercent;
     // 快进/快退
-    private LinearLayout mFastForwardProgressLayout;
-    private TextView mFastForwardProgresText;
+    @BindView(R.id.fast_forward_progress_layout) LinearLayout mFastForwardProgressLayout;
+    @BindView(R.id.fast_forward_progress_text) TextView mFastForwardProgresText;
     /* player control bar */
-    private LinearLayout playerControlBar;
-    private ImageView playPauseBtn;
-    private LinearLayout mSeekBarLayout;
-    private TextView mCurrentTime;
-    private SeekBar mSeekBar;                                                    // 进度
-    private TextView mDurationTime;
-    private ImageView openCloseFullscreenBtn;
-    private boolean mSeeking = false;
-    private ImageView floatingViewIv;
+    @BindView(R.id.player_control_bar) LinearLayout playerControlBar;
+    @BindView(R.id.play_pause_btn) ImageView playPauseBtn;
+    @BindView(R.id.seekbar_layout) LinearLayout mSeekBarLayout;
+    @BindView(R.id.video_playtime) TextView mCurrentTime;
+    @BindView(R.id.seekbar) SeekBar mSeekBar;                                                    // 进度
+    @BindView(R.id.video_durationtime) TextView mDurationTime;
+    @BindView(R.id.open_close_fullscreen) ImageView openCloseFullscreenBtn;
+    @BindView(R.id.show_flotingview) ImageView floatingViewIv;
     private String mMediaPath;
     private boolean playingOnSurface = false;
     private int duration;
     private int lastPosition;
+    private boolean mSeeking = false;
 
-    private int positionToSeek;                                            //手势控制播放位置
+    private ProgressTimer progressTimer;
+    MyHandler myHandler;
 
-    Handler mHandler = new Handler() {
+    static class MyHandler extends Handler {
+        final byte HANDLER_SHOW_CONTROL_BAR = 1;
+        static final byte HANDLER_HIDE_CONTROL_BAR = 2;
+        final byte HANDLER_UPDATE_PLAYBACK_PROGRESS = 3;
+
+        WeakReference<VideoPlayerFragment> weakReference;
+
+        MyHandler(VideoPlayerFragment fragment) {
+            weakReference = new WeakReference<>(fragment);
+        }
+
         @Override
         public void handleMessage(android.os.Message msg) {
+            VideoPlayerFragment fragment = weakReference.get();
+            if (fragment == null) return;
+
             switch (msg.what) {
                 case HANDLER_SHOW_CONTROL_BAR:
 
                     break;
                 case HANDLER_HIDE_CONTROL_BAR:
-                    hideControlView();
+                    fragment.hideControlView();
 
                     break;
                 case HANDLER_UPDATE_PLAYBACK_PROGRESS:
-                    updateProgress();
-                    sendEmptyMessageDelayed(HANDLER_UPDATE_PLAYBACK_PROGRESS, 1000 - lastPosition % 1000);
+                    fragment.updateProgress();
+                    sendEmptyMessageDelayed(HANDLER_UPDATE_PLAYBACK_PROGRESS, 1000 - fragment.lastPosition % 1000);
                     break;
                 default:
                     break;
             }
         }
-    };
+    }
+
+    ;
 
     public VideoPlayerFragment() {
     }
@@ -116,14 +122,23 @@ public class VideoPlayerFragment extends Fragment {
         this.lastPosition = playedTime;
     }
 
-    @SuppressLint("InflateParams")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_media_player, container, false);
+        rootView = inflater.inflate(R.layout.fragment_video_player, container, false);
+        ButterKnife.bind(this, rootView);
         initView(rootView);
         videoPlayerView.play(mMediaPath, 0);
-
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        myHandler = new MyHandler(this);
+
+        progressTimer = new ProgressTimer(this);
+        progressTimer.setCallback(ms -> updateProgress());
+        progressTimer.start();
     }
 
     @Override
@@ -135,17 +150,9 @@ public class VideoPlayerFragment extends Fragment {
         // 获取屏幕尺寸
         DisplayMetrics dm = new DisplayMetrics();
         ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(dm);
-        mScreenWidth = dm.widthPixels;
-        mScreenHeight = dm.heightPixels;
-
-        gesture();
 
         showControllerView(true);
 
-        mHandler.sendEmptyMessage(HANDLER_UPDATE_PLAYBACK_PROGRESS);
-
-//        ControllerFragment controllerFragment = new ControllerFragment();
-//        controllerFragment.showNow(getChildFragmentManager(), ControllerFragment.class.getSimpleName());
     }
 
 
@@ -158,6 +165,7 @@ public class VideoPlayerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume()");
+        progressTimer.start();
     }
 
     /**
@@ -168,7 +176,7 @@ public class VideoPlayerFragment extends Fragment {
         if (hasFocus) {
             if (playingOnSurface && !videoPlayerView.isPlaying()) {
                 videoPlayerView.playback();
-                playPauseBtn.setBackgroundResource(R.drawable.media_pause);
+                playPauseBtn.setBackgroundResource(R.drawable.baseline_pause_circle_outline_white_36);
             }
         } else {
             if (videoPlayerView.isPlaying()) {
@@ -192,6 +200,13 @@ public class VideoPlayerFragment extends Fragment {
         } else {
             // currentPosition -= 3000;// go back few seconds, to compensate player_loading time
         }
+
+        progressTimer.stop();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 
     @Override
@@ -206,56 +221,27 @@ public class VideoPlayerFragment extends Fragment {
     }
 
     private void initView(View view) {
-        videoPlayerView = (VideoPlayerViewNew) view.findViewById(R.id.video_player_view);
-        mVolumenLayout = (LinearLayout) view.findViewById(R.id.volume_layout);
-        mVolumePercent = (TextView) view.findViewById(R.id.volume_percent_tv);
-        mFastForwardProgressLayout = (LinearLayout) view.findViewById(R.id.fast_forward_progress_layout);
-        mFastForwardProgresText = (TextView) view.findViewById(R.id.fast_forward_progress_text);
-        playerControlBar = (LinearLayout) view.findViewById(R.id.player_control_bar);
-        playPauseBtn = (ImageView) view.findViewById(R.id.play_pause_btn);
-        mSeekBarLayout = (LinearLayout) view.findViewById(R.id.seekbar_layout);
-        mCurrentTime = (TextView) view.findViewById(R.id.video_playtime);
-        mSeekBar = (SeekBar) view.findViewById(R.id.seekbar);
-        mDurationTime = (TextView) view.findViewById(R.id.video_durationtime);
-        openCloseFullscreenBtn = (ImageView) view.findViewById(R.id.open_close_fullscreen);
-        floatingViewIv = (ImageView) view.findViewById(R.id.show_flotingview);
-
-        playPauseBtn.setEnabled(false);
-        playPauseBtn.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                playPausePlayer();
-            }
-        });
-        mSeekBar.setEnabled(false);
         mSeekBar.setOnSeekBarChangeListener(new PlaybackSeekBarChangeListener());
-        openCloseFullscreenBtn.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                int orientaion = getResources().getConfiguration().orientation;
-                if (orientaion == Configuration.ORIENTATION_PORTRAIT) {
-                    ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    openCloseFullscreenBtn.setBackgroundResource(R.drawable.fullscreen_exit);
-                } else if (orientaion == Configuration.ORIENTATION_LANDSCAPE) {
-                    ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    openCloseFullscreenBtn.setBackgroundResource(R.drawable.fullscreen_exit);
-                }
+        openCloseFullscreenBtn.setOnClickListener(v -> {
+            int orientaion = getResources().getConfiguration().orientation;
+            if (orientaion == Configuration.ORIENTATION_PORTRAIT) {
+                ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                openCloseFullscreenBtn.setBackgroundResource(R.drawable.fullscreen_exit);
+            } else if (orientaion == Configuration.ORIENTATION_LANDSCAPE) {
+                ((Activity) mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                openCloseFullscreenBtn.setBackgroundResource(R.drawable.fullscreen_exit);
             }
         });
-        floatingViewIv.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), PlayerFloatingViewService.class);
-                intent.putExtra(FloatingViewService.PARAM_KEY, FloatingViewService.PARAM_VALUE);
-                intent.putExtra("MEDIAPATH", mMediaPath);
-                getActivity().startService(intent);
-                getActivity().finish();
-            }
+        floatingViewIv.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), PlayerFloatingViewService.class);
+            intent.putExtra(FloatingViewService.PARAM_KEY, FloatingViewService.PARAM_VALUE);
+            intent.putExtra("MEDIAPATH", mMediaPath);
+            getActivity().startService(intent);
+            getActivity().finish();
         });
     }
 
+    @OnClick(R.id.play_pause_btn)
     public void playPausePlayer() {
         if (videoPlayerView.isPlaying()) {
             videoPlayerView.pause();
@@ -264,7 +250,7 @@ public class VideoPlayerFragment extends Fragment {
         } else {
             videoPlayerView.playback();
             playingOnSurface = true;
-            playPauseBtn.setBackgroundResource(R.drawable.media_pause);
+            playPauseBtn.setBackgroundResource(R.drawable.baseline_pause_circle_outline_white_36);
         }
         showControllerView(true);
     }
@@ -314,7 +300,7 @@ public class VideoPlayerFragment extends Fragment {
     }
 
 
-    private void bigPlayerLandscape(){
+    private void bigPlayerLandscape() {
         portraitWidth = videoPlayerView.getWidth();
         portraintHeight = videoPlayerView.getHeight();
 
@@ -334,14 +320,23 @@ public class VideoPlayerFragment extends Fragment {
     }
 
 
+    @OnClick(R.id.video_player_view)
+    void toggleControllerView() {
+        if (playerControlBar.getVisibility() == View.VISIBLE) {
+            hideControlView();
+        } else {
+            showControllerView(true);
+        }
+    }
+
     private void showControllerView(boolean autoHide) {
         if (playerControlBar.getVisibility() == View.GONE) {
             playerControlBar.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.control_bar_show_up));
             playerControlBar.setVisibility(View.VISIBLE);
         }
         if (autoHide) {
-            mHandler.removeMessages(HANDLER_HIDE_CONTROL_BAR);
-            mHandler.sendEmptyMessageDelayed(HANDLER_HIDE_CONTROL_BAR, HIDE_CONTROL_BAR_DELAY_TIME);
+            myHandler.removeMessages(MyHandler.HANDLER_HIDE_CONTROL_BAR);
+            myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_HIDE_CONTROL_BAR, AUTO_HIDE_CONTROL_DELAY_TIME);
         }
     }
 
@@ -379,11 +374,6 @@ public class VideoPlayerFragment extends Fragment {
         }
     }
 
-    private void updateProgress(int currentPosition) {
-        mCurrentTime.setText(TimeFormater.formatMillisTime(currentPosition));
-        mSeekBar.setProgress(currentPosition);
-    }
-
     private class PlaybackSeekBarChangeListener implements OnSeekBarChangeListener {
         int tmpSeekProgress = 0;
 
@@ -413,173 +403,17 @@ public class VideoPlayerFragment extends Fragment {
         }
     }
 
-    public void play(String path) {
+    public void playback(String path) {
         videoPlayerView.play(path, 0);
         mMediaPath = path;
         lastPosition = 0;
     }
 
+    public void playback(FileDescriptor fd) {
+        // TODO
+    }
 
-    private AudioManager audioMgr;
-    private int maxVolume;
-    private int currentVolume;
-    private float volumePercent;
-
-    private void gesture() {
-        audioMgr = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
-        maxVolume = audioMgr.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        currentVolume = audioMgr.getStreamVolume(AudioManager.STREAM_MUSIC);
-        volumePercent = (float) currentVolume / (float) maxVolume;
-
-        GestureSupport gestureSupport = new GestureSupport(getActivity(), videoPlayerView);
-        gestureSupport.setGestureClickListener(new GestureSupport.GestureClickListener() {
-            @Override
-            public void onClick() {
-                if (playerControlBar.getVisibility() == View.VISIBLE) {
-                    hideControlView();
-                } else {
-                    showControllerView(true);
-                }
-            }
-        });
-
-        gestureSupport.setGestureFromLeftToRightListener(new GestureSupport.GestureFromLeftToRightListener() {
-            @Override
-            public void onStart() {
-                Log.d(TAG, "LeftToRight ------- start");
-                mFastForwardProgressLayout.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onScroll(MotionEvent e1, MotionEvent e2) {
-                Log.d(TAG, "LeftToRight ------- moving   " + (e2.getRawX() - e1.getRawX()));
-                float X = e2.getRawX() - e1.getRawX();
-                if (positionToSeek >= 0 || positionToSeek <= duration) {
-                    int x = DisplayUtil.px2dip(mContext, (int) X); // 优化滑动的流畅性
-                    Log.d(TAG, "xxxxxxx " + x);
-                    positionToSeek = lastPosition + x * 1000; //根据X计算快进/后退时间
-                    String b = TimeFormater.formatMillisTime(positionToSeek) + "/" + TimeFormater.formatMillisTime(duration);
-                    mFastForwardProgresText.setText(b);
-                }
-            }
-
-            @Override
-            public void onEnd() {
-                Log.d(TAG, "LeftToRight ------- end");
-                mFastForwardProgressLayout.setVisibility(View.GONE);
-//                showOverlayHideDelayed(true);
-                videoPlayerView.seekTo(positionToSeek);
-            }
-        });
-
-        gestureSupport.setGestureFromRightToLeftListener(new GestureSupport.GestureFromRightToLeftListener() {
-            @Override
-            public void onStart() {
-                Log.d(TAG, "RightToLeft ------- start");
-                mFastForwardProgressLayout.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onScroll(MotionEvent e1, MotionEvent e2) {
-                Log.d(TAG, "RightToLeft ------- moving   " + (e2.getRawX() - e1.getRawX()));
-                float X = e2.getRawX() - e1.getRawX();
-                if (positionToSeek >= 0 || positionToSeek <= duration) {
-                    int x = DisplayUtil.px2dip(mContext, (int) X); // 优化滑动的流畅性
-                    Log.d(TAG, "xxxxxxx " + x);
-                    positionToSeek = lastPosition + x * 1000; //根据X计算快进/后退时间
-                    String b = TimeFormater.formatMillisTime(positionToSeek) + "/" + TimeFormater.formatMillisTime(duration);
-                    mFastForwardProgresText.setText(b);
-                }
-            }
-
-            @Override
-            public void onEnd() {
-                Log.d(TAG, "RightToLeft ------- end");
-                mFastForwardProgressLayout.setVisibility(View.GONE);
-//                showOverlayHideDelayed(true);
-                videoPlayerView.seekTo(positionToSeek);
-            }
-        });
-
-        gestureSupport.setGestureFromBottomToTopListener(new GestureSupport.GestureFromBottomToTopListener() {
-            @Override
-            public void onStart() {
-                Log.d(TAG, "BottomToTop ------- start");
-                mVolumenLayout.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onScroll(MotionEvent e1, MotionEvent e2) {
-                Log.d(TAG, "BottomToTop ------- moving   " + (e2.getRawY() - e1.getRawY()));
-                float Y = e2.getRawY() - e1.getRawY();
-                int y = DisplayUtil.px2dip(mContext, (int) Y); // 优化滑动的流畅性
-                if (0 <= volumePercent && volumePercent <= 100) {
-                    volumePercent -= y / 50;
-                    if (volumePercent < 0) {
-                        volumePercent = 0;
-                    }
-                    if (volumePercent > 100) {
-                        volumePercent = 100;
-                    }
-                }
-                if (volumePercent > 0) {
-                    mVolumePercent.setCompoundDrawablesWithIntrinsicBounds(mContext.getResources().getDrawable(R.drawable.ic_lock_silent_mode_off), null,
-                            null, null);
-                } else {
-                    mVolumePercent.setCompoundDrawablesWithIntrinsicBounds(mContext.getResources().getDrawable(R.drawable.ic_lock_silent_mode), null, null,
-                            null);
-                }
-                mVolumePercent.setText((int) volumePercent + "%");
-                int volume = (int) (volumePercent / 100 * maxVolume);
-                audioMgr.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
-            }
-
-            @Override
-            public void onEnd() {
-                Log.d(TAG, "BottomToTop ------- end");
-                mVolumenLayout.setVisibility(View.GONE);
-            }
-        });
-
-        gestureSupport.setGestureFromTopToBottomListener(new GestureSupport.GestureFromTopToBottomListener() {
-            @Override
-            public void onStart() {
-                Log.d(TAG, "TopToBottom ------- start");
-                mVolumenLayout.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onScroll(MotionEvent e1, MotionEvent e2) {
-                Log.d(TAG, "TopToBottom ------- moving   " + (e2.getRawY() - e1.getRawY()));
-                float Y = e2.getRawY() - e1.getRawY();
-                int y = DisplayUtil.px2dip(mContext, (int) Y); // 优化滑动的流畅性
-                if (0 <= volumePercent && volumePercent <= 100) {
-                    volumePercent -= y / 50;
-                    if (volumePercent < 0) {
-                        volumePercent = 0;
-                    }
-                    if (volumePercent > 100) {
-                        volumePercent = 100;
-                    }
-                }
-                if (volumePercent > 0) {
-                    mVolumePercent.setCompoundDrawablesWithIntrinsicBounds(mContext.getResources().getDrawable(R.drawable.ic_lock_silent_mode_off), null,
-                            null, null);
-                } else {
-                    mVolumePercent.setCompoundDrawablesWithIntrinsicBounds(mContext.getResources().getDrawable(R.drawable.ic_lock_silent_mode), null, null,
-                            null);
-                }
-                mVolumePercent.setText((int) volumePercent + "%");
-                int volume = (int) (volumePercent / 100 * maxVolume);
-                audioMgr.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
-            }
-
-            @Override
-            public void onEnd() {
-                Log.d(TAG, "TopToBottom ------- end");
-                mVolumenLayout.setVisibility(View.GONE);
-            }
-        });
-
+    public void playback(AssetFileDescriptor afd) {
+        // TODO
     }
 }

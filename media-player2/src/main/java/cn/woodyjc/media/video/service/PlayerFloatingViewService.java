@@ -3,8 +3,6 @@ package cn.woodyjc.media.video.service;
 import android.content.Intent;
 import android.os.IBinder;
 
-import cn.woodyjc.media.video.player.FloatingViewPlayer;
-
 
 /**
  * Created by June on 2016/8/14.

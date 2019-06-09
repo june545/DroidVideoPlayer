@@ -1,4 +1,4 @@
-package cn.woodyjc.media.video.player;
+package cn.woodyjc.media.video.service;
 
 import android.content.Context;
 import android.media.MediaPlayer;
@@ -48,7 +48,7 @@ public class FloatingViewPlayer implements View.OnTouchListener {
 
 
 	public View createView() {
-		View view = View.inflate(context, R.layout.video_player_floating_view, null);
+		View view = View.inflate(context, R.layout.floating_player_view, null);
 		SurfaceView surfaceView = (SurfaceView) view.findViewById(R.id.surfaceview);
 		imageButton = (ImageView) view.findViewById(R.id.close);
 		imageButton.setVisibility(View.GONE);

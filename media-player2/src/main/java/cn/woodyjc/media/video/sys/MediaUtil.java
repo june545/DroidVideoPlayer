@@ -1,4 +1,4 @@
-package cn.woodyjc.media.video.player;
+package cn.woodyjc.media.video.sys;
 
 import android.content.Context;
 import android.content.Intent;
