@@ -21,7 +21,7 @@ public class PlayerManger {
     SurfaceHolder surfaceHolder;
     PlaybackInfo playbackInfo;
     private boolean isSeekable = true;
-
+    private boolean isValidMediaPlayer;
     Vector<PlayerListener> playerListeners = new Vector<>();
 
     public PlayerManger() {
@@ -41,7 +41,7 @@ public class PlayerManger {
 
             @Override
             public void onPrepared(MediaPlayer mp) {
-//                Log.d(TAG, tagPrefix + "onPrepared");
+                LogUtil.d(TAG, "onPrepared: ---------");
 //                if (lastPosition > 0) {
 //                    mp.seekTo(lastPosition);
 //                } else {
@@ -56,7 +56,7 @@ public class PlayerManger {
                 LogUtil.d(TAG, "onVideoSizeChanged: width=" + width + ", height=" + height);
                 if (width * height == 0) return;
                 for (PlayerListener listener : playerListeners) {
-                    listener.onVideoSizeChanged(mp, width, height);
+                    listener.onVideoSizeChanged(width, height);
                 }
             }
         });
@@ -69,7 +69,7 @@ public class PlayerManger {
 //                    onBufferingUpdateListener.onBufferingUpdate(mp, percent);
 //                }
                 for (PlayerListener listener : playerListeners) {
-                    listener.onBufferingUpdate(mp, percent);
+                    listener.onBufferingUpdate(percent);
                 }
             }
         });
@@ -86,7 +86,7 @@ public class PlayerManger {
             public void onCompletion(MediaPlayer mp) {
                 LogUtil.d(TAG, "onCompletion: " + mp);
                 for (PlayerListener listener : playerListeners) {
-                    listener.onCompletion(mp);
+                    listener.onCompletion();
                 }
             }
         });
@@ -111,7 +111,7 @@ public class PlayerManger {
 //                        updateLoadingState(true);
                         start = System.currentTimeMillis();
                         for (PlayerListener listener : playerListeners) {
-                            listener.onBufferingStart(mp);
+                            listener.onBufferingStart();
                         }
                         break;
                     case MediaPlayer.MEDIA_INFO_BUFFERING_END:
@@ -119,7 +119,7 @@ public class PlayerManger {
 //                        updateLoadingState(false);
                         end = System.currentTimeMillis();
                         for (PlayerListener listener : playerListeners) {
-                            listener.onBufferingEnd(mp);
+                            listener.onBufferingEnd();
                         }
                         break;
                     case MediaPlayer.MEDIA_INFO_METADATA_UPDATE:
@@ -127,7 +127,7 @@ public class PlayerManger {
                         break;
                     case MediaPlayer.MEDIA_INFO_NOT_SEEKABLE:
 //                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_NOT_SEEKABLE");
-//                        isSeekable = false;
+                        isSeekable = false;
                         break;
                     case MediaPlayer.MEDIA_INFO_UNKNOWN:
 //                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_UNKNOWN");
@@ -197,6 +197,8 @@ public class PlayerManger {
     public void surfaceDestroyed(SurfaceHolder holder) {
         LogUtil.d(TAG, "--- surfaceDestroyed");
         this.surfaceHolder = null;
+        if(mMediaPlayer != null)
+            mMediaPlayer.setSurface(null);
     }
 
     public void setPlaybackInfo(PlaybackInfo info) {
@@ -211,7 +213,7 @@ public class PlayerManger {
         }
 
         if (surfaceHolder != null)
-            loadMedia(surfaceHolder == null ? null : surfaceHolder.getSurface());
+            loadMedia(surfaceHolder.getSurface());
     }
 
     public int getDuration() {

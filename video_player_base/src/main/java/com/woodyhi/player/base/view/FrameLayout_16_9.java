@@ -6,8 +6,6 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
-import com.woodyhi.player.base.LogUtil;
-
 /**
  * 宽和高其中一条边Match_parent固定为父布局大小，另一条wrap_content 根据16/9计算大小
  *
@@ -56,8 +54,6 @@ public class FrameLayout_16_9 extends FrameLayout {
                 width = widthSpecSize;
             }
         }
-
-        LogUtil.d(TAG, "onMeasure: width " + width + ", height " + height);
 
 //        setMeasuredDimension(width, height); // 显示不出子View
         super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),

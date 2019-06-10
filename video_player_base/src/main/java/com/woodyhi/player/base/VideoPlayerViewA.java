@@ -77,7 +77,7 @@ public class VideoPlayerViewA extends FrameLayout {
 
     PlayerListener playerListener = new PlayerListener() {
         @Override
-        public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+        public void onVideoSizeChanged(int width, int height) {
             surfaceView.updateViewSizeByVideoSize(width, height);
         }
     };
