@@ -110,8 +110,7 @@ public class VideoPlayerFragmentNew extends Fragment {
         controllerView = view.findViewById(R.id.default_controller_view);
         playerManger = videoPlayerView.getPlayerManger();
         if (playbackInfo != null) {
-            playerManger.setPlaybackInfo(playbackInfo);
-            playerManger.playback();
+            playerManger.playback(playbackInfo);
         }
         controllerView.setPlayerManger(playerManger);
     }
@@ -251,8 +250,7 @@ public class VideoPlayerFragmentNew extends Fragment {
      */
     public void playback(PlaybackInfo info) {
         if (playerManger != null) {
-            playerManger.setPlaybackInfo(info);
-            playerManger.playback();
+            playerManger.playback(info);
         } else {
             this.playbackInfo = info;
         }

@@ -18,4 +18,10 @@ public interface BaseController {
     public void fastRewind(int msec);
 
     public boolean isPlaying();
+
+    public boolean isSeekable();
+
+    public int getDuration();
+
+    public int getCurrentPosition();
 }

@@ -28,4 +28,7 @@ public abstract class PlayerListener {
     }
 
 
+    public void onRenderingStart() {
+
+    }
 }

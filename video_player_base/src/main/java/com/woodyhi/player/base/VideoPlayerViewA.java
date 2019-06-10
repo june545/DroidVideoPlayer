@@ -67,8 +67,7 @@ public class VideoPlayerViewA extends FrameLayout {
      * 播放链接
      */
     public void playback(PlaybackInfo info) {
-        playerManger.setPlaybackInfo(info);
-        playerManger.playback();
+        playerManger.playback(info);
     }
 
     public PlayerManger getPlayerManger() {

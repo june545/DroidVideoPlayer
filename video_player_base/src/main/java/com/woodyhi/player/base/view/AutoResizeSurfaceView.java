@@ -2,7 +2,6 @@ package com.woodyhi.player.base.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -91,7 +90,6 @@ public class AutoResizeSurfaceView extends SurfaceView {
         }
 
 //        Log.d(TAG, "----videoplayerview w=" + ((View) getParent()).getWidth() + " h=" + ((View) getParent()).getHeight());
-//        Log.d(TAG, "--------------------------------\n\n\n");
         setMeasuredDimension(width, height);
     }
 

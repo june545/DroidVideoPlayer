@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 
+import java.io.IOException;
 import java.util.Vector;
 
 /**
@@ -14,7 +15,7 @@ import java.util.Vector;
  * @author June
  * @date 2019-06-07
  */
-public class PlayerManger {
+public class PlayerManger extends AbsPlayerManager {
     private static final String TAG = PlayerManger.class.getSimpleName();
 
     MediaPlayer mMediaPlayer;
@@ -104,11 +105,13 @@ public class PlayerManger {
                         break;
                     case MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
 //                        updateLoadingState(false);
+                        for (PlayerListener listener : playerListeners) {
+                            listener.onRenderingStart();
+                        }
                         break;
                     case MediaPlayer.MEDIA_INFO_BUFFERING_START:
                         /* 遇到过这个事件，视频一直不动，mediaplayer状态是playing、网络正常，不知道是不是视频流的问题 */
                         LogUtil.d(TAG, "info MEDIA_INFO_BUFFERING_START");
-//                        updateLoadingState(true);
                         start = System.currentTimeMillis();
                         for (PlayerListener listener : playerListeners) {
                             listener.onBufferingStart();
@@ -116,7 +119,6 @@ public class PlayerManger {
                         break;
                     case MediaPlayer.MEDIA_INFO_BUFFERING_END:
                         LogUtil.d(TAG, "info MEDIA_INFO_BUFFERING_END");
-//                        updateLoadingState(false);
                         end = System.currentTimeMillis();
                         for (PlayerListener listener : playerListeners) {
                             listener.onBufferingEnd();
@@ -189,65 +191,95 @@ public class PlayerManger {
     }
 
     public void surfaceCreated(SurfaceHolder holder) {
-        LogUtil.d(TAG, "--- surfaceCreated");
         this.surfaceHolder = holder;
         loadMedia(holder.getSurface());
     }
 
     public void surfaceDestroyed(SurfaceHolder holder) {
-        LogUtil.d(TAG, "--- surfaceDestroyed");
         this.surfaceHolder = null;
-        if(mMediaPlayer != null)
+        if (mMediaPlayer != null) {
             mMediaPlayer.setSurface(null);
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.pause();
+            }
+        }
     }
 
-    public void setPlaybackInfo(PlaybackInfo info) {
+    public void playback(PlaybackInfo info) {
         this.playbackInfo = info;
+        if (mMediaPlayer != null) {
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.stop();
+                mMediaPlayer.reset();
+            }
+            try {
+                mMediaPlayer.setDataSource(info.path);
+                mMediaPlayer.prepareAsync();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            if (surfaceHolder != null)
+                loadMedia(surfaceHolder.getSurface());
+        }
     }
 
+    //-----------------------------------------Controller--------------------------------------
+    @Override
     public void playback() {
-        if (mMediaPlayer != null) {
-            if (mMediaPlayer.isPlaying()) mMediaPlayer.stop();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-        }
-
-        if (surfaceHolder != null)
-            loadMedia(surfaceHolder.getSurface());
-    }
-
-    public int getDuration() {
-        if (mMediaPlayer != null) {
-            return mMediaPlayer.getDuration();
-        }
-        return 0;
-    }
-
-    public int getCurrentPosition() {
-        if (mMediaPlayer != null) {
-            return mMediaPlayer.getCurrentPosition();
-        }
-        return 0;
-    }
-
-    public boolean isSeekable() {
-        return isSeekable;
-    }
-
-    public void seekTo(int seekto) {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.seekTo(seekto);
+        if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
+            mMediaPlayer.start();
         }
     }
 
+    @Override
+    public void pause() {
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying())
+            mMediaPlayer.pause();
+    }
+
+    @Override
+    public void seekTo(int msec) {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.seekTo(msec);
+        }
+    }
+
+    @Override
+    public void fastForward(int msec) {
+
+    }
+
+    @Override
+    public void fastRewind(int msec) {
+
+    }
+
+    @Override
     public boolean isPlaying() {
         if (mMediaPlayer != null && mMediaPlayer.isPlaying())
             return true;
         return false;
     }
 
-    public void pause() {
-        if (mMediaPlayer != null)
-            mMediaPlayer.pause();
+    @Override
+    public boolean isSeekable() {
+        return isSeekable;
+    }
+
+    @Override
+    public int getDuration() {
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+            return mMediaPlayer.getDuration();
+        }
+        return 0;
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+            return mMediaPlayer.getCurrentPosition();
+        }
+        return 0;
     }
 }

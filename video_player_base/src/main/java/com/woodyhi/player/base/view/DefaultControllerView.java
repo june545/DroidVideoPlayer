@@ -79,11 +79,9 @@ public class DefaultControllerView extends FrameLayout {
                     mCurrentTime.setText(Util.formatMillisTime(currentPosition));
                     mDurationTime.setText(Util.formatMillisTime(duration));
                 }
-                if (duration == 0) {
-                    seekAndTimeView.setVisibility(View.INVISIBLE);
-                }
             }
         });
+        progressTimer.start();
     }
 
     private void setup(Context context) {
@@ -129,7 +127,6 @@ public class DefaultControllerView extends FrameLayout {
         });
 
         mSeekBar.setOnSeekBarChangeListener(new PlayerSeekBarChangeListener());
-
     }
 
     @Override
@@ -151,9 +148,9 @@ public class DefaultControllerView extends FrameLayout {
     PlayerListener playerListener = new PlayerListener() {
         @Override
         public void onCompletion() {
-            LogUtil.d(TAG, "onCompletion: ================================= ");
-//            playPauseBtn.setImageResource(R.drawable.baseline_play_arrow_24);
-//            progressTimer.stop();
+            LogUtil.d(TAG, "onCompletion: --- ");
+            playPauseBtn.setImageResource(R.drawable.baseline_play_arrow_24);
+            progressTimer.stop();
         }
     };
 
