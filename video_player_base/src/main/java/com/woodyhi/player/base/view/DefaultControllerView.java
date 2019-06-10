@@ -13,7 +13,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.woodyhi.player.base.LogUtil;
-import com.woodyhi.player.base.PlayerListener;
+import com.woodyhi.player.base.PlayerCallback;
 import com.woodyhi.player.base.PlayerManger;
 import com.woodyhi.player.base.ProgressTimer;
 import com.woodyhi.player.base.R;
@@ -142,10 +142,10 @@ public class DefaultControllerView extends FrameLayout {
 
     public void setPlayerManger(PlayerManger playerManger) {
         this.playerManger = playerManger;
-        this.playerManger.addPlayerListener(playerListener);
+        this.playerManger.addPlayerListener(playerCallback);
     }
 
-    PlayerListener playerListener = new PlayerListener() {
+    PlayerCallback playerCallback = new PlayerCallback() {
         @Override
         public void onCompletion() {
             LogUtil.d(TAG, "onCompletion: --- ");

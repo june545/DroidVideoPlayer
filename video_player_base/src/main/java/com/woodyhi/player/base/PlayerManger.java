@@ -23,13 +23,13 @@ public class PlayerManger extends AbsPlayerManager {
     PlaybackInfo playbackInfo;
     private boolean isSeekable = true;
     private boolean isValidMediaPlayer;
-    Vector<PlayerListener> playerListeners = new Vector<>();
+    Vector<PlayerCallback> playerCallbacks = new Vector<>();
 
     public PlayerManger() {
     }
 
-    public void addPlayerListener(PlayerListener listener) {
-        this.playerListeners.add(listener);
+    public void addPlayerListener(PlayerCallback listener) {
+        this.playerCallbacks.add(listener);
     }
 
     private MediaPlayer createMediaPlayer(Surface surface) {
@@ -38,57 +38,35 @@ public class PlayerManger extends AbsPlayerManager {
         mediaPlayer.setSurface(surface);
         mediaPlayer.setScreenOnWhilePlaying(true);// works when setDisplay invoked
 
-        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                LogUtil.d(TAG, "onPrepared: ---------");
+        mediaPlayer.setOnPreparedListener(mp -> {
+            LogUtil.d(TAG, "onPrepared: ---------");
 //                if (lastPosition > 0) {
 //                    mp.seekTo(lastPosition);
 //                } else {
-                mp.start();
+            mp.start();
 //                }
+        });
+        mediaPlayer.setOnVideoSizeChangedListener((mp, width, height) -> {
+            LogUtil.d(TAG, "onVideoSizeChanged: width=" + width + ", height=" + height);
+            if (width * height == 0) return;
+            for (PlayerCallback listener : playerCallbacks) {
+                listener.onVideoSizeChanged(width, height);
             }
         });
-        mediaPlayer.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
-
-            @Override
-            public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
-                LogUtil.d(TAG, "onVideoSizeChanged: width=" + width + ", height=" + height);
-                if (width * height == 0) return;
-                for (PlayerListener listener : playerListeners) {
-                    listener.onVideoSizeChanged(width, height);
-                }
-            }
-        });
-        mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
-
-            @Override
-            public void onBufferingUpdate(MediaPlayer mp, int percent) {
+        mediaPlayer.setOnBufferingUpdateListener((mp, percent) -> {
 //                Log.d(TAG, tagPrefix + "mediaplayer buffered progress : " + percent + "%");
 //                if (onBufferingUpdateListener != null) {
 //                    onBufferingUpdateListener.onBufferingUpdate(mp, percent);
 //                }
-                for (PlayerListener listener : playerListeners) {
-                    listener.onBufferingUpdate(percent);
-                }
+            for (PlayerCallback listener : playerCallbacks) {
+                listener.onBufferingUpdate(percent);
             }
         });
-        mediaPlayer.setOnSeekCompleteListener(new MediaPlayer.OnSeekCompleteListener() {
-
-            @Override
-            public void onSeekComplete(MediaPlayer mp) {
-                LogUtil.d(TAG, "onSeekComplete");
-            }
-        });
-        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                LogUtil.d(TAG, "onCompletion: " + mp);
-                for (PlayerListener listener : playerListeners) {
-                    listener.onCompletion();
-                }
+        mediaPlayer.setOnSeekCompleteListener(mp -> LogUtil.d(TAG, "onSeekComplete"));
+        mediaPlayer.setOnCompletionListener(mp -> {
+            LogUtil.d(TAG, "onCompletion: " + mp);
+            for (PlayerCallback listener : playerCallbacks) {
+                listener.onCompletion();
             }
         });
         mediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
@@ -105,7 +83,7 @@ public class PlayerManger extends AbsPlayerManager {
                         break;
                     case MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
 //                        updateLoadingState(false);
-                        for (PlayerListener listener : playerListeners) {
+                        for (PlayerCallback listener : playerCallbacks) {
                             listener.onRenderingStart();
                         }
                         break;
@@ -113,14 +91,14 @@ public class PlayerManger extends AbsPlayerManager {
                         /* 遇到过这个事件，视频一直不动，mediaplayer状态是playing、网络正常，不知道是不是视频流的问题 */
                         LogUtil.d(TAG, "info MEDIA_INFO_BUFFERING_START");
                         start = System.currentTimeMillis();
-                        for (PlayerListener listener : playerListeners) {
+                        for (PlayerCallback listener : playerCallbacks) {
                             listener.onBufferingStart();
                         }
                         break;
                     case MediaPlayer.MEDIA_INFO_BUFFERING_END:
                         LogUtil.d(TAG, "info MEDIA_INFO_BUFFERING_END");
                         end = System.currentTimeMillis();
-                        for (PlayerListener listener : playerListeners) {
+                        for (PlayerCallback listener : playerCallbacks) {
                             listener.onBufferingEnd();
                         }
                         break;
@@ -190,11 +168,13 @@ public class PlayerManger extends AbsPlayerManager {
         }
     }
 
+    @Override
     public void surfaceCreated(SurfaceHolder holder) {
         this.surfaceHolder = holder;
         loadMedia(holder.getSurface());
     }
 
+    @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         this.surfaceHolder = null;
         if (mMediaPlayer != null) {

@@ -80,11 +80,11 @@ public class APlayerView extends FrameLayout {
 
     public void setPlayerManager(PlayerManger playerManger) {
         this.playerManger = playerManger;
-        this.playerManger.addPlayerListener(playerListener);
+        this.playerManger.addPlayerListener(playerCallback);
         surfaceView.setPlayerManager(this.playerManger);
     }
 
-    PlayerListener playerListener = new PlayerListener() {
+    PlayerCallback playerCallback = new PlayerCallback() {
         @Override
         public void onVideoSizeChanged(int width, int height) {
             surfaceView.updateViewSizeByVideoSize(width, height);

@@ -39,10 +39,10 @@ public class VideoPlayerFragmentNew extends Fragment {
     @BindView(R.id.open_close_fullscreen) ImageView openCloseFullscreenBtn;
 
     PlayerManger playerManger;
+    PlaybackInfo playbackInfo;
 
     private int systemUiVisibilityWhenPortrait;
 
-    PlaybackInfo playbackInfo;
 
     public static VideoPlayerFragmentNew newInstance() {
         VideoPlayerFragmentNew videoPlayerFragmentNew = new VideoPlayerFragmentNew();
@@ -68,9 +68,7 @@ public class VideoPlayerFragmentNew extends Fragment {
 
     private void initViews(View view) {
         playerManger = videoPlayerView.getPlayerManger();
-        if (playbackInfo != null) {
-            playerManger.playback(playbackInfo);
-        }
+        playerManger.playback(playbackInfo);
     }
 
     @Override

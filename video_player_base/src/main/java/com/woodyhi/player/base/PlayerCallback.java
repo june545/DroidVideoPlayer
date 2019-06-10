@@ -4,7 +4,7 @@ package com.woodyhi.player.base;
  * @author June
  * @date 2019-06-09
  */
-public abstract class PlayerListener {
+public abstract class PlayerCallback {
 
     public void onPrepared() {
     }

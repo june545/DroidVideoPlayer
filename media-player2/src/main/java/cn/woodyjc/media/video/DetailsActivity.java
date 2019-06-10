@@ -7,7 +7,7 @@ import android.view.WindowManager;
 
 import com.woodyhi.player.base.PlaybackInfo;
 
-import cn.woodyjc.media.video.player.VideoPlayerFragment;
+import cn.woodyjc.media.video.ijk.IjkPlayerFragment;
 
 public class DetailsActivity extends AppCompatActivity {
     //    String path = Uri.fromFile(new File("/sdcard/Download/iceage.3gp")).toString();
@@ -32,6 +32,7 @@ public class DetailsActivity extends AppCompatActivity {
 //        AspectRatioFrameLayout aspectRatioLayout = findViewById(R.id.player_container);
 //        aspectRatioLayout.setResizeType(AspectRatioFrameLayout.RESIZE_TYPE_16_9);
 
+        /*
         VideoPlayerFragmentNew videoPlayerFragmentNew = VideoPlayerFragmentNew.newInstance();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -39,6 +40,7 @@ public class DetailsActivity extends AppCompatActivity {
                 .commit();
 
         videoPlayerFragmentNew.playback(new PlaybackInfo(path));
+*/
 
 /*
         VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
@@ -49,6 +51,15 @@ public class DetailsActivity extends AppCompatActivity {
 
         videoPlayerFragment.playback(path);
 */
+
+
+        IjkPlayerFragment fragment = new IjkPlayerFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.player_container, fragment)
+                .commit();
+
+        fragment.playback(new PlaybackInfo(path));
 
 
     }
