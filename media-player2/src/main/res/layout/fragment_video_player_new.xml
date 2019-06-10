@@ -2,18 +2,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.woodyhi.player.base.VideoPlayer
+    <com.woodyhi.player.base.SimplePlayerView
         android:id="@+id/video_player_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </com.woodyhi.player.base.VideoPlayer>
+    </com.woodyhi.player.base.SimplePlayerView>
 
-
-    <!--<include layout="@layout/video_player_controller"/>-->
-    <com.woodyhi.player.base.view.DefaultControllerView
-        android:id="@+id/default_controller_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </com.woodyhi.player.base.view.DefaultControllerView>
 </FrameLayout>

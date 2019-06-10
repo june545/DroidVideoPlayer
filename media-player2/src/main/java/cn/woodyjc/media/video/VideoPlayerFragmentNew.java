@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,10 +17,8 @@ import android.widget.ImageView;
 
 import com.woodyhi.player.base.PlaybackInfo;
 import com.woodyhi.player.base.PlayerManger;
-import com.woodyhi.player.base.VideoPlayer;
+import com.woodyhi.player.base.SimplePlayerView;
 import com.woodyhi.player.base.view.DefaultControllerView;
-
-import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,52 +34,15 @@ public class VideoPlayerFragmentNew extends Fragment {
 
     private Context mContext;
     private View rootView;
-    @BindView(R.id.video_player_view) VideoPlayer videoPlayerView;
-
-    @BindView(R.id.default_controller_view) DefaultControllerView controllerView;
+    @BindView(R.id.video_player_view) SimplePlayerView videoPlayerView;
+    DefaultControllerView controllerView;
+    @BindView(R.id.open_close_fullscreen) ImageView openCloseFullscreenBtn;
 
     PlayerManger playerManger;
-
-    @BindView(R.id.open_close_fullscreen) ImageView openCloseFullscreenBtn;
 
     private int systemUiVisibilityWhenPortrait;
 
     PlaybackInfo playbackInfo;
-
-    static class MyHandler extends Handler {
-        static final byte HANDLER_SHOW_CONTROL_BAR = 1;
-        static final byte HANDLER_HIDE_CONTROL_BAR = 2;
-        static final byte HANDLER_UPDATE_PLAYBACK_PROGRESS = 3;
-
-        WeakReference<VideoPlayerFragmentNew> weakReference;
-
-        MyHandler(VideoPlayerFragmentNew fragment) {
-            weakReference = new WeakReference<>(fragment);
-        }
-
-        @Override
-        public void handleMessage(android.os.Message msg) {
-            VideoPlayerFragmentNew fragment = weakReference.get();
-            if (fragment == null) return;
-
-            switch (msg.what) {
-                case HANDLER_SHOW_CONTROL_BAR:
-
-                    break;
-                case HANDLER_HIDE_CONTROL_BAR:
-//                    fragment.hideControlView();
-
-                    break;
-                case HANDLER_UPDATE_PLAYBACK_PROGRESS:
-//                    sendEmptyMessageDelayed(HANDLER_UPDATE_PLAYBACK_PROGRESS, 1000 - fragment.lastPosition % 1000);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    ;
 
     public static VideoPlayerFragmentNew newInstance() {
         VideoPlayerFragmentNew videoPlayerFragmentNew = new VideoPlayerFragmentNew();
@@ -107,12 +67,10 @@ public class VideoPlayerFragmentNew extends Fragment {
     }
 
     private void initViews(View view) {
-        controllerView = view.findViewById(R.id.default_controller_view);
         playerManger = videoPlayerView.getPlayerManger();
         if (playbackInfo != null) {
             playerManger.playback(playbackInfo);
         }
-        controllerView.setPlayerManger(playerManger);
     }
 
     @Override
@@ -129,7 +87,6 @@ public class VideoPlayerFragmentNew extends Fragment {
         // 获取屏幕尺寸
         DisplayMetrics dm = new DisplayMetrics();
         ((Activity) mContext).getWindowManager().getDefaultDisplay().getMetrics(dm);
-
     }
 
     @Override
@@ -145,14 +102,6 @@ public class VideoPlayerFragmentNew extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause() ");
-/*
-        if (duration - lastPosition < 5000) {// almost completed
-            lastPosition = 0;
-        } else {
-            // currentPosition -= 3000;// go back few seconds, to compensate player_loading time
-        }
-        */
     }
 
     @Override

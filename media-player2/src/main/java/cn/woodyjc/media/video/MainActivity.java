@@ -1,11 +1,8 @@
 package cn.woodyjc.media.video;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-
-import java.io.File;
 
 import cn.woodyjc.media.view.AspectRatioLayout;
 
@@ -22,11 +19,6 @@ public class MainActivity extends AppCompatActivity {
 
         AspectRatioLayout aspectRatioLayout = findViewById(R.id.aspect_ratio_layout);
         aspectRatioLayout.setResizeType(AspectRatioLayout.RESIZE_TYPE_16_9);
-
-        String path = Uri.fromFile(new File("/sdcard/Download/iceage.3gp")).toString();
-
-//        videoPlayerFragment = (VideoPlayerFragment) getSupportFragmentManager().findFragmentById(R.id.video_payer_fragment);
-//        videoPlayerFragment.playback(path);
 
         startActivity(new Intent(this, DetailsActivity.class));
         finish();

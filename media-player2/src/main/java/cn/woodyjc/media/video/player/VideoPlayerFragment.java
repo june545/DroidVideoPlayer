@@ -108,7 +108,6 @@ public class VideoPlayerFragment extends Fragment {
         }
     }
 
-    ;
 
     public VideoPlayerFragment() {
     }
@@ -404,16 +403,8 @@ public class VideoPlayerFragment extends Fragment {
     }
 
     public void playback(String path) {
-        videoPlayerView.play(path, 0);
-        mMediaPath = path;
-        lastPosition = 0;
-    }
-
-    public void playback(FileDescriptor fd) {
-        // TODO
-    }
-
-    public void playback(AssetFileDescriptor afd) {
-        // TODO
+//        videoPlayerView.play(path, 0);
+//        mMediaPath = path;
+//        lastPosition = 0;
     }
 }

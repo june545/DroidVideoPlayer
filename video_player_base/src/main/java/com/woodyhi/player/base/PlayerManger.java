@@ -277,7 +277,7 @@ public class PlayerManger extends AbsPlayerManager {
 
     @Override
     public int getCurrentPosition() {
-        if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+        if (mMediaPlayer != null) {
             return mMediaPlayer.getCurrentPosition();
         }
         return 0;
