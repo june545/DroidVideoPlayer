@@ -7,14 +7,13 @@ import android.view.WindowManager;
 
 import com.woodyhi.player.base.PlaybackInfo;
 
-import cn.woodyjc.media.video.ijk.IjkPlayerFragment;
-
 public class DetailsActivity extends AppCompatActivity {
     //    String path = Uri.fromFile(new File("/sdcard/Download/iceage.3gp")).toString();
 //    String path = "http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4";
 //    String path = "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8";
-    String path = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
-//    String path = "http://vfx.mtime.cn/Video/2019/05/21/mp4/190521101629869012.mp4";
+//    String path = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
+    String path = "http://vfx.mtime.cn/Video/2019/05/21/mp4/190521101629869012.mp4";
+//    String path = "rtmp://live.hkstv.hk.lxdns.com/live/hks1";
 
 
     @Override
@@ -29,10 +28,8 @@ public class DetailsActivity extends AppCompatActivity {
             getWindow().getDecorView().findViewById(android.R.id.content).setFitsSystemWindows(true);
         }
 
-//        AspectRatioFrameLayout aspectRatioLayout = findViewById(R.id.player_container);
-//        aspectRatioLayout.setResizeType(AspectRatioFrameLayout.RESIZE_TYPE_16_9);
 
-        /*
+
         VideoPlayerFragmentNew videoPlayerFragmentNew = VideoPlayerFragmentNew.newInstance();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -40,7 +37,7 @@ public class DetailsActivity extends AppCompatActivity {
                 .commit();
 
         videoPlayerFragmentNew.playback(new PlaybackInfo(path));
-*/
+
 
 /*
         VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
@@ -52,7 +49,7 @@ public class DetailsActivity extends AppCompatActivity {
         videoPlayerFragment.playback(path);
 */
 
-
+/*
         IjkPlayerFragment fragment = new IjkPlayerFragment();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -60,7 +57,7 @@ public class DetailsActivity extends AppCompatActivity {
                 .commit();
 
         fragment.playback(new PlaybackInfo(path));
-
+*/
 
     }
 }

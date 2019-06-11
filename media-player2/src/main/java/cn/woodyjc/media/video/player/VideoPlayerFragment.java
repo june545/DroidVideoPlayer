@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.res.AssetFileDescriptor;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,7 +23,6 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-import java.io.FileDescriptor;
 import java.lang.ref.WeakReference;
 
 import butterknife.BindView;
@@ -330,7 +328,7 @@ public class VideoPlayerFragment extends Fragment {
 
     private void showControllerView(boolean autoHide) {
         if (playerControlBar.getVisibility() == View.GONE) {
-            playerControlBar.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.control_bar_show_up));
+            playerControlBar.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.bottom_slide_up));
             playerControlBar.setVisibility(View.VISIBLE);
         }
         if (autoHide) {
@@ -341,7 +339,7 @@ public class VideoPlayerFragment extends Fragment {
 
     private void hideControlView() {
         if (playerControlBar.getVisibility() == View.VISIBLE) {
-            playerControlBar.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.control_bar_hide_down));
+            playerControlBar.setAnimation(AnimationUtils.loadAnimation(mContext, R.anim.bottom_slide_down));
             playerControlBar.setVisibility(View.GONE);
         }
     }

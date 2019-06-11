@@ -14,11 +14,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.woodyhi.player.base.view.FrameLayout_16_9
+        <com.woodyhi.player.view.FrameLayout_16_9
             android:id="@+id/player_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        </com.woodyhi.player.base.view.FrameLayout_16_9>
+        </com.woodyhi.player.view.FrameLayout_16_9>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

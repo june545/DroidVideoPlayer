@@ -3,8 +3,7 @@ package cn.woodyjc.media.video;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-
-import cn.woodyjc.media.view.AspectRatioLayout;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 //    String path = "http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4";
@@ -17,10 +16,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        AspectRatioLayout aspectRatioLayout = findViewById(R.id.aspect_ratio_layout);
-        aspectRatioLayout.setResizeType(AspectRatioLayout.RESIZE_TYPE_16_9);
+    }
 
+    public void internal(View view) {
         startActivity(new Intent(this, DetailsActivity.class));
-        finish();
+
+    }
+
+    public void ijkplay(View view) {
+        startActivity(new Intent(this, DetailsIjkActivity.class));
+
+    }
+
+    public void vlcplay(View view) {
+        startActivity(new Intent(this, DetailsVlcActivity.class));
+
     }
 }

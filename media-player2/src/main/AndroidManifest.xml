@@ -14,6 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".DetailsVlcActivity"></activity>
+        <activity android:name=".DetailsIjkActivity" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
@@ -25,7 +27,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".DetailsActivity"
             android:configChanges="orientation|screenSize" />
