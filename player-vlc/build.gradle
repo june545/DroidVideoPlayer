@@ -36,5 +36,6 @@ dependencies {
     androidTestImplementation deps.espresso.core
 
     api project(path: ':player-base')
+    implementation 'androidx.annotation:annotation:1.0.0'
 
 }
