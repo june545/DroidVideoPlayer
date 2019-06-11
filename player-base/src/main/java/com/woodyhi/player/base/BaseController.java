@@ -6,6 +6,8 @@ package com.woodyhi.player.base;
  */
 
 public interface BaseController {
+    public void playback(PlaybackInfo info);
+
     /** 播放 */
     public void playback();
     /** 暂停 */

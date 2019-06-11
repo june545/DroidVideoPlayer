@@ -3,15 +3,14 @@ package com.woodyhi.player.internal;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.woodyhi.player.base.APlayerView;
+import com.woodyhi.player.base.AbsPlayerView;
 import com.woodyhi.player.base.PlaybackInfo;
-import com.woodyhi.player.view.DefaultControllerView;
 
 /**
  * @author June
  * @date 2019-06-09
  */
-public class SimplePlayerView extends APlayerView {
+public class SimplePlayerView extends AbsPlayerView {
     public SimplePlayerView(Context context) {
         this(context, null);
     }
@@ -26,8 +25,8 @@ public class SimplePlayerView extends APlayerView {
     }
 
     private void init(Context context) {
-        PlayerManger playerManger = new PlayerManger();
-        setPlayerManager(playerManger);
+        MediaPlayerManger playerManger = new MediaPlayerManger();
+        this.setPlayerManager(playerManger);
 
 
         DefaultControllerView controllerView = new DefaultControllerView(context);

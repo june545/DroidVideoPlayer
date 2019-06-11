@@ -8,19 +8,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.PlaybackInfo;
-import com.woodyhi.player.internal.PlayerManger;
+import com.woodyhi.player.internal.MediaPlayerManger;
 
 /**
  * @auth June
  * @date 2019/06/10
  */
+@Deprecated
 public class IjkPlayerFragment extends Fragment {
 
     View rootView;
     IjkPlayerView videoPlayerView;
 
-    PlayerManger playerManger;
+    AbsPlayerManager playerManger;
     PlaybackInfo playbackInfo;
 
     @Nullable

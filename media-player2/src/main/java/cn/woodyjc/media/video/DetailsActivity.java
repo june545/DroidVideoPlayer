@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.WindowManager;
 
 import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.internal.SimplePlayerView;
 
 public class DetailsActivity extends AppCompatActivity {
     //    String path = Uri.fromFile(new File("/sdcard/Download/iceage.3gp")).toString();
@@ -29,7 +30,6 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
 
-
         VideoPlayerFragmentNew videoPlayerFragmentNew = VideoPlayerFragmentNew.newInstance();
         getSupportFragmentManager()
                 .beginTransaction()
@@ -39,25 +39,9 @@ public class DetailsActivity extends AppCompatActivity {
         videoPlayerFragmentNew.playback(new PlaybackInfo(path));
 
 
-/*
-        VideoPlayerFragment videoPlayerFragment = new VideoPlayerFragment();
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.player_container, videoPlayerFragment)
-                .commit();
-
-        videoPlayerFragment.playback(path);
-*/
-
-/*
-        IjkPlayerFragment fragment = new IjkPlayerFragment();
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(R.id.player_container, fragment)
-                .commit();
-
-        fragment.playback(new PlaybackInfo(path));
-*/
-
+        SimplePlayerView simplePlayerView1 = findViewById(R.id.video_player_view_1);
+        simplePlayerView1.getPlayerManger().playback(new PlaybackInfo(path));
+        SimplePlayerView simplePlayerView2 = findViewById(R.id.video_player_view_2);
+        simplePlayerView2.getPlayerManger().playback(new PlaybackInfo(path));
     }
 }

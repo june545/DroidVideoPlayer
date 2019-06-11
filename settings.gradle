@@ -1,4 +1,4 @@
-include ':VideoPlayer', ':media-player-base', ':media-player', ':exo-player-demo', ':gl', ':multimediautil', ':video-player-exo'
+include ':VideoPlayer', ':media-player-base', ':media-player', ':exo-player-demo', ':gl', ':multimediautil', ':video-player-exo', ':libvlc'
 include ':player-base'
 include ':player-ijk'
 include ':player-vlc'

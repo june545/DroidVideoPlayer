@@ -4,9 +4,6 @@ import android.view.SurfaceHolder;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.PlaybackInfo;
-import com.woodyhi.player.base.PlayerCallback;
-
-import java.util.Vector;
 
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -17,7 +14,6 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 public class IjkPlayerManager extends AbsPlayerManager {
 
     IjkMediaPlayer ijkMediaPlayer;
-    Vector<PlayerCallback> playerCallbacks = new Vector<>();
     SurfaceHolder surfaceHolder;
 
     PlaybackInfo playbackInfo;
@@ -68,6 +64,8 @@ public class IjkPlayerManager extends AbsPlayerManager {
         pause();
     }
 
+
+    //-----------------------------------------Controller--------------------------------------
     public void playback(PlaybackInfo info) {
         this.playbackInfo = info;
         if (ijkMediaPlayer != null) {
@@ -80,7 +78,6 @@ public class IjkPlayerManager extends AbsPlayerManager {
         }
     }
 
-    //-----------------------------------------Controller--------------------------------------
     @Override
     public void playback() {
 

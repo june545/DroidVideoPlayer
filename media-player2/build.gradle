@@ -47,6 +47,7 @@ dependencies {
 
     implementation project(path: ':player-base')
     implementation project(path: ':player-ijk')
-//    implementation project(path: ':player-vlc')
+//    implementation project(path: ':libvlc')
+    implementation project(path: ':player-vlc')
 
 }

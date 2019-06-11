@@ -16,8 +16,8 @@ import android.view.WindowManager;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
+import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.PlaybackInfo;
-import com.woodyhi.player.internal.PlayerManger;
 import com.woodyhi.player.internal.SimplePlayerView;
 
 import butterknife.BindView;
@@ -38,7 +38,7 @@ public class VideoPlayerFragmentNew extends Fragment {
     View controllerView;
     @BindView(R.id.open_close_fullscreen) ImageView openCloseFullscreenBtn;
 
-    PlayerManger playerManger;
+    AbsPlayerManager playerManger;
     PlaybackInfo playbackInfo;
 
     private int systemUiVisibilityWhenPortrait;
