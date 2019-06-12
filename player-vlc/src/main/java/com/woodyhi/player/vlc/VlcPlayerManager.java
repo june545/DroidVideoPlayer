@@ -33,11 +33,9 @@ public class VlcPlayerManager extends AbsPlayerManager {
 
     private MediaPlayer mediaPlayer;
     private LibVLC libVLC;
+    private volatile int lastPosition;
 
-    public VlcPlayerManager() {
-    }
-
-    public void setContext(Context context) {
+    public VlcPlayerManager(Context context) {
         this.context = context;
     }
 
@@ -52,7 +50,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
         options.add("--network-caching=3000");
         options.add("--live-caching=500"); // 直播缓存
         options.add("--sout-mux-caching=500"); // 输出缓存
-        options.add("--rtsp-tcp"); // RTSP采用TCP传输方式
+//        options.add("--rtsp-tcp"); // RTSP采用TCP传输方式
         options.add("--aout=opensles");
         options.add("--audio-time-stretch"); // time stretching
 
@@ -92,7 +90,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
             switch (event.type) {
                 case MediaPlayer.Event.EndReached:
                     LogUtil.d(TAG, "MediaPlayerEndReached");
-//                    player.releasePlayer();
+                    mgr.onCompletion();
                     break;
                 case MediaPlayer.Event.EncounteredError:
                     LogUtil.d(TAG, "Media Player Error, re-try");
@@ -101,7 +99,8 @@ public class VlcPlayerManager extends AbsPlayerManager {
                 case MediaPlayer.Event.PositionChanged:
                     break;
                 case MediaPlayer.Event.TimeChanged:
-                    mgr.onTimeChanged(event.getTimeChanged());
+//                    mgr.onTimeChanged(event.getTimeChanged());
+                    mgr.lastPosition = (int) event.getTimeChanged();
                     break;
                 case MediaPlayer.Event.Playing:
                 case MediaPlayer.Event.Paused:
@@ -110,6 +109,11 @@ public class VlcPlayerManager extends AbsPlayerManager {
                     break;
             }
         }
+    }
+
+    private void onCompletion() {
+        for(PlayerCallback callback : playerCallbacks)
+            callback.onCompletion();
     }
 
     private void onTimeChanged(long time) {
@@ -173,9 +177,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
     @Override
     public void seekTo(int msec) {
         if (mediaPlayer != null && mediaPlayer.isSeekable()) {
-            mediaPlayer.pause();
-            mediaPlayer.setPosition(msec);
-            mediaPlayer.play();
+            mediaPlayer.setTime(msec);
         }
     }
 
@@ -210,9 +212,9 @@ public class VlcPlayerManager extends AbsPlayerManager {
 
     @Override
     public int getCurrentPosition() {
-        if (mediaPlayer != null)
-            mediaPlayer.getPosition();
-        return 0;
+//        if (mediaPlayer != null)
+//            mediaPlayer.getPosition();
+        return lastPosition;
     }
 
     @Override
