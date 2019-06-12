@@ -39,6 +39,17 @@
             </com.woodyhi.player.vlc.VlcPlayerView>
         </com.woodyhi.player.widget.FrameLayout_16_9>
 
+        <com.woodyhi.player.widget.FrameLayout_16_9
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.woodyhi.player.widget.PlayerView
+                android:id="@+id/video_player_view_3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </com.woodyhi.player.widget.PlayerView>
+        </com.woodyhi.player.widget.FrameLayout_16_9>
     </LinearLayout>
 
 

@@ -7,13 +7,16 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.woodyhi.player.base.AbsPlayerManager;
+import com.woodyhi.player.base.LogUtil;
 import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.base.PlayerCallback;
 
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.util.VLCUtil;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +24,7 @@ import java.util.ArrayList;
  * @date 2019-06-11
  */
 public class VlcPlayerManager extends AbsPlayerManager {
-    private final String TAG = VlcPlayerManager.class.getSimpleName();
+    private static final String TAG = VlcPlayerManager.class.getSimpleName();
 
     private Context context;
     private SurfaceHolder surfaceHolder;
@@ -34,7 +37,6 @@ public class VlcPlayerManager extends AbsPlayerManager {
     public VlcPlayerManager() {
     }
 
-
     public void setContext(Context context) {
         this.context = context;
     }
@@ -45,14 +47,19 @@ public class VlcPlayerManager extends AbsPlayerManager {
             throw new IllegalStateException("LibVLC initialisation failed: " + VLCUtil.getErrorMsg());
         }
         ArrayList<String> options = new ArrayList<>();
-        options.add("-vvv");
+//        options.add("-vvv");
+        options.add("--http-reconnect");
         options.add("--network-caching=3000");
         options.add("--live-caching=500"); // 直播缓存
         options.add("--sout-mux-caching=500"); // 输出缓存
         options.add("--rtsp-tcp"); // RTSP采用TCP传输方式
+        options.add("--aout=opensles");
+        options.add("--audio-time-stretch"); // time stretching
 
         libVLC = new LibVLC(options);
         mediaPlayer = new MediaPlayer(libVLC);
+
+        mediaPlayer.setEventListener(new EventListenerImpl(this));
     }
 
     private void createMediaPlayer() {
@@ -71,11 +78,51 @@ public class VlcPlayerManager extends AbsPlayerManager {
         mediaPlayer = new MediaPlayer(libVLC);
     }
 
+    private static class EventListenerImpl implements MediaPlayer.EventListener {
+        private WeakReference<VlcPlayerManager> mOwner;
+
+        public EventListenerImpl(VlcPlayerManager owner) {
+            mOwner = new WeakReference<VlcPlayerManager>(owner);
+        }
+
+        @Override
+        public void onEvent(MediaPlayer.Event event) {
+            VlcPlayerManager mgr = mOwner.get();
+            Log.d(TAG, "Player EVENT");
+            switch (event.type) {
+                case MediaPlayer.Event.EndReached:
+                    LogUtil.d(TAG, "MediaPlayerEndReached");
+//                    player.releasePlayer();
+                    break;
+                case MediaPlayer.Event.EncounteredError:
+                    LogUtil.d(TAG, "Media Player Error, re-try");
+                    //player.releasePlayer();
+                    break;
+                case MediaPlayer.Event.PositionChanged:
+                    break;
+                case MediaPlayer.Event.TimeChanged:
+                    mgr.onTimeChanged(event.getTimeChanged());
+                    break;
+                case MediaPlayer.Event.Playing:
+                case MediaPlayer.Event.Paused:
+                case MediaPlayer.Event.Stopped:
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void onTimeChanged(long time) {
+        for (PlayerCallback callback : playerCallbacks) {
+            callback.onTimeChanged(time);
+        }
+    }
+
     private void loadMedia() {
         if (mediaPlayer == null) {
             create();
             mediaPlayer.getVLCVout().detachViews();
-            mediaPlayer.getVLCVout().setVideoView(surfaceView);
+            mediaPlayer.getVLCVout().setVideoSurface(surfaceHolder.getSurface(), surfaceHolder);
             mediaPlayer.getVLCVout().attachViews();
         }
         Media media = new Media(libVLC, Uri.parse(playbackInfo.path));
@@ -113,17 +160,20 @@ public class VlcPlayerManager extends AbsPlayerManager {
 
     @Override
     public void playback() {
-
+        if (mediaPlayer != null && !mediaPlayer.isPlaying())
+            mediaPlayer.play();
     }
 
     @Override
     public void pause() {
-
+        if (mediaPlayer != null && mediaPlayer.isPlaying())
+            mediaPlayer.pause();
     }
 
     @Override
     public void seekTo(int msec) {
-
+        if (mediaPlayer != null && mediaPlayer.isSeekable())
+            mediaPlayer.setPosition(msec);
     }
 
     @Override
@@ -138,29 +188,39 @@ public class VlcPlayerManager extends AbsPlayerManager {
 
     @Override
     public boolean isPlaying() {
-        return false;
+        return (mediaPlayer != null && mediaPlayer.isPlaying());
     }
 
     @Override
     public boolean isSeekable() {
+        if (mediaPlayer != null)
+            return mediaPlayer.isSeekable();
         return false;
     }
 
     @Override
     public int getDuration() {
+        if (mediaPlayer != null)
+            return (int) mediaPlayer.getLength();
         return 0;
     }
 
     @Override
     public int getCurrentPosition() {
+        if (mediaPlayer != null)
+            mediaPlayer.getPosition();
         return 0;
     }
 
     @Override
     public void release() {
-        if (mediaPlayer != null)
+        if (mediaPlayer != null) {
             mediaPlayer.release();
-        if (libVLC != null)
+            mediaPlayer = null;
+        }
+        if (libVLC != null) {
             libVLC.release();
+            libVLC = null;
+        }
     }
 }

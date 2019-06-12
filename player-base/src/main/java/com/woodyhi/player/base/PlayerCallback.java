@@ -31,4 +31,7 @@ public abstract class PlayerCallback {
     public void onRenderingStart() {
 
     }
+
+    public void onTimeChanged(long time) {
+    }
 }

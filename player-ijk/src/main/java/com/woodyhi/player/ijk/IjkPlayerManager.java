@@ -102,7 +102,8 @@ public class IjkPlayerManager extends AbsPlayerManager {
 
     @Override
     public void playback() {
-
+        if (ijkMediaPlayer != null && !ijkMediaPlayer.isPlaying())
+            ijkMediaPlayer.start();
     }
 
     @Override
@@ -113,7 +114,8 @@ public class IjkPlayerManager extends AbsPlayerManager {
 
     @Override
     public void seekTo(int msec) {
-
+        if (ijkMediaPlayer != null)
+            ijkMediaPlayer.seekTo(msec);
     }
 
     @Override
@@ -128,7 +130,7 @@ public class IjkPlayerManager extends AbsPlayerManager {
 
     @Override
     public boolean isPlaying() {
-        return false;
+        return ijkMediaPlayer != null && ijkMediaPlayer.isPlaying();
     }
 
     @Override
@@ -138,16 +140,25 @@ public class IjkPlayerManager extends AbsPlayerManager {
 
     @Override
     public int getDuration() {
+        if (ijkMediaPlayer != null)
+            return (int) ijkMediaPlayer.getDuration();
         return 0;
     }
 
     @Override
     public int getCurrentPosition() {
+        if (ijkMediaPlayer != null)
+            return (int) ijkMediaPlayer.getCurrentPosition();
         return 0;
     }
 
     @Override
     public void release() {
-
+        if (ijkMediaPlayer != null) {
+            ijkMediaPlayer.stop();
+            ijkMediaPlayer.setDisplay(null);
+            ijkMediaPlayer.release();
+            ijkMediaPlayer = null;
+        }
     }
 }
