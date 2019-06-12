@@ -5,6 +5,8 @@ import android.view.SurfaceHolder;
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.PlaybackInfo;
 
+import java.io.IOException;
+
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
@@ -23,12 +25,30 @@ public class IjkPlayerManager extends AbsPlayerManager {
             ijkMediaPlayer.stop();
             ijkMediaPlayer.setDisplay(null);
             ijkMediaPlayer.release();
+            ijkMediaPlayer = null;
         }
         final IjkMediaPlayer ijkPlayer = new IjkMediaPlayer();
         ijkPlayer.native_setLogLevel(IjkMediaPlayer.IJK_LOG_DEBUG);
 
+        /*
+        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 1);
+
+        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "overlay-format", IjkMediaPlayer.SDL_FCC_RV32);
+        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 1);
+        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 0);
+
+        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "http-detect-range-support", 1);
+
+        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48);
+        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "min-frames", 100);
+        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
+
+        ijkMediaPlayer.setVolume(1.0f, 1.0f);
+*/
         // 开启硬解码
         // ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);
+        //  ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
+        //  ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-handle-resolution-change", 1);
 
         ijkMediaPlayer = ijkPlayer;
 
@@ -45,7 +65,15 @@ public class IjkPlayerManager extends AbsPlayerManager {
     }
 
     private void loadMedia() {
+        if (ijkMediaPlayer == null) {
+            createMediaPlayer();
+        }
         ijkMediaPlayer.setSurface(surfaceHolder.getSurface());
+        try {
+            ijkMediaPlayer.setDataSource(playbackInfo.path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         ijkMediaPlayer.prepareAsync();
     }
 
@@ -68,14 +96,8 @@ public class IjkPlayerManager extends AbsPlayerManager {
     //-----------------------------------------Controller--------------------------------------
     public void playback(PlaybackInfo info) {
         this.playbackInfo = info;
-        if (ijkMediaPlayer != null) {
-            ijkMediaPlayer.stop();
-            ijkMediaPlayer.setDisplay(null);
-            ijkMediaPlayer.release();
-        } else {
-            if (surfaceHolder != null)
-                loadMedia();
-        }
+        if (surfaceHolder != null)
+            loadMedia();
     }
 
     @Override
@@ -124,5 +146,8 @@ public class IjkPlayerManager extends AbsPlayerManager {
         return 0;
     }
 
+    @Override
+    public void release() {
 
+    }
 }

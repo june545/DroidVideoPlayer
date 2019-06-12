@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.PlaybackInfo;
-import com.woodyhi.player.internal.MediaPlayerManger;
 
 /**
  * @auth June

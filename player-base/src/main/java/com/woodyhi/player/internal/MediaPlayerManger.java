@@ -262,4 +262,9 @@ public class MediaPlayerManger extends AbsPlayerManager {
         }
         return 0;
     }
+
+    @Override
+    public void release() {
+
+    }
 }

@@ -16,13 +16,6 @@
         android:orientation="vertical">
 
         <com.woodyhi.player.widget.FrameLayout_16_9
-            android:id="@+id/player_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </com.woodyhi.player.widget.FrameLayout_16_9>
-
-        <com.woodyhi.player.widget.FrameLayout_16_9
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

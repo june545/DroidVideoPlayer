@@ -26,4 +26,6 @@ public interface BaseController {
     public int getDuration();
 
     public int getCurrentPosition();
+
+    public void release();
 }

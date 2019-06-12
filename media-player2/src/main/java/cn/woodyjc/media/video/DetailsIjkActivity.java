@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import com.woodyhi.player.base.PlaybackInfo;
 import com.woodyhi.player.ijk.IjkPlayerFragment;
+import com.woodyhi.player.ijk.IjkPlayerView;
+import com.woodyhi.player.vlc.VlcPlayerView;
 
 public class DetailsIjkActivity extends AppCompatActivity {
     String path = "http://vfx.mtime.cn/Video/2019/05/21/mp4/190521101629869012.mp4";
@@ -22,5 +24,12 @@ public class DetailsIjkActivity extends AppCompatActivity {
                 .commit();
 
         fragment.playback(new PlaybackInfo(path));
+
+
+
+        IjkPlayerView playerView1 = findViewById(R.id.video_player_view_1);
+        playerView1.getPlayerManger().playback(new PlaybackInfo(path));
+        IjkPlayerView playerView2 = findViewById(R.id.video_player_view_2);
+        playerView2.getPlayerManger().playback(new PlaybackInfo(path));
     }
 }
