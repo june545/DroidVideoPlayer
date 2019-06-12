@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.PlaybackInfo;
 import com.woodyhi.player.internal.DefaultControllerView;
+import com.woodyhi.player.vlc.VlcControllerView;
 import com.woodyhi.player.vlc.VlcPlayerManager;
 import com.woodyhi.player.vlc.VlcPlayerView;
 import com.woodyhi.player.widget.PlayerView;
@@ -35,7 +36,7 @@ public class DetailsVlcActivity extends AppCompatActivity {
         PlayerView playerView = findViewById(R.id.video_player_view_3);
         manager3 = new VlcPlayerManager();
         playerView.setPlayerManager(manager3);
-        DefaultControllerView controllerView = new DefaultControllerView(this);
+        VlcControllerView controllerView = new VlcControllerView(this);
         controllerView.setPlayerManger(manager3);
         playerView.setControllerView(controllerView);
         manager3.playback(new PlaybackInfo(rtsp));

@@ -47,7 +47,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
             throw new IllegalStateException("LibVLC initialisation failed: " + VLCUtil.getErrorMsg());
         }
         ArrayList<String> options = new ArrayList<>();
-//        options.add("-vvv");
+//        options.add("-vvv"); // 日志
         options.add("--http-reconnect");
         options.add("--network-caching=3000");
         options.add("--live-caching=500"); // 直播缓存
@@ -82,7 +82,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
         private WeakReference<VlcPlayerManager> mOwner;
 
         public EventListenerImpl(VlcPlayerManager owner) {
-            mOwner = new WeakReference<VlcPlayerManager>(owner);
+            mOwner = new WeakReference<>(owner);
         }
 
         @Override
@@ -172,8 +172,11 @@ public class VlcPlayerManager extends AbsPlayerManager {
 
     @Override
     public void seekTo(int msec) {
-        if (mediaPlayer != null && mediaPlayer.isSeekable())
+        if (mediaPlayer != null && mediaPlayer.isSeekable()) {
+            mediaPlayer.pause();
             mediaPlayer.setPosition(msec);
+            mediaPlayer.play();
+        }
     }
 
     @Override
