@@ -265,6 +265,10 @@ public class MediaPlayerManger extends AbsPlayerManager {
 
     @Override
     public void release() {
-
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
+        }
     }
 }

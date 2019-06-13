@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.woodyhi.player.base.AbsPlayerManager;
@@ -68,17 +67,6 @@ public class VideoPlayerFragmentNew extends Fragment {
 
     private void initViews(View view) {
         controllerView = videoPlayerView.getControllerView();
-        videoPlayerView.setOnClickListener(v -> {
-            controllerView.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.control_bar));
-            if (controllerView.getVisibility() == View.VISIBLE) {
-                controllerView.setVisibility(View.GONE);
-            } else {
-
-//                player_control_bottom_bar.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.control_bar_show_up));
-//                player_control_bottom_bar.setVisibility(View.VISIBLE);
-                controllerView.setVisibility(View.VISIBLE);
-            }
-        });
         playerManger = videoPlayerView.getPlayerManger();
         playerManger.playback(playbackInfo);
     }

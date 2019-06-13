@@ -32,6 +32,11 @@
             android:text="vlcplayer"
             android:onClick="vlcplay"/>
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="all player"
+            android:onClick="allplay"/>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

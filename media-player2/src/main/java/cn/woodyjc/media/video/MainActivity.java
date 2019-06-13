@@ -32,4 +32,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, DetailsVlcActivity.class));
 
     }
+
+    public void allplay(View view) {
+        startActivity(new Intent(this, AllPlayer3Activity.class));
+
+    }
 }

@@ -45,14 +45,13 @@ public class VlcPlayerManager extends AbsPlayerManager {
             throw new IllegalStateException("LibVLC initialisation failed: " + VLCUtil.getErrorMsg());
         }
         ArrayList<String> options = new ArrayList<>();
-//        options.add("-vvv"); // 日志
+//        options.add("-vvv"); // verbosity
         options.add("--http-reconnect");
-        options.add("--network-caching=3000");
-        options.add("--live-caching=500"); // 直播缓存
-        options.add("--sout-mux-caching=500"); // 输出缓存
-//        options.add("--rtsp-tcp"); // RTSP采用TCP传输方式
+        options.add("--network-caching=6000");
         options.add("--aout=opensles");
-        options.add("--audio-time-stretch"); // time stretching
+        options.add("--audio-time-stretch");
+        options.add("--rtsp-tcp"); // RTSP采用TCP传输方式
+        options.add("--rtsp-frame-buffer-size=1000"); // RTSP帧缓冲大小，默认大小为100000
 
         libVLC = new LibVLC(options);
         mediaPlayer = new MediaPlayer(libVLC);
@@ -91,6 +90,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
                 case MediaPlayer.Event.EndReached:
                     LogUtil.d(TAG, "MediaPlayerEndReached");
                     mgr.onCompletion();
+                    mgr.release();
                     break;
                 case MediaPlayer.Event.EncounteredError:
                     LogUtil.d(TAG, "Media Player Error, re-try");
@@ -112,7 +112,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
     }
 
     private void onCompletion() {
-        for(PlayerCallback callback : playerCallbacks)
+        for (PlayerCallback callback : playerCallbacks)
             callback.onCompletion();
     }
 
@@ -164,6 +164,9 @@ public class VlcPlayerManager extends AbsPlayerManager {
 
     @Override
     public void playback() {
+        if (mediaPlayer == null)
+            loadMedia();
+
         if (mediaPlayer != null && !mediaPlayer.isPlaying())
             mediaPlayer.play();
     }

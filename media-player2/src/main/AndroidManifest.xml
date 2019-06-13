@@ -14,7 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".DetailsIjkActivity" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
@@ -32,7 +31,15 @@
             android:configChanges="orientation|screenSize" />
 
         <activity
+            android:name=".DetailsIjkActivity"
+            android:configChanges="orientation|screenSize" />
+
+        <activity
             android:name=".DetailsVlcActivity"
+            android:configChanges="orientation|screenSize" />
+
+        <activity
+            android:name=".AllPlayer3Activity"
             android:configChanges="orientation|screenSize" />
 
     </application>

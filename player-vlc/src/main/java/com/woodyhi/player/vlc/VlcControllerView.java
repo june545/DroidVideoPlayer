@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Surface;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.LogUtil;
 import com.woodyhi.player.base.PlayerCallback;
-import com.woodyhi.player.base.ProgressTimer;
 import com.woodyhi.player.base.R;
 import com.woodyhi.player.base.Util;
 
@@ -140,8 +138,6 @@ public class VlcControllerView extends FrameLayout {
 //                progressTimer.start();
             } else {
 //                progressTimer.stop();
-//                player_control_bottom_bar.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.bottom_slide_down));
-//                player_control_bottom_bar.setVisibility(View.GONE);
             }
     }
 

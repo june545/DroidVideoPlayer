@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.internal.DefaultControllerView;
 
 /**
  * @auth June
@@ -31,6 +32,9 @@ public class IjkPlayerFragment extends Fragment {
 
         videoPlayerView = rootView.findViewById(R.id.video_player_view);
         playerManger = videoPlayerView.getPlayerManger();
+        DefaultControllerView controllerView = new DefaultControllerView(getActivity());
+        controllerView.setPlayerManger(playerManger);
+        videoPlayerView.setControllerView(controllerView);
         playerManger.playback(playbackInfo);
 
         return rootView;
@@ -45,5 +49,12 @@ public class IjkPlayerFragment extends Fragment {
         } else {
             this.playbackInfo = info;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (playerManger != null)
+            playerManger.release();
     }
 }

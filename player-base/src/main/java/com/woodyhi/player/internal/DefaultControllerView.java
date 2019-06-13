@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.Surface;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -130,6 +129,7 @@ public class DefaultControllerView extends FrameLayout {
         });
 
         mSeekBar.setOnSeekBarChangeListener(new PlayerSeekBarChangeListener());
+        mSeekBar.setOnClickListener(null); // 点击父布局thumb状态变成pressed
     }
 
     @Override
@@ -140,8 +140,6 @@ public class DefaultControllerView extends FrameLayout {
                 progressTimer.start();
             } else {
                 progressTimer.stop();
-                player_control_bottom_bar.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.bottom_slide_down));
-                player_control_bottom_bar.setVisibility(View.GONE);
             }
     }
 

@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
 import com.woodyhi.player.internal.MediaPlayerManger;
@@ -71,6 +72,16 @@ public class AbsPlayerView extends FrameLayout {
         this.controllerView = view;
         this.controllerView.setTag("Controller");
         addView(controllerView);
+
+        this.setOnClickListener(v -> {
+            if (controllerView.getVisibility() == View.VISIBLE) {
+                controllerView.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.bottom_slide_down));
+                controllerView.setVisibility(View.GONE);
+            } else {
+                controllerView.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.bottom_slide_up));
+                controllerView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     public View getControllerView() {
