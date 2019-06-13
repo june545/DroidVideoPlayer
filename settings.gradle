@@ -4,3 +4,5 @@ include ':player-base'
 include ':player-ijk'
 include ':player-vlc'
 include ':media-player2'
+
+include ':playlist-demo'
