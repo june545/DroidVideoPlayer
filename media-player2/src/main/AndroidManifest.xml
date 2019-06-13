@@ -25,21 +25,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".DetailsActivity"
             android:configChanges="orientation|screenSize" />
-
         <activity
             android:name=".DetailsIjkActivity"
             android:configChanges="orientation|screenSize" />
-
         <activity
             android:name=".DetailsVlcActivity"
             android:configChanges="orientation|screenSize" />
-
         <activity
             android:name=".AllPlayer3Activity"
+            android:configChanges="orientation|screenSize" />
+        <activity android:name=".FullScreenPlayActivity"
             android:configChanges="orientation|screenSize" />
 
     </application>

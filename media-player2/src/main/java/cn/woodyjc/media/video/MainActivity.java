@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void allplay(View view) {
         startActivity(new Intent(this, AllPlayer3Activity.class));
+    }
 
+    public void fullscreenplay(View view) {
+        startActivity(new Intent(this, FullScreenPlayActivity.class));
     }
 }

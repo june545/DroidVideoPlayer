@@ -4,6 +4,7 @@ import android.view.SurfaceHolder;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.base.PlayerCallback;
 
 import java.io.IOException;
 
@@ -59,6 +60,10 @@ public class IjkPlayerManager extends AbsPlayerManager {
         });
         ijkMediaPlayer.setOnBufferingUpdateListener((iMediaPlayer, i) -> {
 
+        });
+        ijkMediaPlayer.setOnCompletionListener(iMediaPlayer -> {
+            for (PlayerCallback callback : playerCallbacks)
+                callback.onCompletion();
         });
         ijkMediaPlayer.setOnErrorListener((iMediaPlayer, i, i1) -> false);
         return ijkMediaPlayer;
