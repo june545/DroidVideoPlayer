@@ -1,8 +1,28 @@
 include ':VideoPlayer', ':media-player-base', ':media-player', ':exo-player-demo', ':gl', ':multimediautil', ':video-player-exo'
-include ':libvlc', ':libvlc-3.0.0'
+
+
+
+
+
+//---------------------------------------------------------------------------
 include ':player-base'
+project(':player-base').projectDir = new File(rootDir, 'player-lib/player-base')
+
+
+include ':libijk-0.8.8'
+project(':libijk-0.8.8').projectDir = new File(rootDir, 'player-lib/libijk-0.8.8')
 include ':player-ijk'
+project(':player-ijk').projectDir = new File(rootDir, 'player-lib/player-ijk')
+
+include ':libvlc-3.0.4'
+project(':libvlc-3.0.4').projectDir = new File(rootDir, 'player-lib/libvlc-3.0.4')
+include ':libvlc-medialibrary-3.0.4'
+project(':libvlc-medialibrary-3.0.4').projectDir = new File(rootDir, 'player-lib/libvlc-medialibrary-3.0.4')
 include ':player-vlc'
-include ':media-player2'
+project(':player-vlc').projectDir = new File(rootDir, 'player-lib/player-vlc')
+
+include ':player-demo'
+project(':player-demo').projectDir = new File(rootDir, 'player-lib/player-demo')
 
 include ':playlist-demo'
+project(':playlist-demo').projectDir = new File(rootDir, 'player-lib/playlist-demo')
