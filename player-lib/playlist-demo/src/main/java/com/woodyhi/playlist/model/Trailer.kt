@@ -1,5 +1,8 @@
 package com.woodyhi.playlist.model
 
+import android.os.Parcel
+import android.os.Parcelable
+
 /**
  *
 <pre>
@@ -32,12 +35,13 @@ class Trailer {
     var id: Int? = 0
     var movieName: String? = null
     var coverImg: String? = null
-    var moviId: Int? = 0;
+    var moviId: Int? = 0
     var url: String? = null
     var hightUrl: String? = null
     var videoTitle: String? = null
     var videoLength: Int? = null
-    var rating: Int? = null
+    var rating: Float? = null
     var type: Array<String>? = null
     var summary: String? = null
+
 }
