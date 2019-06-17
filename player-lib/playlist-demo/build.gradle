@@ -3,13 +3,13 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion versions.build_versions.compile_sdk
 
 
     defaultConfig {
         applicationId "com.woodyhi.playlist"
-        minSdkVersion 15
-        targetSdkVersion 28
+        minSdkVersion versions.build_versions.min_sdk
+        targetSdkVersion versions.build_versions.target_sdk
         versionCode 1
         versionName "1.0"
 
@@ -35,6 +35,7 @@ dependencies {
     implementation deps.support.app_compat
     implementation deps.constraint_layout
     implementation deps.support.recyclerview
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
@@ -48,8 +49,9 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.5.0'
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+
+    implementation project(':player-vlc')
 }
 
-repositories {
-    mavenCentral()
-}

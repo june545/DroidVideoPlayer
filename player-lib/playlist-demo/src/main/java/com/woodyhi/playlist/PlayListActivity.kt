@@ -7,6 +7,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.woodyhi.playlist.model.Trailer
+import com.woodyhi.playlist.model.TrailerListData
 import kotlinx.android.synthetic.main.activity_play_list.*
 
 class PlayListActivity : AppCompatActivity() {
@@ -16,18 +17,21 @@ class PlayListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_play_list)
 
-        recycler_view.layoutManager = LinearLayoutManager(this)
 
         val content: String? = assets.open("trailers.txt").use { it.bufferedReader().use { it.readText() } }
         Log.d(TAG, content)
 
         val trailerListData: TrailerListData? = Gson().fromJson(content, object : TypeToken<TrailerListData>() {}.type)
 
-        for (trailer in trailerListData?.trailers!!) {
+        for (trailer: Trailer in trailerListData?.trailers!!) {
             println(trailer.movieName)
         }
+
+
+        recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler_view.adapter = MyAdapter(trailerListData.trailers)
+
     }
 
-    data class TrailerListData(val trailers: List<Trailer>)
 
 }

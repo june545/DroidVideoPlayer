@@ -1,8 +1,5 @@
 package com.woodyhi.playlist.model
 
-import android.os.Parcel
-import android.os.Parcelable
-
 /**
  *
 <pre>
@@ -45,3 +42,5 @@ class Trailer {
     var summary: String? = null
 
 }
+
+data class TrailerListData(val trailers: List<Trailer>)
