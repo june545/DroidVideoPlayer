@@ -37,7 +37,7 @@ public class AbsPlayerView extends FrameLayout {
     public AbsPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
-        setBackgroundColor(Color.parseColor("#FF03740A"));
+        setBackgroundColor(Color.parseColor("#FF27512A"));
     }
 
     private void init(Context context) {

@@ -10,15 +10,6 @@ import com.woodyhi.player.base.PlaybackInfo;
 import com.woodyhi.player.widget.PlayerView;
 
 public class DetailsActivity extends AppCompatActivity {
-    //    String path = Uri.fromFile(new File("/sdcard/Download/iceage.3gp")).toString();
-//    String path = "http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4";
-//    String path = "https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8";
-//    String path = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
-//    String path = "http://vfx.mtime.cn/Video/2019/05/21/mp4/190521101629869012.mp4";
-    String path = "http://vfx.mtime.cn/Video/2019/06/15/mp4/190615103827358781.mp4";
-
-//    String path = "rtmp://live.hkstv.hk.lxdns.com/live/hks1";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +36,7 @@ public class DetailsActivity extends AppCompatActivity {
                 .add(R.id.player_container, videoPlayerFragmentNew)
                 .commit();
 
-        videoPlayerFragmentNew.playback(new PlaybackInfo(path));
+        videoPlayerFragmentNew.playback(new PlaybackInfo(VideoPath.https));
 
 
         PlayerView playerView2 = findViewById(R.id.video_player_view_2);

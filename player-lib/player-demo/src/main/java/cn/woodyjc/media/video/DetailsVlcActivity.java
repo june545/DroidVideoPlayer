@@ -10,10 +10,6 @@ import com.woodyhi.player.vlc.VlcPlayerManager;
 import com.woodyhi.player.widget.PlayerView;
 
 public class DetailsVlcActivity extends AppCompatActivity {
-    String path = "http://vfx.mtime.cn/Video/2019/05/21/mp4/190521101629869012.mp4";
-    String rtmp = "rtmp://live.hkstv.hk.lxdns.com/live/hks1";
-    String rtsp = "rtsp://184.72.239.149/vod/mp4:BigBuckBunny_115k.mov";
-    String https = "https://res.exexm.com/cw_145225549855002";
 
     AbsPlayerManager manager1;
     AbsPlayerManager manager2;
@@ -31,7 +27,7 @@ public class DetailsVlcActivity extends AppCompatActivity {
         DefaultControllerView controllerView1 = new DefaultControllerView(this);
         controllerView1.setPlayerManger(manager1);
         playerView1.setControllerView(controllerView1);
-        manager1.playback(new PlaybackInfo(https));
+        manager1.playback(new PlaybackInfo(VideoPath.https));
 
 //        PlayerView playerView2 = findViewById(R.id.video_player_view_2);
 //        manager2 = new VlcPlayerManager(this);
@@ -40,7 +36,7 @@ public class DetailsVlcActivity extends AppCompatActivity {
 //        DefaultControllerView controllerView2 = new DefaultControllerView(this);
 //        controllerView2.setPlayerManger(manager2);
 //        playerView2.setControllerView(controllerView2);
-//        manager2.playback(new PlaybackInfo(rtmp));
+//        manager2.playback(new PlaybackInfo(VideoPath.rtmp));
 
 
 //        PlayerView playerView3 = findViewById(R.id.video_player_view_3);

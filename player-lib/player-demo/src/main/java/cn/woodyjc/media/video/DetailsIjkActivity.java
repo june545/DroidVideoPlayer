@@ -5,21 +5,11 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.PlaybackInfo;
-import com.woodyhi.player.ijk.IjkPlayerFragment;
 import com.woodyhi.player.ijk.IjkPlayerManager;
 import com.woodyhi.player.internal.DefaultControllerView;
 import com.woodyhi.player.widget.PlayerView;
 
 public class DetailsIjkActivity extends AppCompatActivity {
-    //    String path = "http://vfx.mtime.cn/Video/2019/05/21/mp4/190521101629869012.mp4";
-    String path = "http://vfx.mtime.cn/Video/2019/06/11/mp4/190611221730282660.mp4";
-
-    String rtmp = "rtmp://live.hkstv.hk.lxdns.com/live/hks1";
-
-    //    String rtmp = "rtmp://live.hkstv.hk.lxdns.com/live/hks1";
-    String https = "https://res.exexm.com/cw_145225549855002";
-    //    String path = "https://res.exexm.com/cw_145225549855002";
-    String rtsp = "rtsp://184.72.239.149/vod/mp4:BigBuckBunny_115k.mov";
 
     AbsPlayerManager mgr1;
     AbsPlayerManager manager2;
@@ -45,7 +35,7 @@ public class DetailsIjkActivity extends AppCompatActivity {
         DefaultControllerView controllerView1 = new DefaultControllerView(this);
         controllerView1.setPlayerManger(mgr1);
         playerView1.setControllerView(controllerView1);
-        mgr1.playback(new PlaybackInfo(https));
+        mgr1.playback(new PlaybackInfo(VideoPath.https));
 
 
 

@@ -3,11 +3,13 @@ package com.woodyhi.player.ijk;
 import android.view.SurfaceHolder;
 
 import com.woodyhi.player.base.AbsPlayerManager;
+import com.woodyhi.player.base.LogUtil;
 import com.woodyhi.player.base.PlaybackInfo;
 import com.woodyhi.player.base.PlayerCallback;
 
 import java.io.IOException;
 
+import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
@@ -15,6 +17,7 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
  * @date 2019/06/10
  */
 public class IjkPlayerManager extends AbsPlayerManager {
+    private final String TAG = IjkPlayerManager.class.getSimpleName();
 
     IjkMediaPlayer ijkMediaPlayer;
     SurfaceHolder surfaceHolder;
@@ -30,37 +33,25 @@ public class IjkPlayerManager extends AbsPlayerManager {
         }
         final IjkMediaPlayer ijkPlayer = new IjkMediaPlayer();
         ijkPlayer.native_setLogLevel(IjkMediaPlayer.IJK_LOG_DEBUG);
-        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 1); //Sound Library for Embedded Systems 为嵌入式系统打开声音库
-        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 1);
-        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 0);
-        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "http-detect-range-support", 1);
-        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48); // 是否开启环路过滤: 0开启，画面质量高，解码开销大，48关闭，画面质量差点，解码开销小
-        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
-        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "fflags", "fastseek");
+//        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 1); //Sound Library for Embedded Systems 为嵌入式系统打开声音库
+//        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 1);
+//        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 0);
+//        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "http-detect-range-support", 1);
+//        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48); // 是否开启环路过滤: 0开启，画面质量高，解码开销大，48关闭，画面质量差点，解码开销小
+//        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
+//        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "fflags", "fastseek");
 //        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "analyzemaxduration", 1); // 设置播放前的探测时间 1,达到首屏秒开效果
 //        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "probesize", 1024 * 10); // 播放前的探测Size，默认是1M, 改小一点会出画面更快
 //        ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "flush_packets", 1L); // 每处理一个packet之后刷新io上下文
         ijkPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "reconnect", 3); // 重连次数
 
         /*
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "opensles", 1);
-
         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "overlay-format", IjkMediaPlayer.SDL_FCC_RV32);
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "framedrop", 1);
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "start-on-prepared", 0);
 
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "http-detect-range-support", 1);
-
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "skip_loop_filter", 48);
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_CODEC, "min-frames", 100);
-        ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "enable-accurate-seek", 1);
 
 mediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"max-buffer-size",maxCacheSize);最大缓冲大小,单位kb
 mediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"max-fps",30);最大fps
-.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT, "fflags", "fastseek");//设置seekTo能够快速seek到指定位置并播放
-mediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT,"probesize",1024*10);播放前的探测Size，默认是1M, 改小一点会出画面更快
         ijkMediaPlayer.setVolume(1.0f, 1.0f);
-
         // 开启硬解码
         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec", 1);
         ijkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, "mediacodec-auto-rotate", 1);
@@ -69,7 +60,13 @@ mediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_FORMAT,"probesize",1024*10);�
 
         ijkMediaPlayer = ijkPlayer;
 
-        ijkMediaPlayer.setOnPreparedListener(iMediaPlayer -> iMediaPlayer.start());
+        ijkMediaPlayer.setOnPreparedListener(IMediaPlayer::start);
+        ijkMediaPlayer.setOnVideoSizeChangedListener((mp, width, height, sar_num, sar_den) -> {
+            LogUtil.d(TAG, "onVideoSizeChanged: w " + width + ", h " + height +
+                    ", sar_num " + sar_num + ", sar_den " + sar_den);
+            for(PlayerCallback callback : playerCallbacks)
+                callback.onVideoSizeChanged(width, height);
+        });
         ijkMediaPlayer.setOnInfoListener((iMediaPlayer, what, extra) -> false);
         ijkMediaPlayer.setOnSeekCompleteListener(iMediaPlayer -> {
 

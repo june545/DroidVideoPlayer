@@ -135,10 +135,11 @@ public class VlcPlayerManager extends AbsPlayerManager {
         public void onNewVideoLayout(IVLCVout vlcVout, int width, int height, int visibleWidth, int visibleHeight, int sarNum, int sarDen) {
             LogUtil.d(TAG, "---------- width: " + width + ", height: " + height
                     + ", visibleWidth: " + visibleWidth + ", visibleHeight: " + visibleHeight);
-            new VlcVideoLayout(context)
-                    .with((FrameLayout) surfaceView.getParent(), surfaceView, mediaPlayer)
-                    .onNewLayout(width, height, visibleWidth, visibleHeight, sarNum, sarDen)
-                    .updateVideoSurfaces(1080, 1920);
+//            FrameLayout parent = (FrameLayout) surfaceView.getParent();
+//            new VlcVideoLayout(context)
+//                    .with(parent, surfaceView, mediaPlayer)
+//                    .onNewLayout(width, height, visibleWidth, visibleHeight, sarNum, sarDen)
+//                    .updateVideoSurfaces(parent.getWidth(), parent.getHeight());
         }
     };
 
@@ -148,6 +149,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
     ) -> {
         if (right - left != oldRight - oldLeft || bottom - top != oldBottom - oldTop) {
             if (mediaPlayer != null) {
+                LogUtil.d(TAG, "onLayoutChangeListener : " + (right - left) + ", " + (bottom - top));
                 mediaPlayer.getVLCVout().setWindowSize(right - left, bottom - top);
             }
         }
@@ -165,6 +167,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
             createMediaPlayer();
             mediaPlayer.getVLCVout().detachViews();
             mediaPlayer.getVLCVout().setVideoSurface(surfaceHolder.getSurface(), surfaceHolder);
+            LogUtil.d(TAG, "loadMedia: sufaceview size  " + surfaceView.getWidth() + ", " + surfaceView.getHeight());
             mediaPlayer.getVLCVout().setWindowSize(surfaceView.getMeasuredWidth(), surfaceView.getMeasuredHeight());
             mediaPlayer.getVLCVout().attachViews(onNewVideoLayoutListener);
         }
