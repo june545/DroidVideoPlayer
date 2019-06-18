@@ -11,5 +11,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         startActivity(Intent(baseContext, PlayListActivity::class.java))
+        finish()
     }
 }

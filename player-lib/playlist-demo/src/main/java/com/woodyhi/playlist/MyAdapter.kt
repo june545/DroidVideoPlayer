@@ -30,7 +30,7 @@ class MyAdapter(private val listData: List<Trailer>) : RecyclerView.Adapter<MyAd
         holder.rating.text = "${listData[position].rating}"
         holder.movieName.text = listData[position].movieName
         holder.type.text = listData[position].type?.joinToString()
-        holder.itemView.setOnClickListener { v ->
+        holder.itemView.setOnClickListener {
             var ctx = holder.itemView.context
             var intent = Intent(ctx, VideoPlayerActivity::class.java)
             intent.data = Uri.parse(listData[position].url)

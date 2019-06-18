@@ -32,7 +32,7 @@ public class VideoSurfaceView extends ResizeSurfaceView implements SurfaceHolder
     public VideoSurfaceView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
-        setBackgroundColor(Color.parseColor("#55AA053C"));
+//        setBackgroundColor(Color.parseColor("#55AA053C"));
     }
 
     private void init(Context context) {

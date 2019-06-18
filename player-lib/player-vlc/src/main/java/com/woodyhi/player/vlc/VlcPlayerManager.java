@@ -79,7 +79,8 @@ public class VlcPlayerManager extends AbsPlayerManager {
         @Override
         public void onEvent(MediaPlayer.Event event) {
             VlcPlayerManager mgr = mOwner.get();
-            LogUtil.d(TAG, "Player EVENT " + event.type);
+            if(mgr == null) return;
+            LogUtil.d(TAG, "Player EVENT " + event.type + ", " + Integer.toHexString(event.type));
             switch (event.type) {
                 case MediaPlayer.Event.EndReached:
                     LogUtil.d(TAG, "MediaPlayerEndReached");
@@ -90,15 +91,13 @@ public class VlcPlayerManager extends AbsPlayerManager {
                     LogUtil.d(TAG, "Media Player Error, re-try");
                     //releasePlayer();
                     break;
-                case MediaPlayer.Event.PositionChanged:
-                    break;
                 case MediaPlayer.Event.TimeChanged:
 //                    mgr.onTimeChanged(event.getTimeChanged());
                     mgr.lastPosition = (int) event.getTimeChanged();
-                    Media.VideoTrack vtrack = mgr.mediaPlayer.getCurrentVideoTrack();
-                    if (vtrack != null) {
-                        LogUtil.d(TAG, "TimeChanged ------  videoW : " + vtrack.width + ", videoH : " + vtrack.height);
-                    }
+//                    Media.VideoTrack vtrack = mgr.mediaPlayer.getCurrentVideoTrack();
+//                    if (vtrack != null) {
+//                        LogUtil.d(TAG, "TimeChanged ------  videoW : " + vtrack.width + ", videoH : " + vtrack.height);
+//                    }
                     break;
                 case MediaPlayer.Event.Buffering:
                     LogUtil.d(TAG, "MediaPlayer.Event.Buffering ------  " + event.getBuffering());

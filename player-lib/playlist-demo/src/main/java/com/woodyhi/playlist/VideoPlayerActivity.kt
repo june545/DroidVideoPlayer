@@ -58,4 +58,9 @@ class VideoPlayerActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        manager1?.release()
+    }
 }
