@@ -1,5 +1,8 @@
 package com.woodyhi.playlist
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -27,6 +30,12 @@ class MyAdapter(private val listData: List<Trailer>) : RecyclerView.Adapter<MyAd
         holder.rating.text = "${listData[position].rating}"
         holder.movieName.text = listData[position].movieName
         holder.type.text = listData[position].type?.joinToString()
+        holder.itemView.setOnClickListener { v ->
+            var ctx = holder.itemView.context
+            var intent = Intent(ctx, VideoPlayerActivity::class.java)
+            intent.data = Uri.parse(listData[position].url)
+            ctx.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int {

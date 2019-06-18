@@ -7,6 +7,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.woodyhi.player.base.AbsPlayerManager;
@@ -142,13 +143,28 @@ public class VlcPlayerManager extends AbsPlayerManager {
         }
     };
 
+    // 监听surfaceview容器大小
+    private View.OnLayoutChangeListener onLayoutChangeListener = (
+            v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom
+    ) -> {
+        if (right - left != oldRight - oldLeft || bottom - top != oldBottom - oldTop) {
+            if (mediaPlayer != null) {
+                mediaPlayer.getVLCVout().setWindowSize(right - left, bottom - top);
+            }
+        }
+    };
+
     private void loadMedia() {
-        if(surfaceView == null) {
+        if (surfaceView == null) {
             throw new NullPointerException("surfaceView field is null");
         }
+        FrameLayout parent = (FrameLayout) surfaceView.getParent();
+        parent.removeOnLayoutChangeListener(onLayoutChangeListener);
+        parent.addOnLayoutChangeListener(onLayoutChangeListener);
+
         if (mediaPlayer == null) {
             createMediaPlayer();
-//            mediaPlayer.getVLCVout().detachViews();
+            mediaPlayer.getVLCVout().detachViews();
             mediaPlayer.getVLCVout().setVideoSurface(surfaceHolder.getSurface(), surfaceHolder);
             mediaPlayer.getVLCVout().setWindowSize(surfaceView.getMeasuredWidth(), surfaceView.getMeasuredHeight());
             mediaPlayer.getVLCVout().attachViews(onNewVideoLayoutListener);
