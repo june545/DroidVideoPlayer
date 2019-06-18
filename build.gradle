@@ -29,43 +29,13 @@ task clean(type: Delete) {
 }
 
 
-
-ext.versions = [:]
-ext.deps = [:]
-
-def build_versions = [:]
-build_versions.min_sdk = 21
-build_versions.compile_sdk = 27
-build_versions.target_sdk = 23
-build_versions.build_tools = "27.0.3"
-versions.build_versions = build_versions
-
-versions.support = "27.1.1"
-def support = [:]
-support.annotations = "com.android.support:support-annotations:$versions.support"
-support.app_compat = "com.android.support:appcompat-v7:$versions.support"
-support.recyclerview = "com.android.support:recyclerview-v7:$versions.support"
-support.cardview = "com.android.support:cardview-v7:$versions.support"
-support.design = "com.android.support:design:$versions.support"
-support.v4 = "com.android.support:support-v4:$versions.support"
-support.core_utils = "com.android.support:support-core-utils:$versions.support"
-support.annotations = "com.android.support:support-annotations:$versions.support"
-deps.support = support
-
-
-
-versions.junit = "4.12"
-deps.junit = "junit:junit:$versions.junit"
-
-versions.runner = "1.0.2"
-deps.runner = "com.android.support.test:runner:$versions.runner"
-
-versions.espresso = "3.0.2"
-def espresso = [:]
-espresso.core = "com.android.support.test.espresso:espresso-core:$versions.espresso"
-espresso.contrib = "com.android.support.test.espresso:espresso-contrib:$versions.espresso"
-espresso.intents = "com.android.support.test.espresso:espresso-intents:$versions.espresso"
-deps.espresso = espresso
-
-versions.constraint_layout = "1.1.0"
-deps.constraint_layout = "com.android.support.constraint:constraint-layout:$versions.constraint_layout"
+ext {
+    compileSdkVersion = 28
+    minSdkVersion = 21
+    targetSdkVersion = 23
+    support = "28.0.0"
+    junit = "4.12"
+    runner = "1.0.2"
+    espresso = "3.0.2"
+    constraint_layout = "1.1.3"
+}

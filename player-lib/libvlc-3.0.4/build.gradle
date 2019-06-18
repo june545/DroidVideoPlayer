@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion versions.build_versions.compile_sdk
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
 
     defaultConfig {
-        minSdkVersion versions.build_versions.min_sdk
-        targetSdkVersion versions.build_versions.target_sdk
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
 
@@ -25,10 +25,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation deps.support.app_compat
-    testImplementation deps.junit
-    androidTestImplementation deps.runner
-    androidTestImplementation deps.espresso.core
+    implementation "com.android.support:appcompat-v7:$rootProject.ext.support"
+    testImplementation "junit:junit:$rootProject.ext.junit"
+    androidTestImplementation "com.android.support.test:runner:$rootProject.ext.runner"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.ext.espresso"
 
 //    api "androidx.legacy:legacy-support-v4:1.0.0"
 }

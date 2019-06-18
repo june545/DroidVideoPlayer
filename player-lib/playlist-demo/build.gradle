@@ -3,13 +3,13 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion versions.build_versions.compile_sdk
+    compileSdkVersion rootProject.ext.compileSdkVersion
 
 
     defaultConfig {
         applicationId "com.woodyhi.playlist"
-        minSdkVersion versions.build_versions.min_sdk
-        targetSdkVersion versions.build_versions.target_sdk
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
 
@@ -35,15 +35,15 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation deps.support.app_compat
-    implementation deps.constraint_layout
-    implementation deps.support.recyclerview
-    implementation deps.constraint_layout
-    testImplementation deps.junit
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.android.support:appcompat-v7:$rootProject.ext.support"
+    implementation "com.android.support:recyclerview-v7:$rootProject.ext.support"
+    implementation "com.android.support.constraint:constraint-layout:$rootProject.ext.constraint_layout"
 
+    testImplementation "junit:junit:$rootProject.ext.junit"
+    androidTestImplementation "com.android.support.test:runner:$rootProject.ext.runner"
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.ext.espresso"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     implementation 'com.squareup.okhttp3:okhttp:3.14.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.14.1'
