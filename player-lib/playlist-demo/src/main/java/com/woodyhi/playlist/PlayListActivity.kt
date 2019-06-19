@@ -31,7 +31,8 @@ class PlayListActivity : AppCompatActivity() {
 //        recycler_view.layoutManager = LinearLayoutManager(this)
 //        recycler_view.adapter = MyAdapter(trailerListData.trailers)
 
-        val disposable: Disposable = ApiManager.getApiService()
+        val disposable: Disposable = ApiManager.getInstance(this)
+                .apiService
                 .trailersData
                 .subscribeOn(Schedulers.io())
                 .map { t -> t.trailers }
