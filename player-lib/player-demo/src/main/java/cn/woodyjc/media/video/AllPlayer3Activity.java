@@ -58,7 +58,6 @@ public class AllPlayer3Activity extends AppCompatActivity {
     private void initVlc() {
         PlayerView vlcPlayerView = findViewById(R.id.vlcplayer_view);
         vlcMgr = new VlcPlayerManager(this);
-        ((VlcPlayerManager) vlcMgr).setSurfaceView(vlcPlayerView.getSurfaceView());
         vlcPlayerView.setPlayerManager(vlcMgr);
         DefaultControllerView vlcControllerView = new DefaultControllerView(this);
         vlcControllerView.setPlayerManger(vlcMgr);

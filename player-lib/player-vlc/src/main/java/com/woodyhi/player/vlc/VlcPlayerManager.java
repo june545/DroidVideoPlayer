@@ -79,7 +79,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
         @Override
         public void onEvent(MediaPlayer.Event event) {
             VlcPlayerManager mgr = mOwner.get();
-            if(mgr == null) return;
+            if (mgr == null) return;
             LogUtil.d(TAG, "Player EVENT " + event.type + ", " + Integer.toHexString(event.type));
             switch (event.type) {
                 case MediaPlayer.Event.EndReached:
@@ -157,7 +157,8 @@ public class VlcPlayerManager extends AbsPlayerManager {
 
     private void loadMedia() {
         if (surfaceView == null) {
-            throw new NullPointerException("surfaceView field is null");
+            LogUtil.e(TAG, "surfaceView field is null");
+            return;
         }
         FrameLayout parent = (FrameLayout) surfaceView.getParent();
         parent.removeOnLayoutChangeListener(onLayoutChangeListener);
@@ -177,19 +178,16 @@ public class VlcPlayerManager extends AbsPlayerManager {
         mediaPlayer.play();
     }
 
-    public void setSurfaceView(SurfaceView view) {
-        this.surfaceView = view;
-    }
-
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
+    public void surfaceCreated(SurfaceView view, SurfaceHolder holder) {
+        this.surfaceView = view;
         this.surfaceHolder = holder;
         if (playbackInfo != null)
             loadMedia();
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
+    public void surfaceDestroyed(SurfaceView view, SurfaceHolder holder) {
         this.surfaceHolder = null;
     }
 
@@ -210,6 +208,15 @@ public class VlcPlayerManager extends AbsPlayerManager {
 
         if (mediaPlayer != null && !mediaPlayer.isPlaying())
             mediaPlayer.play();
+    }
+
+    public void togglePlayPause() {
+        if (mediaPlayer != null) {
+            if (mediaPlayer.getPlayerState() == Media.State.Playing)
+                mediaPlayer.pause();
+            else if (mediaPlayer.getPlayerState() == Media.State.Paused)
+                mediaPlayer.play();
+        }
     }
 
     @Override

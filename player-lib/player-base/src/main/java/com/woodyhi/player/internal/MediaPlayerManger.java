@@ -5,6 +5,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.LogUtil;
@@ -70,10 +71,10 @@ public class MediaPlayerManger extends AbsPlayerManager {
 
             @Override
             public boolean onInfo(MediaPlayer mp, int what, int extra) {
-//                Log.d(TAG, tagPrefix + "onInfo what = " + what + ", extra = " + extra);
+//                Log.d(TAG, "onInfo what = " + what + ", extra = " + extra);
                 switch (what) {
                     case MediaPlayer.MEDIA_INFO_BAD_INTERLEAVING:
-//                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_BAD_INTERLEAVING");
+//                        Log.d(TAG, "info MEDIA_INFO_BAD_INTERLEAVING");
                         break;
                     case MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
 //                        updateLoadingState(false);
@@ -97,17 +98,17 @@ public class MediaPlayerManger extends AbsPlayerManager {
                         }
                         break;
                     case MediaPlayer.MEDIA_INFO_METADATA_UPDATE:
-//                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_METADATA_UPDATE");
+//                        Log.d(TAG, "info MEDIA_INFO_METADATA_UPDATE");
                         break;
                     case MediaPlayer.MEDIA_INFO_NOT_SEEKABLE:
-//                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_NOT_SEEKABLE");
+//                        Log.d(TAG, "info MEDIA_INFO_NOT_SEEKABLE");
                         isSeekable = false;
                         break;
                     case MediaPlayer.MEDIA_INFO_UNKNOWN:
-//                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_UNKNOWN");
+//                        Log.d(TAG, "info MEDIA_INFO_UNKNOWN");
                         break;
                     case MediaPlayer.MEDIA_INFO_VIDEO_TRACK_LAGGING:
-//                        Log.d(TAG, tagPrefix + "info MEDIA_INFO_VIDEO_TRACK_LAGGING");
+//                        Log.d(TAG, "info MEDIA_INFO_VIDEO_TRACK_LAGGING");
                         break;
                 }
                 return false;
@@ -117,18 +118,17 @@ public class MediaPlayerManger extends AbsPlayerManager {
 
             @Override
             public boolean onError(MediaPlayer mp, int what, int extra) {
-//                Log.e(TAG, tagPrefix + "onError what = " + what + ", extra = " + extra);
+//                Log.e(TAG, "onError what = " + what + ", extra = " + extra);
                 switch (what) {
                     case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
-//                        Log.e(TAG, tagPrefix + "error MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK");
+//                        Log.e(TAG, "error MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK");
                         break;
                     case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-//                        Log.e(TAG, tagPrefix + "error MEDIA_ERROR_SERVER_DIED");
+//                        Log.e(TAG, "error MEDIA_ERROR_SERVER_DIED");
                         break;
                     case MediaPlayer.MEDIA_ERROR_UNKNOWN:
-//                        Log.e(TAG, tagPrefix + "error MEDIA_ERROR_UNKNOWN");
+//                        Log.e(TAG, "error MEDIA_ERROR_UNKNOWN");
 //                        Toast.makeText(getContext(), "未知错误", Toast.LENGTH_SHORT).show();
-//                        updateLoadingState(false);
                         break;
                 }
                 return false;
@@ -163,14 +163,14 @@ public class MediaPlayerManger extends AbsPlayerManager {
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
+    public void surfaceCreated(SurfaceView view, SurfaceHolder holder) {
         this.surfaceHolder = holder;
         if (playbackInfo != null)
             loadMedia(holder.getSurface());
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
+    public void surfaceDestroyed(SurfaceView view, SurfaceHolder holder) {
         this.surfaceHolder = null;
         if (mMediaPlayer != null) {
             mMediaPlayer.setSurface(null);

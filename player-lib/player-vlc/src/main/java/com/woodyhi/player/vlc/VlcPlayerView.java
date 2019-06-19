@@ -26,7 +26,6 @@ public class VlcPlayerView extends AbsPlayerView {
     private void init(Context context) {
         VlcPlayerManager manager = new VlcPlayerManager(context);
         this.setPlayerManager(manager);
-        manager.setSurfaceView(getSurfaceView());
     }
 
 

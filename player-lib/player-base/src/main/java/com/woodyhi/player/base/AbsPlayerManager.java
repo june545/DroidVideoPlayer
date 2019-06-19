@@ -1,6 +1,7 @@
 package com.woodyhi.player.base;
 
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 import java.util.Vector;
 
@@ -19,7 +20,7 @@ public abstract class AbsPlayerManager implements BaseController {
         playerCallbacks.remove(callback);
     }
 
-    public abstract void surfaceCreated(SurfaceHolder holder);
+    public abstract void surfaceCreated(SurfaceView surfaceView, SurfaceHolder holder);
 
-    public abstract void surfaceDestroyed(SurfaceHolder holder);
+    public abstract void surfaceDestroyed(SurfaceView surfaceView, SurfaceHolder holder);
 }

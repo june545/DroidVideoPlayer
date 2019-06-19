@@ -1,2 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.woodyhi.player.vlc" />
+    package="com.woodyhi.player.vlc">
+
+    <application>
+        <activity
+            android:name="com.woodyhi.player.vlc.DefaultVlcPlayerActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+
+        </activity>
+    </application>
+</manifest>

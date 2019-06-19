@@ -3,6 +3,7 @@ package com.woodyhi.player.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.res.Configuration;
 import android.view.Surface;
 
 import java.text.DecimalFormat;
@@ -100,6 +101,21 @@ public class Util {
      * @return true if portrait, false if landscape.
      */
     public static boolean isPortrait(Activity activity) {
+        Configuration configuration = activity.getResources().getConfiguration();
+        switch (configuration.orientation) {
+            case Configuration.ORIENTATION_PORTRAIT:
+                return true;
+            case Configuration.ORIENTATION_LANDSCAPE:
+                return false;
+        }
+        return false;
+    }
+
+    /**
+     * @param activity
+     * @return true if portrait, false if landscape.
+     */
+    public static boolean isPortrait2(Activity activity) {
         int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
         switch (rotation) {
             case Surface.ROTATION_0:

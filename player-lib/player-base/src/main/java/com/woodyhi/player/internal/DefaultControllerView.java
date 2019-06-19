@@ -1,11 +1,12 @@
 package com.woodyhi.player.internal;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.Surface;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -104,27 +105,17 @@ public class DefaultControllerView extends FrameLayout {
             }
         });
 
-        fullscreenBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int rotation = Util.getActivityByContext(getContext())
-                        .getWindowManager()
-                        .getDefaultDisplay()
-                        .getRotation();
-                switch (rotation) {
-                    case Surface.ROTATION_0:
-                    case Surface.ROTATION_180:
-                        fullscreenBtn.setImageResource(R.drawable.baseline_fullscreen_exit_24);
-                        Util.getActivityByContext(getContext())
-                                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                        break;
-                    case Surface.ROTATION_90:
-                    case Surface.ROTATION_270:
-                        fullscreenBtn.setImageResource(R.drawable.baseline_fullscreen_24);
-                        Util.getActivityByContext(getContext())
-                                .setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                        break;
-                }
+        fullscreenBtn.setOnClickListener(v -> {
+            Activity activity = Util.getActivityByContext(getContext());
+            switch (activity.getResources().getConfiguration().orientation) {
+                case Configuration.ORIENTATION_PORTRAIT:
+                    fullscreenBtn.setImageResource(R.drawable.baseline_fullscreen_exit_24);
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    break;
+                case Configuration.ORIENTATION_LANDSCAPE:
+                    fullscreenBtn.setImageResource(R.drawable.baseline_fullscreen_24);
+                    activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    break;
             }
         });
 
@@ -140,6 +131,17 @@ public class DefaultControllerView extends FrameLayout {
                 progressTimer.start();
         } else {
             progressTimer.stop();
+        }
+    }
+
+    public void configurationChanged(Configuration newConfig) {
+        switch (newConfig.orientation) {
+            case Configuration.ORIENTATION_PORTRAIT:
+                fullscreenBtn.setImageResource(R.drawable.baseline_fullscreen_24);
+                break;
+            case Configuration.ORIENTATION_LANDSCAPE:
+                fullscreenBtn.setImageResource(R.drawable.baseline_fullscreen_exit_24);
+                break;
         }
     }
 

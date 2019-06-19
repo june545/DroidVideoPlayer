@@ -22,7 +22,6 @@ public class DetailsVlcActivity extends AppCompatActivity {
 
         PlayerView playerView1 = findViewById(R.id.video_player_view_1);
         manager1 = new VlcPlayerManager(this);
-        ((VlcPlayerManager) manager1).setSurfaceView(playerView1.getSurfaceView());
         playerView1.setPlayerManager(manager1);
         DefaultControllerView controllerView1 = new DefaultControllerView(this);
         controllerView1.setPlayerManger(manager1);
@@ -31,7 +30,6 @@ public class DetailsVlcActivity extends AppCompatActivity {
 
 //        PlayerView playerView2 = findViewById(R.id.video_player_view_2);
 //        manager2 = new VlcPlayerManager(this);
-//        ((VlcPlayerManager) manager2).setSurfaceView(playerView2.getSurfaceView());
 //        playerView2.setPlayerManager(manager2);
 //        DefaultControllerView controllerView2 = new DefaultControllerView(this);
 //        controllerView2.setPlayerManger(manager2);
@@ -41,7 +39,6 @@ public class DetailsVlcActivity extends AppCompatActivity {
 
 //        PlayerView playerView3 = findViewById(R.id.video_player_view_3);
 //        manager3 = new VlcPlayerManager(this);
-//        ((VlcPlayerManager) manager3).setSurfaceView(playerView3.getSurfaceView());
 //        playerView3.setPlayerManager(manager3);
 //        DefaultControllerView controllerView3 = new DefaultControllerView(this);
 //        controllerView3.setPlayerManger(manager3);

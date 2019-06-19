@@ -43,4 +43,10 @@ public class DetailsActivity extends AppCompatActivity {
 
         PlayerView playerView3 = findViewById(R.id.video_player_view_3);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
 }

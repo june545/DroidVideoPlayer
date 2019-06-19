@@ -42,7 +42,7 @@ public class VideoSurfaceView extends ResizeSurfaceView implements SurfaceHolder
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         if (playerManger != null)
-            playerManger.surfaceCreated(holder);
+            playerManger.surfaceCreated(this, holder);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class VideoSurfaceView extends ResizeSurfaceView implements SurfaceHolder
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         if (playerManger != null)
-            playerManger.surfaceDestroyed(holder);
+            playerManger.surfaceDestroyed(this, holder);
     }
 
     public void setPlayerManager(AbsPlayerManager playerManager) {

@@ -1,6 +1,7 @@
 package com.woodyhi.player.ijk;
 
 import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.LogUtil;
@@ -97,13 +98,13 @@ mediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"max-fps",30);最大fps
     }
 
     @Override
-    public void surfaceCreated(SurfaceHolder holder) {
+    public void surfaceCreated(SurfaceView view, SurfaceHolder holder) {
         this.surfaceHolder = holder;
         loadMedia();
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
+    public void surfaceDestroyed(SurfaceView view, SurfaceHolder holder) {
         this.surfaceHolder = null;
         if (ijkMediaPlayer != null) {
             ijkMediaPlayer.setSurface(null);

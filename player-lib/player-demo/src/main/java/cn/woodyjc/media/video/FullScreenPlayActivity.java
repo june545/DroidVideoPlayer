@@ -87,4 +87,11 @@ public class FullScreenPlayActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mpMgr != null)
+            mpMgr.release();
+    }
 }

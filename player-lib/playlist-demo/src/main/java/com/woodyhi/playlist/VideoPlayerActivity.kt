@@ -1,10 +1,12 @@
 package com.woodyhi.playlist
 
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.KeyEvent
 import android.view.View
 import com.woodyhi.player.base.PlaybackInfo
 import com.woodyhi.player.internal.DefaultControllerView
@@ -17,6 +19,7 @@ class VideoPlayerActivity : AppCompatActivity() {
     private var systemUiVisibilityWhenPortrait: Int = 0
 
     private var manager1: VlcPlayerManager? = null
+    private var controllerView1: DefaultControllerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,10 +36,9 @@ class VideoPlayerActivity : AppCompatActivity() {
 
         val playerView1 = findViewById<PlayerView>(R.id.playerView)
         manager1 = VlcPlayerManager(this)
-        (manager1 as VlcPlayerManager).setSurfaceView(playerView1.surfaceView)
         playerView1.setPlayerManager(manager1)
-        val controllerView1 = DefaultControllerView(this)
-        controllerView1.setPlayerManger(manager1)
+        controllerView1 = DefaultControllerView(this)
+        controllerView1!!.setPlayerManger(manager1)
         playerView1.controllerView = controllerView1
         manager1!!.playback(PlaybackInfo(if (path == null) rtmp else path))
     }
@@ -49,18 +51,38 @@ class VideoPlayerActivity : AppCompatActivity() {
                 activity.window.decorView.systemUiVisibility = systemUiVisibilityWhenPortrait
             }
             Configuration.ORIENTATION_LANDSCAPE -> {
-                activity.window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LOW_PROFILE
-                        or View.SYSTEM_UI_FLAG_FULLSCREEN
-                        or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                        or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                        or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
+                activity.window.decorView.systemUiVisibility = (
+                        View.SYSTEM_UI_FLAG_LOW_PROFILE
+                                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
             }
         }
+        controllerView1?.configurationChanged(newConfig)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        manager1?.togglePlayPause()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        manager1?.togglePlayPause();
     }
 
     override fun onDestroy() {
         super.onDestroy()
         manager1?.release()
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event?.repeatCount == 0 && !com.woodyhi.player.base.Util.isPortrait(this)) {
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
     }
 }
