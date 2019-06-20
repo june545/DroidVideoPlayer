@@ -5,7 +5,7 @@ import android.view.SurfaceView;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.LogUtil;
-import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.base.PlayerCallback;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class IjkPlayerManager extends AbsPlayerManager {
     IjkMediaPlayer ijkMediaPlayer;
     SurfaceHolder surfaceHolder;
 
-    PlaybackInfo playbackInfo;
+    PlayInfo playInfo;
 
     private IjkMediaPlayer createMediaPlayer() {
         if (ijkMediaPlayer != null) {
@@ -90,7 +90,7 @@ mediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"max-fps",30);最大fps
         }
         ijkMediaPlayer.setSurface(surfaceHolder.getSurface());
         try {
-            ijkMediaPlayer.setDataSource(playbackInfo.path);
+            ijkMediaPlayer.setDataSource(playInfo.path);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -114,14 +114,14 @@ mediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"max-fps",30);最大fps
 
 
     //-----------------------------------------Controller--------------------------------------
-    public void playback(PlaybackInfo info) {
-        this.playbackInfo = info;
+    public void play(PlayInfo info) {
+        this.playInfo = info;
         if (surfaceHolder != null)
             loadMedia();
     }
 
     @Override
-    public void playback() {
+    public void play() {
         if (ijkMediaPlayer != null && !ijkMediaPlayer.isPlaying())
             ijkMediaPlayer.start();
     }

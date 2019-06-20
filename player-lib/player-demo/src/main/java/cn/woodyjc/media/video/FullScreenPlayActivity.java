@@ -11,7 +11,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.woodyhi.player.base.AbsPlayerManager;
-import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.internal.DefaultControllerView;
 import com.woodyhi.player.vlc.VlcPlayerManager;
 import com.woodyhi.player.widget.PlayerView;
@@ -40,7 +40,7 @@ public class FullScreenPlayActivity extends AppCompatActivity {
         DefaultControllerView mpControllerView = new DefaultControllerView(this);
         mpControllerView.setPlayerManger(mpMgr);
         mpPlayerView.setControllerView(mpControllerView);
-        mpMgr.playback(new PlaybackInfo(path));
+        mpMgr.play(new PlayInfo(path));
     }
 
 

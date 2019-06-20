@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.KeyEvent
 import android.view.View
-import com.woodyhi.player.base.PlaybackInfo
+import com.woodyhi.player.base.PlayInfo
 import com.woodyhi.player.internal.DefaultControllerView
 import com.woodyhi.player.vlc.VlcPlayerManager
 import com.woodyhi.player.widget.PlayerView
@@ -40,7 +40,7 @@ class VideoPlayerActivity : AppCompatActivity() {
         controllerView1 = DefaultControllerView(this)
         controllerView1!!.setPlayerManger(manager1)
         playerView1.controllerView = controllerView1
-        manager1!!.playback(PlaybackInfo(if (path == null) rtmp else path))
+        manager1!!.play(PlayInfo(if (path == null) rtmp else path))
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -65,12 +65,12 @@ class VideoPlayerActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        manager1?.togglePlayPause()
+        manager1?.play()
     }
 
     override fun onPause() {
         super.onPause()
-        manager1?.togglePlayPause();
+        manager1?.pause()
     }
 
     override fun onDestroy() {

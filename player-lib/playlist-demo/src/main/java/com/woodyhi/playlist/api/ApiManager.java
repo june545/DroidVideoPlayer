@@ -32,7 +32,7 @@ public class ApiManager {
                     Response response = chain.proceed(chain.request());
                     return response.newBuilder()
                             .removeHeader("Pragma")
-                            .header("Cache-Control", "public, max-age=3600")
+                            .header("Cache-Control", "public, max-age=" + 3600 * 24)
                             .build();
                 })
                 .build();

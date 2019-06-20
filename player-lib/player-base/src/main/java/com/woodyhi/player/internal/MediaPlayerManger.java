@@ -9,7 +9,7 @@ import android.view.SurfaceView;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.LogUtil;
-import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.base.PlayerCallback;
 
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class MediaPlayerManger extends AbsPlayerManager {
 
     MediaPlayer mMediaPlayer;
     SurfaceHolder surfaceHolder;
-    PlaybackInfo playbackInfo;
+    PlayInfo playInfo;
     private boolean isSeekable = true;
     private boolean isValidMediaPlayer;
 
@@ -136,11 +136,11 @@ public class MediaPlayerManger extends AbsPlayerManager {
         });
 
         try {
-            if (playbackInfo.path == null) {
-                AssetFileDescriptor afd = playbackInfo.assetFileDescriptor;
+            if (playInfo.path == null) {
+                AssetFileDescriptor afd = playInfo.assetFileDescriptor;
                 mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             } else {
-                mediaPlayer.setDataSource(playbackInfo.path);
+                mediaPlayer.setDataSource(playInfo.path);
             }
 
             mediaPlayer.prepareAsync();
@@ -165,7 +165,7 @@ public class MediaPlayerManger extends AbsPlayerManager {
     @Override
     public void surfaceCreated(SurfaceView view, SurfaceHolder holder) {
         this.surfaceHolder = holder;
-        if (playbackInfo != null)
+        if (playInfo != null)
             loadMedia(holder.getSurface());
     }
 
@@ -182,8 +182,8 @@ public class MediaPlayerManger extends AbsPlayerManager {
 
 
     //-----------------------------------------Controller--------------------------------------
-    public void playback(PlaybackInfo info) {
-        this.playbackInfo = info;
+    public void play(PlayInfo info) {
+        this.playInfo = info;
         if (mMediaPlayer != null) {
             if (mMediaPlayer.isPlaying()) {
                 mMediaPlayer.stop();
@@ -202,7 +202,7 @@ public class MediaPlayerManger extends AbsPlayerManager {
     }
 
     @Override
-    public void playback() {
+    public void play() {
         if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
             mMediaPlayer.start();
         }

@@ -12,7 +12,7 @@ import android.widget.FrameLayout;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.LogUtil;
-import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.base.PlayerCallback;
 
 import org.videolan.libvlc.IVLCVout;
@@ -34,7 +34,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
     private Context context;
     private SurfaceHolder surfaceHolder;
     private SurfaceView surfaceView;
-    private PlaybackInfo playbackInfo;
+    private PlayInfo playInfo;
 
     private MediaPlayer mediaPlayer;
     private LibVLC libVLC;
@@ -172,7 +172,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
             mediaPlayer.getVLCVout().setWindowSize(surfaceView.getMeasuredWidth(), surfaceView.getMeasuredHeight());
             mediaPlayer.getVLCVout().attachViews(onNewVideoLayoutListener);
         }
-        Media media = new Media(libVLC, Uri.parse(playbackInfo.path));
+        Media media = new Media(libVLC, Uri.parse(playInfo.path));
         mediaPlayer.setMedia(media);
         media.release();
         mediaPlayer.play();
@@ -182,7 +182,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
     public void surfaceCreated(SurfaceView view, SurfaceHolder holder) {
         this.surfaceView = view;
         this.surfaceHolder = holder;
-        if (playbackInfo != null)
+        if (playInfo != null)
             loadMedia();
     }
 
@@ -194,29 +194,20 @@ public class VlcPlayerManager extends AbsPlayerManager {
 
     //-------------------------------------Controller-----------------------------------------
     @Override
-    public void playback(PlaybackInfo info) {
-        this.playbackInfo = info;
+    public void play(PlayInfo info) {
+        this.playInfo = info;
         if (surfaceHolder != null) {
             loadMedia();
         }
     }
 
     @Override
-    public void playback() {
+    public void play() {
         if (mediaPlayer == null)
             loadMedia();
 
         if (mediaPlayer != null && !mediaPlayer.isPlaying())
             mediaPlayer.play();
-    }
-
-    public void togglePlayPause() {
-        if (mediaPlayer != null) {
-            if (mediaPlayer.getPlayerState() == Media.State.Playing)
-                mediaPlayer.pause();
-            else if (mediaPlayer.getPlayerState() == Media.State.Paused)
-                mediaPlayer.play();
-        }
     }
 
     @Override

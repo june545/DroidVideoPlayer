@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.woodyhi.player.base.AbsPlayerManager;
-import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.ijk.IjkPlayerManager;
 import com.woodyhi.player.internal.DefaultControllerView;
 import com.woodyhi.player.internal.MediaPlayerManger;
@@ -42,7 +42,7 @@ public class AllPlayer3Activity extends AppCompatActivity {
         DefaultControllerView mpControllerView = new DefaultControllerView(this);
         mpControllerView.setPlayerManger(mpMgr);
         mpPlayerView.setControllerView(mpControllerView);
-        mpMgr.playback(new PlaybackInfo(path));
+        mpMgr.play(new PlayInfo(path));
     }
 
     private void initIjk() {
@@ -52,7 +52,7 @@ public class AllPlayer3Activity extends AppCompatActivity {
         DefaultControllerView ijkControllerView = new DefaultControllerView(this);
         ijkControllerView.setPlayerManger(ijkMgr);
         ijkPlayerView.setControllerView(ijkControllerView);
-        ijkMgr.playback(new PlaybackInfo(path2));
+        ijkMgr.play(new PlayInfo(path2));
     }
 
     private void initVlc() {
@@ -62,7 +62,7 @@ public class AllPlayer3Activity extends AppCompatActivity {
         DefaultControllerView vlcControllerView = new DefaultControllerView(this);
         vlcControllerView.setPlayerManger(vlcMgr);
         vlcPlayerView.setControllerView(vlcControllerView);
-        vlcMgr.playback(new PlaybackInfo(path3));
+        vlcMgr.play(new PlayInfo(path3));
     }
 
     @Override

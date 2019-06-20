@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.widget.PlayerView;
 
 public class DetailsActivity extends AppCompatActivity {
@@ -36,7 +36,7 @@ public class DetailsActivity extends AppCompatActivity {
                 .add(R.id.player_container, videoPlayerFragmentNew)
                 .commit();
 
-        videoPlayerFragmentNew.playback(new PlaybackInfo(VideoPath.https));
+        videoPlayerFragmentNew.playback(new PlayInfo(VideoPath.https));
 
 
         PlayerView playerView2 = findViewById(R.id.video_player_view_2);

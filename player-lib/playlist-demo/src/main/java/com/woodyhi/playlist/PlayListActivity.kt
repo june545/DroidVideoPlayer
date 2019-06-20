@@ -20,7 +20,7 @@ class PlayListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_play_list)
 
 
-//        val content: String? = assets.open("trailers.txt").use { it.bufferedReader().use { it.readText() } }
+//        val content: String? = assets.open("trailers.json").use { it.bufferedReader().use { it.readText() } }
 //        Log.d(TAG, content)
 //        val trailerListData: TrailerListData? = Gson().fromJson(content, object : TypeToken<TrailerListData>() {}.type)
 //        for (trailer: Trailer in trailerListData?.trailers!!) {

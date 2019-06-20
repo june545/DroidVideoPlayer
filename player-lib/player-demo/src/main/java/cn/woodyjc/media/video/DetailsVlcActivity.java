@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.woodyhi.player.base.AbsPlayerManager;
-import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.internal.DefaultControllerView;
 import com.woodyhi.player.vlc.VlcPlayerManager;
 import com.woodyhi.player.widget.PlayerView;
@@ -26,7 +26,7 @@ public class DetailsVlcActivity extends AppCompatActivity {
         DefaultControllerView controllerView1 = new DefaultControllerView(this);
         controllerView1.setPlayerManger(manager1);
         playerView1.setControllerView(controllerView1);
-        manager1.playback(new PlaybackInfo(VideoPath.https));
+        manager1.play(new PlayInfo(VideoPath.https));
 
 //        PlayerView playerView2 = findViewById(R.id.video_player_view_2);
 //        manager2 = new VlcPlayerManager(this);
@@ -34,7 +34,7 @@ public class DetailsVlcActivity extends AppCompatActivity {
 //        DefaultControllerView controllerView2 = new DefaultControllerView(this);
 //        controllerView2.setPlayerManger(manager2);
 //        playerView2.setControllerView(controllerView2);
-//        manager2.playback(new PlaybackInfo(VideoPath.rtmp));
+//        manager2.playback(new PlayInfo(VideoPath.rtmp));
 
 
 //        PlayerView playerView3 = findViewById(R.id.video_player_view_3);
@@ -43,7 +43,7 @@ public class DetailsVlcActivity extends AppCompatActivity {
 //        DefaultControllerView controllerView3 = new DefaultControllerView(this);
 //        controllerView3.setPlayerManger(manager3);
 //        playerView3.setControllerView(controllerView3);
-//        manager3.playback(new PlaybackInfo(rtsp));
+//        manager3.playback(new PlayInfo(rtsp));
     }
 
     @Override

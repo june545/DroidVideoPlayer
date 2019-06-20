@@ -16,7 +16,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.woodyhi.player.base.AbsPlayerManager;
-import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.internal.SimplePlayerView;
 
 import butterknife.BindView;
@@ -38,7 +38,7 @@ public class VideoPlayerFragmentNew extends Fragment {
     @BindView(R.id.open_close_fullscreen) ImageView openCloseFullscreenBtn;
 
     AbsPlayerManager playerManger;
-    PlaybackInfo playbackInfo;
+    PlayInfo playInfo;
 
     private int systemUiVisibilityWhenPortrait;
 
@@ -68,7 +68,7 @@ public class VideoPlayerFragmentNew extends Fragment {
     private void initViews(View view) {
         controllerView = videoPlayerView.getControllerView();
         playerManger = videoPlayerView.getPlayerManger();
-        playerManger.playback(playbackInfo);
+        playerManger.play(playInfo);
     }
 
     @Override
@@ -207,11 +207,11 @@ public class VideoPlayerFragmentNew extends Fragment {
     /**
      * 待播放视频
      */
-    public void playback(PlaybackInfo info) {
+    public void playback(PlayInfo info) {
         if (playerManger != null) {
-            playerManger.playback(info);
+            playerManger.play(info);
         } else {
-            this.playbackInfo = info;
+            this.playInfo = info;
         }
     }
 

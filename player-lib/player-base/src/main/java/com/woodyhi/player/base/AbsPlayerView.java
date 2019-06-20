@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 
-import com.woodyhi.player.internal.MediaPlayerManger;
 import com.woodyhi.player.widget.VideoSurfaceView;
 
 /**
@@ -86,13 +85,6 @@ public class AbsPlayerView extends FrameLayout {
 
     public View getControllerView() {
         return controllerView;
-    }
-
-    /**
-     * 播放链接
-     */
-    public void playback(PlaybackInfo info) {
-        playerManger.playback(info);
     }
 
     public AbsPlayerManager getPlayerManger() {

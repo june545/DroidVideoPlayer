@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.woodyhi.player.base.AbsPlayerManager;
-import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.internal.DefaultControllerView;
 
 /**
@@ -23,7 +23,7 @@ public class IjkPlayerFragment extends Fragment {
     IjkPlayerView videoPlayerView;
 
     AbsPlayerManager playerManger;
-    PlaybackInfo playbackInfo;
+    PlayInfo playInfo;
 
     @Nullable
     @Override
@@ -35,7 +35,7 @@ public class IjkPlayerFragment extends Fragment {
         DefaultControllerView controllerView = new DefaultControllerView(getActivity());
         controllerView.setPlayerManger(playerManger);
         videoPlayerView.setControllerView(controllerView);
-        playerManger.playback(playbackInfo);
+        playerManger.play(playInfo);
 
         return rootView;
     }
@@ -43,11 +43,11 @@ public class IjkPlayerFragment extends Fragment {
     /**
      * 待播放视频
      */
-    public void playback(PlaybackInfo info) {
+    public void playback(PlayInfo info) {
         if (playerManger != null) {
-            playerManger.playback(info);
+            playerManger.play(info);
         } else {
-            this.playbackInfo = info;
+            this.playInfo = info;
         }
     }
 

@@ -8,7 +8,7 @@ import android.view.KeyEvent;
 import android.view.View;
 
 import com.woodyhi.player.base.AbsPlayerManager;
-import com.woodyhi.player.base.PlaybackInfo;
+import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.internal.DefaultControllerView;
 import com.woodyhi.player.widget.PlayerView;
 
@@ -34,7 +34,7 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
         controllerView1 = new DefaultControllerView(this);
         controllerView1.setPlayerManger(playerManager);
         playerView1.setControllerView(controllerView1);
-        playerManager.playback(new PlaybackInfo(path));
+        playerManager.play(new PlayInfo(path));
     }
 
     @Override
@@ -59,6 +59,20 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
                 controllerView1.configurationChanged(newConfig);
                 break;
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (playerManager != null)
+            playerManager.play();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (playerManager != null)
+            playerManager.pause();
     }
 
     @Override

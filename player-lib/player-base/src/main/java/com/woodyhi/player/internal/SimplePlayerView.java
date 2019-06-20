@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 
 import com.woodyhi.player.base.AbsPlayerView;
-import com.woodyhi.player.base.PlaybackInfo;
 
 /**
  * @author June
