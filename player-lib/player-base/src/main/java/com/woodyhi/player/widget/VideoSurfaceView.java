@@ -41,6 +41,7 @@ public class VideoSurfaceView extends ResizeSurfaceView implements SurfaceHolder
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        LogUtil.d(TAG, "surfaceCreated: ---");
         if (playerManger != null)
             playerManger.surfaceCreated(this, holder);
     }
@@ -55,11 +56,12 @@ public class VideoSurfaceView extends ResizeSurfaceView implements SurfaceHolder
         else if (format == ImageFormat.YV12)
             _format = "YV12";
 
-        LogUtil.d(TAG, "surfaceChanged -> PixelFormat is " + _format + ", width = " + width + ", height = " + height);
+        LogUtil.d(TAG, "surfaceChanged: PixelFormat is " + _format + ", width : " + width + ", height : " + height);
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+        LogUtil.d(TAG, "surfaceDestroyed: ---");
         if (playerManger != null)
             playerManger.surfaceDestroyed(this, holder);
     }
@@ -73,6 +75,5 @@ public class VideoSurfaceView extends ResizeSurfaceView implements SurfaceHolder
             }
         });
     }
-
 
 }

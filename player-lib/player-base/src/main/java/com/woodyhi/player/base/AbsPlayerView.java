@@ -96,4 +96,9 @@ public class AbsPlayerView extends FrameLayout {
         surfaceView.setPlayerManager(this.playerManger);
     }
 
+    @Override
+    protected void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
+        LogUtil.d(TAG, "onWindowVisibilityChanged: --------------- " + visibility);
+    }
 }

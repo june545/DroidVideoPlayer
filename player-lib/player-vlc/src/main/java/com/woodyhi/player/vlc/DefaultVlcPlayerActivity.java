@@ -15,7 +15,6 @@ import com.woodyhi.player.widget.PlayerView;
 public class DefaultVlcPlayerActivity extends AppCompatActivity {
 
     private AbsPlayerManager playerManager;
-    private DefaultControllerView controllerView1;
     private boolean isLandscape = false;
     private int originalSystemUiVisibility;
 
@@ -31,7 +30,7 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
         PlayerView playerView1 = findViewById(R.id.playerView);
         playerManager = new VlcPlayerManager(this);
         playerView1.setPlayerManager(playerManager);
-        controllerView1 = new DefaultControllerView(this);
+        DefaultControllerView controllerView1 = new DefaultControllerView(this);
         controllerView1.setPlayerManger(playerManager);
         playerView1.setControllerView(controllerView1);
         playerManager.play(new PlayInfo(path));
@@ -44,7 +43,6 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
             case Configuration.ORIENTATION_PORTRAIT:
                 getWindow().getDecorView().setVisibility(originalSystemUiVisibility);
                 isLandscape = false;
-                controllerView1.configurationChanged(newConfig);
                 break;
             case Configuration.ORIENTATION_LANDSCAPE:
                 getWindow().getDecorView().setSystemUiVisibility(
@@ -56,7 +54,6 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
                                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 );
                 isLandscape = true;
-                controllerView1.configurationChanged(newConfig);
                 break;
         }
     }

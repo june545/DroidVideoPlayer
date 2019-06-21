@@ -96,7 +96,7 @@ public class DefaultControllerView extends FrameLayout {
                         playerManger.pause();
                         playPauseBtn.setImageResource(R.drawable.baseline_play_arrow_24);
                     } else {
-                        playerManger.play();
+                        playerManger.play(null);
                         playPauseBtn.setImageResource(R.drawable.baseline_pause_24);
 
                         progressTimer.start();
@@ -134,7 +134,9 @@ public class DefaultControllerView extends FrameLayout {
         }
     }
 
-    public void configurationChanged(Configuration newConfig) {
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
         switch (newConfig.orientation) {
             case Configuration.ORIENTATION_PORTRAIT:
                 fullscreenBtn.setImageResource(R.drawable.baseline_fullscreen_24);
@@ -154,6 +156,11 @@ public class DefaultControllerView extends FrameLayout {
         @Override
         public void onBufferingUpdate(float percent) {
             mSeekBar.setSecondaryProgress((int) (mSeekBar.getMax() * percent / 100));
+        }
+
+        @Override
+        public void onPlaying() {
+            playPauseBtn.setImageResource(R.drawable.baseline_pause_24);
         }
 
         @Override

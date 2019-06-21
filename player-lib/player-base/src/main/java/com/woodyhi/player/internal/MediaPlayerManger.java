@@ -79,7 +79,7 @@ public class MediaPlayerManger extends AbsPlayerManager {
                     case MediaPlayer.MEDIA_INFO_VIDEO_RENDERING_START:
 //                        updateLoadingState(false);
                         for (PlayerCallback listener : playerCallbacks) {
-                            listener.onRenderingStart();
+                            listener.onPlaying();
                         }
                         break;
                     case MediaPlayer.MEDIA_INFO_BUFFERING_START:

@@ -27,9 +27,7 @@ public abstract class PlayerCallback {
     public void onVideoSizeChanged(int width, int height) {
     }
 
-
-    public void onRenderingStart() {
-
+    public void onPlaying() {
     }
 
     public void onTimeChanged(long time) {

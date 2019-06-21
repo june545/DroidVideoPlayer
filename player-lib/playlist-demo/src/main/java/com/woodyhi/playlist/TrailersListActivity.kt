@@ -3,7 +3,6 @@ package com.woodyhi.playlist
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import com.woodyhi.playlist.api.ApiManager
 import com.woodyhi.playlist.model.Trailer
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -12,8 +11,8 @@ import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_play_list.*
 
-class PlayListActivity : AppCompatActivity() {
-    val TAG = PlayListActivity::class.java.simpleName
+class TrailersListActivity : AppCompatActivity() {
+    val TAG = TrailersListActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +39,7 @@ class PlayListActivity : AppCompatActivity() {
                 .subscribe(
                         object : Consumer<List<Trailer>> {
                             override fun accept(t: List<Trailer>?) {
-                                recycler_view.layoutManager = LinearLayoutManager(this@PlayListActivity)
+                                recycler_view.layoutManager = LinearLayoutManager(this@TrailersListActivity)
                                 recycler_view.adapter = t?.let { MyAdapter(it) }
                             }
                         },

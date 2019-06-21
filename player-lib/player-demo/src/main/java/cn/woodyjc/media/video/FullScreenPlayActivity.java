@@ -1,7 +1,9 @@
 package cn.woodyjc.media.video;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.widget.FrameLayout;
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.internal.DefaultControllerView;
+import com.woodyhi.player.vlc.DefaultVlcPlayerActivity;
 import com.woodyhi.player.vlc.VlcPlayerManager;
 import com.woodyhi.player.widget.PlayerView;
 
@@ -30,7 +33,11 @@ public class FullScreenPlayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_full_screen_play);
 
-        initMediaPlayer();
+        Intent intent = new Intent(this, DefaultVlcPlayerActivity.class);
+        intent.setData(Uri.parse("http://vfx.mtime.cn/Video/2019/06/15/mp4/190615103827358781.mp4"));
+        startActivity(intent);
+        finish();
+//        initMediaPlayer();
     }
 
     private void initMediaPlayer() {

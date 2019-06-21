@@ -19,7 +19,6 @@ class VideoPlayerActivity : AppCompatActivity() {
     private var systemUiVisibilityWhenPortrait: Int = 0
 
     private var manager1: VlcPlayerManager? = null
-    private var controllerView1: DefaultControllerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +36,8 @@ class VideoPlayerActivity : AppCompatActivity() {
         val playerView1 = findViewById<PlayerView>(R.id.playerView)
         manager1 = VlcPlayerManager(this)
         playerView1.setPlayerManager(manager1)
-        controllerView1 = DefaultControllerView(this)
-        controllerView1!!.setPlayerManger(manager1)
+        val controllerView1 = DefaultControllerView(this)
+        controllerView1.setPlayerManger(manager1)
         playerView1.controllerView = controllerView1
         manager1!!.play(PlayInfo(if (path == null) rtmp else path))
     }
@@ -60,7 +59,6 @@ class VideoPlayerActivity : AppCompatActivity() {
                                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION)
             }
         }
-        controllerView1?.configurationChanged(newConfig)
     }
 
     override fun onResume() {
