@@ -39,7 +39,8 @@ public class VlcPlayerManager extends AbsPlayerManager {
     private MediaPlayer mediaPlayer;
     private LibVLC libVLC;
     private volatile int lastPosition;
-    private boolean seekable = true;
+    private volatile boolean seekable = true;
+    private volatile boolean endReached;
     private boolean play = true;
     private boolean pausedFromUser;
 
@@ -90,6 +91,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
                     mgr.onCompletion();
                     mgr.release();
                     mgr.play = false;
+                    mgr.endReached = true;
                     break;
                 case MediaPlayer.Event.EncounteredError:
                     LogUtil.d(TAG, "Media Player Error, re-try");
@@ -199,17 +201,24 @@ public class VlcPlayerManager extends AbsPlayerManager {
             mediaPlayer.getVLCVout().detachViews();
             mediaPlayer.getVLCVout().setVideoSurface(holder.getSurface(), holder);
             mediaPlayer.getVLCVout().attachViews(onNewVideoLayoutListener);
-            if (play)
+        }
+        if (!endReached && !pausedFromUser) {
+            if (mediaPlayer != null && mediaPlayer.getPlayerState() == Media.State.Paused) {
                 play();
-
-        } else {
-            loadMedia();
+            } else {
+                loadMedia();
+            }
         }
     }
 
     @Override
     public void surfaceDestroyed(SurfaceView view, SurfaceHolder holder) {
         this.surfaceHolder = null;
+        view.setZOrderOnTop(true);
+        view.setZOrderMediaOverlay(true);
+        pause();
+        if (mediaPlayer != null)
+            mediaPlayer.getVLCVout().detachViews();
     }
 
 
@@ -228,6 +237,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
             loadMedia();
         }
         play = true;
+        endReached = false;
     }
 
     @Override
@@ -241,9 +251,15 @@ public class VlcPlayerManager extends AbsPlayerManager {
     public void pause() {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
-            if (seekable) {
-                mediaPlayer.setTime(lastPosition - 3000);
-            }
+        }
+    }
+
+    @Override
+    public void pause(boolean fromUser) {
+        this.pausedFromUser = fromUser;
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+//            mediaPlayer.getVLCVout().detachViews();
+            mediaPlayer.pause();
         }
     }
 

@@ -23,4 +23,9 @@ public abstract class AbsPlayerManager implements BaseController {
     public abstract void surfaceCreated(SurfaceView surfaceView, SurfaceHolder holder);
 
     public abstract void surfaceDestroyed(SurfaceView surfaceView, SurfaceHolder holder);
+
+    @Override
+    public void pause(boolean fromUser) {
+
+    }
 }

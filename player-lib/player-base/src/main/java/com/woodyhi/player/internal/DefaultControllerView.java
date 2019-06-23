@@ -94,6 +94,7 @@ public class DefaultControllerView extends FrameLayout {
                 if (playerManger != null) {
                     if (playerManger.isPlaying()) {
                         playerManger.pause();
+                        playerManger.pause(true);
                         playPauseBtn.setImageResource(R.drawable.baseline_play_arrow_24);
                     } else {
                         playerManger.play(null);

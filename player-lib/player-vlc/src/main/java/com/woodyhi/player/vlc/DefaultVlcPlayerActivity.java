@@ -61,15 +61,15 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (playerManager != null)
-            playerManager.play();
+//        if (playerManager != null)
+//            playerManager.play();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (playerManager != null)
-            playerManager.pause();
+//        if (playerManager != null)
+//            playerManager.pause();
     }
 
     @Override
