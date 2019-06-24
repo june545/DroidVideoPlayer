@@ -4,13 +4,10 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-
-import com.woodyhi.player.widget.VideoSurfaceView;
 
 /**
  * @author June
@@ -19,11 +16,9 @@ import com.woodyhi.player.widget.VideoSurfaceView;
 public class AbsPlayerView extends FrameLayout {
     private static final String TAG = AbsPlayerView.class.getSimpleName();
 
-    VideoSurfaceView surfaceView;
+    View videoView;
     View coverView;
     View controllerView;
-
-    AbsPlayerManager playerManger;
 
     public AbsPlayerView(Context context) {
         this(context, null);
@@ -40,15 +35,20 @@ public class AbsPlayerView extends FrameLayout {
     }
 
     private void init(Context context) {
-        surfaceView = new VideoSurfaceView(getContext());
-        LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        lp.gravity = Gravity.CENTER;
-        surfaceView.setTag("SurfaceView");
-        addView(surfaceView, lp);
+
     }
 
-    public SurfaceView getSurfaceView() {
-        return surfaceView;
+    public void setVideoView(View view) {
+        this.videoView = view;
+        LayoutParams lp = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        lp.gravity = Gravity.CENTER;
+        videoView.setTag("SurfaceView");
+        addView(videoView, 0, lp);
+    }
+
+    /** SurfaceView or TextureView */
+    public View getVideoView() {
+        return videoView;
     }
 
     public void setCoverView(View view) {
@@ -87,18 +87,4 @@ public class AbsPlayerView extends FrameLayout {
         return controllerView;
     }
 
-    public AbsPlayerManager getPlayerManger() {
-        return playerManger;
-    }
-
-    public void setPlayerManager(AbsPlayerManager playerManger) {
-        this.playerManger = playerManger;
-        surfaceView.setPlayerManager(this.playerManger);
-    }
-
-    @Override
-    protected void onWindowVisibilityChanged(int visibility) {
-        super.onWindowVisibilityChanged(visibility);
-        LogUtil.d(TAG, "onWindowVisibilityChanged: --------------- " + visibility);
-    }
 }

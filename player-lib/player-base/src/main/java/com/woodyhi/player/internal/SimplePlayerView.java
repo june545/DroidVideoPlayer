@@ -2,7 +2,9 @@ package com.woodyhi.player.internal;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.SurfaceView;
 
+import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.AbsPlayerView;
 
 /**
@@ -10,6 +12,10 @@ import com.woodyhi.player.base.AbsPlayerView;
  * @date 2019-06-09
  */
 public class SimplePlayerView extends AbsPlayerView {
+
+    private SurfaceView surfaceView;
+    private MediaPlayerManger playerManger;
+
     public SimplePlayerView(Context context) {
         this(context, null);
     }
@@ -24,13 +30,19 @@ public class SimplePlayerView extends AbsPlayerView {
     }
 
     private void init(Context context) {
-        MediaPlayerManger playerManger = new MediaPlayerManger();
-        this.setPlayerManager(playerManger);
+        playerManger = new MediaPlayerManger();
 
+        surfaceView = new SurfaceView(context);
+        super.setVideoView(surfaceView);
+
+        playerManger.setVideoView(surfaceView);
 
         DefaultControllerView controllerView = new DefaultControllerView(context);
-        controllerView.setPlayerManger(getPlayerManger());
+        controllerView.setPlayerManger(playerManger);
         setControllerView(controllerView);
     }
 
+    public AbsPlayerManager getPlayerManager() {
+        return playerManger;
+    }
 }

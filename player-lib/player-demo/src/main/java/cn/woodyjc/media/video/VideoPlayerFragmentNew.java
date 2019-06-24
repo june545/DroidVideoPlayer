@@ -67,7 +67,7 @@ public class VideoPlayerFragmentNew extends Fragment {
 
     private void initViews(View view) {
         controllerView = videoPlayerView.getControllerView();
-        playerManger = videoPlayerView.getPlayerManger();
+        playerManger = videoPlayerView.getPlayerManager();
         playerManger.play(playInfo);
     }
 

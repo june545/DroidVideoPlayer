@@ -26,6 +26,5 @@ public class IjkPlayerView extends AbsPlayerView {
 
     private void init(Context context) {
         IjkPlayerManager playerManger = new IjkPlayerManager();
-        setPlayerManager(playerManger);
     }
 }

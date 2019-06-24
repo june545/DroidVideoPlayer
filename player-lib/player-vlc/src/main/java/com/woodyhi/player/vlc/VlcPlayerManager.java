@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -32,8 +33,6 @@ public class VlcPlayerManager extends AbsPlayerManager {
     private static final String TAG = VlcPlayerManager.class.getSimpleName();
 
     private Context context;
-    private SurfaceHolder surfaceHolder;
-    private SurfaceView surfaceView;
     private PlayInfo playInfo;
 
     private MediaPlayer mediaPlayer;
@@ -163,27 +162,33 @@ public class VlcPlayerManager extends AbsPlayerManager {
     };
 
     private void loadMedia() {
-        if (playInfo == null) {
-            LogUtil.e(TAG, "playInfo is null");
+//        if (playInfo == null) {
+//            LogUtil.e(TAG, "playInfo is null");
+//            return;
+//        }
+        if (surfaceView == null && textureView == null) {
+            LogUtil.e(TAG, "video surface field is null");
             return;
         }
-        if (surfaceView == null) {
-            LogUtil.e(TAG, "surfaceView field is null");
+        if (!isSurfaceValid) {
+            LogUtil.e(TAG, "video surface is invalid");
             return;
         }
-        if (surfaceHolder == null || !surfaceHolder.getSurface().isValid()) {
-            return;
-        }
-
-        FrameLayout parent = (FrameLayout) surfaceView.getParent();
-        parent.removeOnLayoutChangeListener(onLayoutChangeListener);
-        parent.addOnLayoutChangeListener(onLayoutChangeListener);
 
         if (mediaPlayer == null) {
             createMediaPlayer();
             mediaPlayer.getVLCVout().detachViews();
-            mediaPlayer.getVLCVout().setVideoSurface(surfaceHolder.getSurface(), surfaceHolder);
-            mediaPlayer.getVLCVout().setWindowSize(surfaceView.getWidth(), surfaceView.getHeight());
+            if (surfaceView != null) {
+                mediaPlayer.getVLCVout().setVideoView(surfaceView);
+                FrameLayout parent = (FrameLayout) surfaceView.getParent();
+                parent.removeOnLayoutChangeListener(onLayoutChangeListener);
+                parent.addOnLayoutChangeListener(onLayoutChangeListener);
+            } else {
+//                mediaPlayer.getVLCVout().setVideoView(textureView);
+                mediaPlayer.getVLCVout().setVideoSurface(mSurface, null);
+            }
+//            mediaPlayer.getVLCVout().setWindowSize(surfaceView.getWidth(), surfaceView.getHeight());
+            mediaPlayer.getVLCVout().setWindowSize(1080, 1920);
             mediaPlayer.getVLCVout().attachViews(onNewVideoLayoutListener);
         }
 
@@ -196,7 +201,6 @@ public class VlcPlayerManager extends AbsPlayerManager {
     @Override
     public void surfaceCreated(SurfaceView view, SurfaceHolder holder) {
         this.surfaceView = view;
-        this.surfaceHolder = holder;
         if (mediaPlayer != null) {
             mediaPlayer.getVLCVout().detachViews();
             mediaPlayer.getVLCVout().setVideoSurface(holder.getSurface(), holder);
@@ -213,14 +217,33 @@ public class VlcPlayerManager extends AbsPlayerManager {
 
     @Override
     public void surfaceDestroyed(SurfaceView view, SurfaceHolder holder) {
-        this.surfaceHolder = null;
-        view.setZOrderOnTop(true);
-        view.setZOrderMediaOverlay(true);
         pause();
         if (mediaPlayer != null)
             mediaPlayer.getVLCVout().detachViews();
     }
 
+    @Override
+    protected void onSurfaceCreated(Surface surface) {
+        if (mediaPlayer != null) {
+            mediaPlayer.getVLCVout().detachViews();
+            mediaPlayer.getVLCVout().setVideoSurface(surface, null);
+            mediaPlayer.getVLCVout().attachViews(onNewVideoLayoutListener);
+        }
+        if (!endReached && !pausedFromUser) {
+            if (mediaPlayer != null && mediaPlayer.getPlayerState() == Media.State.Paused) {
+                play();
+            } else {
+                loadMedia();
+            }
+        }
+    }
+
+    @Override
+    protected void onSurfaceDestroyed() {
+        if (mediaPlayer != null)
+            mediaPlayer.getVLCVout().detachViews();
+        pause();
+    }
 
     //-------------------------------------Controller-----------------------------------------
     @Override
@@ -242,7 +265,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
 
     @Override
     public void play() {
-        if (mediaPlayer != null && mediaPlayer.getPlayerState() == Media.State.Paused && surfaceHolder != null)
+        if (mediaPlayer != null && mediaPlayer.getPlayerState() == Media.State.Paused)
             mediaPlayer.play();
         play = true;
     }

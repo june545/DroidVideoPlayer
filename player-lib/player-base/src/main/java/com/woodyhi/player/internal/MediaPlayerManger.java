@@ -22,7 +22,6 @@ public class MediaPlayerManger extends AbsPlayerManager {
     private static final String TAG = MediaPlayerManger.class.getSimpleName();
 
     MediaPlayer mMediaPlayer;
-    SurfaceHolder surfaceHolder;
     PlayInfo playInfo;
     private boolean isSeekable = true;
     private boolean isValidMediaPlayer;
@@ -164,14 +163,12 @@ public class MediaPlayerManger extends AbsPlayerManager {
 
     @Override
     public void surfaceCreated(SurfaceView view, SurfaceHolder holder) {
-        this.surfaceHolder = holder;
         if (playInfo != null)
             loadMedia(holder.getSurface());
     }
 
     @Override
     public void surfaceDestroyed(SurfaceView view, SurfaceHolder holder) {
-        this.surfaceHolder = null;
         if (mMediaPlayer != null) {
             mMediaPlayer.setSurface(null);
             if (mMediaPlayer.isPlaying()) {
@@ -180,6 +177,21 @@ public class MediaPlayerManger extends AbsPlayerManager {
         }
     }
 
+    @Override
+    protected void onSurfaceCreated(Surface surface) {
+        if (playInfo != null)
+            loadMedia(surface);
+    }
+
+    @Override
+    protected void onSurfaceDestroyed() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.setSurface(null);
+            if (mMediaPlayer.isPlaying()) {
+                mMediaPlayer.pause();
+            }
+        }
+    }
 
     //-----------------------------------------Controller--------------------------------------
     public void play(PlayInfo info) {
@@ -196,8 +208,8 @@ public class MediaPlayerManger extends AbsPlayerManager {
                 e.printStackTrace();
             }
         } else {
-            if (surfaceHolder != null)
-                loadMedia(surfaceHolder.getSurface());
+            if (isSurfaceValid)
+                loadMedia(mSurface);
         }
     }
 

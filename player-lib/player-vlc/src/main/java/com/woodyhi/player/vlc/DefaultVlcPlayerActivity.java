@@ -10,7 +10,7 @@ import android.view.View;
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.internal.DefaultControllerView;
-import com.woodyhi.player.widget.PlayerView;
+import com.woodyhi.player.widget.TextureViewPlayer;
 
 public class DefaultVlcPlayerActivity extends AppCompatActivity {
 
@@ -27,7 +27,16 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
         String path = getIntent().getDataString();
         if (path == null) return;
 
-        PlayerView playerView1 = findViewById(R.id.playerView);
+//        PlayerView playerView1 = findViewById(R.id.playerView);
+//        playerManager = new VlcPlayerManager(this);
+//        playerView1.setPlayerManager(playerManager);
+//        DefaultControllerView controllerView1 = new DefaultControllerView(this);
+//        controllerView1.setPlayerManger(playerManager);
+//        playerView1.setControllerView(controllerView1);
+//        playerManager.play(new PlayInfo(path));
+
+
+        TextureViewPlayer playerView1 = findViewById(R.id.playerView);
         playerManager = new VlcPlayerManager(this);
         playerView1.setPlayerManager(playerManager);
         DefaultControllerView controllerView1 = new DefaultControllerView(this);
@@ -61,15 +70,15 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        if (playerManager != null)
-//            playerManager.play();
+        if (playerManager != null)
+            playerManager.play();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-//        if (playerManager != null)
-//            playerManager.pause();
+        if (playerManager != null)
+            playerManager.pause();
     }
 
     @Override
