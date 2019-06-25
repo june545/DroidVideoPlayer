@@ -2,14 +2,17 @@ package com.woodyhi.player.vlc;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.internal.DefaultControllerView;
+import com.woodyhi.player.widget.SurfaceViewPlayer;
 import com.woodyhi.player.widget.TextureViewPlayer;
 
 public class DefaultVlcPlayerActivity extends AppCompatActivity {
@@ -22,6 +25,15 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_default_vlc_player);
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+//         设置状态半透明
+            WindowManager.LayoutParams windowParams = getWindow().getAttributes();
+            windowParams.flags |= WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS;
+//         并在根布局设置android:fitsSystemWindows 或 在代码中设置：
+            getWindow().getDecorView().findViewById(android.R.id.content).setFitsSystemWindows(true);
+        }
+
         originalSystemUiVisibility = getWindow().getDecorView().getSystemUiVisibility();
 
         String path = getIntent().getDataString();
@@ -36,7 +48,7 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
 //        playerManager.play(new PlayInfo(path));
 
 
-        TextureViewPlayer playerView1 = findViewById(R.id.playerView);
+        SurfaceViewPlayer playerView1 = findViewById(R.id.playerView);
         playerManager = new VlcPlayerManager(this);
         playerView1.setPlayerManager(playerManager);
         DefaultControllerView controllerView1 = new DefaultControllerView(this);

@@ -4,8 +4,6 @@ import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.LogUtil;
@@ -162,22 +160,6 @@ public class MediaPlayerManger extends AbsPlayerManager {
     }
 
     @Override
-    public void surfaceCreated(SurfaceView view, SurfaceHolder holder) {
-        if (playInfo != null)
-            loadMedia(holder.getSurface());
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceView view, SurfaceHolder holder) {
-        if (mMediaPlayer != null) {
-            mMediaPlayer.setSurface(null);
-            if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.pause();
-            }
-        }
-    }
-
-    @Override
     protected void onSurfaceCreated(Surface surface) {
         if (playInfo != null)
             loadMedia(surface);
@@ -208,8 +190,8 @@ public class MediaPlayerManger extends AbsPlayerManager {
                 e.printStackTrace();
             }
         } else {
-            if (isSurfaceValid)
-                loadMedia(mSurface);
+            if (surfaceView != null && surfaceView.getHolder().getSurface().isValid())
+                loadMedia(surfaceView.getHolder().getSurface());
         }
     }
 

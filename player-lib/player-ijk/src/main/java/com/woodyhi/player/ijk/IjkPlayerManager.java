@@ -1,7 +1,6 @@
 package com.woodyhi.player.ijk;
 
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
+import android.view.Surface;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.LogUtil;
@@ -21,7 +20,6 @@ public class IjkPlayerManager extends AbsPlayerManager {
     private final String TAG = IjkPlayerManager.class.getSimpleName();
 
     IjkMediaPlayer ijkMediaPlayer;
-    SurfaceHolder surfaceHolder;
 
     PlayInfo playInfo;
 
@@ -65,7 +63,7 @@ mediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"max-fps",30);最大fps
         ijkMediaPlayer.setOnVideoSizeChangedListener((mp, width, height, sar_num, sar_den) -> {
             LogUtil.d(TAG, "onVideoSizeChanged: w " + width + ", h " + height +
                     ", sar_num " + sar_num + ", sar_den " + sar_den);
-            for(PlayerCallback callback : playerCallbacks)
+            for (PlayerCallback callback : playerCallbacks)
                 callback.onVideoSizeChanged(width, height);
         });
         ijkMediaPlayer.setOnInfoListener((iMediaPlayer, what, extra) -> false);
@@ -84,11 +82,11 @@ mediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"max-fps",30);最大fps
         return ijkMediaPlayer;
     }
 
-    private void loadMedia() {
+    private void loadMedia(Surface surface) {
         if (ijkMediaPlayer == null) {
             createMediaPlayer();
         }
-        ijkMediaPlayer.setSurface(surfaceHolder.getSurface());
+        ijkMediaPlayer.setSurface(surface);
         try {
             ijkMediaPlayer.setDataSource(playInfo.path);
         } catch (IOException e) {
@@ -98,26 +96,23 @@ mediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER,"max-fps",30);最大fps
     }
 
     @Override
-    public void surfaceCreated(SurfaceView view, SurfaceHolder holder) {
-        this.surfaceHolder = holder;
-        loadMedia();
+    protected void onSurfaceCreated(Surface surface) {
+        loadMedia(surface);
     }
 
     @Override
-    public void surfaceDestroyed(SurfaceView view, SurfaceHolder holder) {
-        this.surfaceHolder = null;
+    protected void onSurfaceDestroyed() {
         if (ijkMediaPlayer != null) {
             ijkMediaPlayer.setSurface(null);
         }
         pause();
     }
 
-
     //-----------------------------------------Controller--------------------------------------
     public void play(PlayInfo info) {
         this.playInfo = info;
-        if (surfaceHolder != null)
-            loadMedia();
+        if (surfaceView != null && surfaceView.getHolder().getSurface().isValid())
+            loadMedia(surfaceView.getHolder().getSurface());
     }
 
     @Override

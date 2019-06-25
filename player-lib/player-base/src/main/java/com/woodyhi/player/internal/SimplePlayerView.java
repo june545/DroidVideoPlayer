@@ -2,10 +2,11 @@ package com.woodyhi.player.internal;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.SurfaceView;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.AbsPlayerView;
+import com.woodyhi.player.base.PlayerCallback;
+import com.woodyhi.player.widget.ResizeSurfaceView;
 
 /**
  * @author June
@@ -13,7 +14,7 @@ import com.woodyhi.player.base.AbsPlayerView;
  */
 public class SimplePlayerView extends AbsPlayerView {
 
-    private SurfaceView surfaceView;
+    private ResizeSurfaceView surfaceView;
     private MediaPlayerManger playerManger;
 
     public SimplePlayerView(Context context) {
@@ -31,10 +32,15 @@ public class SimplePlayerView extends AbsPlayerView {
 
     private void init(Context context) {
         playerManger = new MediaPlayerManger();
+        playerManger.addPlayerCallback(new PlayerCallback() {
+            @Override
+            public void onVideoSizeChanged(int width, int height) {
+                surfaceView.updateViewSizeByVideoSize(width, height);
+            }
+        });
 
-        surfaceView = new SurfaceView(context);
+        surfaceView = new ResizeSurfaceView(context);
         super.setVideoView(surfaceView);
-
         playerManger.setVideoView(surfaceView);
 
         DefaultControllerView controllerView = new DefaultControllerView(context);

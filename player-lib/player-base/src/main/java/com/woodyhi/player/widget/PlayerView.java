@@ -7,6 +7,7 @@ import android.view.TextureView;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.AbsPlayerView;
+import com.woodyhi.player.base.PlayerCallback;
 
 /**
  * @auth June
@@ -14,7 +15,7 @@ import com.woodyhi.player.base.AbsPlayerView;
  */
 public class PlayerView extends AbsPlayerView {
 
-    private SurfaceView surfaceView;
+    private ResizeSurfaceView surfaceView;
     private TextureView textureView;
 
     public PlayerView(Context context) {
@@ -37,5 +38,11 @@ public class PlayerView extends AbsPlayerView {
 
     public void setPlayerManager(AbsPlayerManager playerManger) {
         playerManger.setVideoView(surfaceView);
+        playerManger.addPlayerCallback(new PlayerCallback() {
+            @Override
+            public void onVideoSizeChanged(int width, int height) {
+                surfaceView.updateViewSizeByVideoSize(width, height);
+            }
+        });
     }
 }

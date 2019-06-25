@@ -1,13 +1,13 @@
 package com.woodyhi.player.vlc;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.Surface;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 
@@ -22,6 +22,9 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.util.VLCUtil;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -55,22 +58,35 @@ public class VlcPlayerManager extends AbsPlayerManager {
         ArrayList<String> options = new ArrayList<>();
 //        options.add("-vvv"); // verbosity
         options.add("--http-reconnect");
-//        options.add("--network-caching=6000");
+        options.add("--network-caching=6000");
         options.add("--aout=opensles");
         options.add("--audio-time-stretch");
         options.add("--rtsp-tcp"); // RTSP采用TCP传输方式
 //        options.add("--rtsp-frame-buffer-size=1000"); // RTSP帧缓冲大小，默认大小为100000
 
-        libVLC = new LibVLC(context, options);
-        mediaPlayer = new MediaPlayer(libVLC);
-        mediaPlayer.setEventListener(new EventListenerImpl(this));
-    }
+        options.add("--live-caching=10000");
+//        options.add("--disc-caching=10000");
+        options.add("--file-caching=10000");
+//        options.add("--fullscreen");
+        options.add("--avcodec-skiploopfilter=4");
+        options.add("--codec=mediacodec_ndk,mediacodec_jni,iomx,all");
+//        options.add("--no-drop-late-frames");
+//        options.add("--no-skip-frames");
+//        options.add("--no-mediacodec-dr");
+        options.add("--no-omxil-dr");
+        options.add("--no-omxil-dr");
 
 //        options.add(":file-caching=500"); // 文件缓存
 //        options.add(":live-caching=500"); // 直播缓存
 //        options.add(":sout-mux-caching=500"); // 输出缓存
 //        options.add(":codec=mediacodec,iomx,all");
 //        options.add(":sout-rtp-proto={dccp,sctp,tcp,udp,udplite}"); // RTSP采用TCP传输方式
+
+        libVLC = new LibVLC(context, options);
+        mediaPlayer = new MediaPlayer(libVLC);
+        mediaPlayer.setEventListener(new EventListenerImpl(this));
+    }
+
 
     private static class EventListenerImpl implements MediaPlayer.EventListener {
         private WeakReference<VlcPlayerManager> mOwner;
@@ -167,12 +183,23 @@ public class VlcPlayerManager extends AbsPlayerManager {
 //            return;
 //        }
         if (surfaceView == null && textureView == null) {
-            LogUtil.e(TAG, "video surface field is null");
+            LogUtil.e(TAG, "video view field is null");
             return;
         }
-        if (!isSurfaceValid) {
-            LogUtil.e(TAG, "video surface is invalid");
-            return;
+
+
+        if (surfaceView != null) {
+            if (!isSurfaceValid && !surfaceView.getHolder().getSurface().isValid()) {
+                LogUtil.e(TAG, "surfaceView -> surface is invalid");
+                return;
+            }
+        }
+
+        if (textureView != null) {
+            if (!isSurfaceValid && !textureView.isAvailable()) {
+                LogUtil.e(TAG, "textureView -> surface is invalid");
+                return;
+            }
         }
 
         if (mediaPlayer == null) {
@@ -180,15 +207,17 @@ public class VlcPlayerManager extends AbsPlayerManager {
             mediaPlayer.getVLCVout().detachViews();
             if (surfaceView != null) {
                 mediaPlayer.getVLCVout().setVideoView(surfaceView);
+                mediaPlayer.getVLCVout().setWindowSize(surfaceView.getWidth(), surfaceView.getHeight());
                 FrameLayout parent = (FrameLayout) surfaceView.getParent();
                 parent.removeOnLayoutChangeListener(onLayoutChangeListener);
                 parent.addOnLayoutChangeListener(onLayoutChangeListener);
             } else {
-//                mediaPlayer.getVLCVout().setVideoView(textureView);
-                mediaPlayer.getVLCVout().setVideoSurface(mSurface, null);
+                mediaPlayer.getVLCVout().setVideoView(textureView);
+                mediaPlayer.getVLCVout().setWindowSize(textureView.getWidth(), textureView.getHeight());
+                FrameLayout parent = (FrameLayout) textureView.getParent();
+                parent.removeOnLayoutChangeListener(onLayoutChangeListener);
+                parent.addOnLayoutChangeListener(onLayoutChangeListener);
             }
-//            mediaPlayer.getVLCVout().setWindowSize(surfaceView.getWidth(), surfaceView.getHeight());
-            mediaPlayer.getVLCVout().setWindowSize(1080, 1920);
             mediaPlayer.getVLCVout().attachViews(onNewVideoLayoutListener);
         }
 
@@ -196,30 +225,6 @@ public class VlcPlayerManager extends AbsPlayerManager {
         mediaPlayer.setMedia(media);
         media.release();
         mediaPlayer.play();
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceView view, SurfaceHolder holder) {
-        this.surfaceView = view;
-        if (mediaPlayer != null) {
-            mediaPlayer.getVLCVout().detachViews();
-            mediaPlayer.getVLCVout().setVideoSurface(holder.getSurface(), holder);
-            mediaPlayer.getVLCVout().attachViews(onNewVideoLayoutListener);
-        }
-        if (!endReached && !pausedFromUser) {
-            if (mediaPlayer != null && mediaPlayer.getPlayerState() == Media.State.Paused) {
-                play();
-            } else {
-                loadMedia();
-            }
-        }
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceView view, SurfaceHolder holder) {
-        pause();
-        if (mediaPlayer != null)
-            mediaPlayer.getVLCVout().detachViews();
     }
 
     @Override
@@ -240,9 +245,9 @@ public class VlcPlayerManager extends AbsPlayerManager {
 
     @Override
     protected void onSurfaceDestroyed() {
+        pause();
         if (mediaPlayer != null)
             mediaPlayer.getVLCVout().detachViews();
-        pause();
     }
 
     //-------------------------------------Controller-----------------------------------------
@@ -275,6 +280,37 @@ public class VlcPlayerManager extends AbsPlayerManager {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }
+//        try {
+//            Bitmap bitmap = textureView.getBitmap();
+//            saveBitmap(bitmap, context.getExternalCacheDir().getAbsolutePath() + "/shot.jpg");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    public void saveBitmap(Bitmap bitmap, String path) {
+        File filePic;
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+        } else {
+            Log.d("xxx", "saveBitmap: 1return");
+            return;
+        }
+        try {
+            filePic = new File(path);
+            if (!filePic.exists()) {
+                filePic.getParentFile().mkdirs();
+                filePic.createNewFile();
+            }
+            FileOutputStream fos = new FileOutputStream(filePic);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d("xxx", "saveBitmap: 2return");
+            return;
+        }
+        Log.d("xxx", "saveBitmap: " + filePic.getAbsolutePath());
     }
 
     @Override

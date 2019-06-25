@@ -1,7 +1,6 @@
 package com.woodyhi.player.widget;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
 import android.util.AttributeSet;
@@ -42,8 +41,6 @@ public class VideoSurfaceView extends ResizeSurfaceView implements SurfaceHolder
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         LogUtil.d(TAG, "surfaceCreated: ---");
-        if (playerManger != null)
-            playerManger.surfaceCreated(this, holder);
     }
 
     @Override
@@ -62,8 +59,6 @@ public class VideoSurfaceView extends ResizeSurfaceView implements SurfaceHolder
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         LogUtil.d(TAG, "surfaceDestroyed: ---");
-        if (playerManger != null)
-            playerManger.surfaceDestroyed(this, holder);
     }
 
     public void setPlayerManager(AbsPlayerManager playerManager) {

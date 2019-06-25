@@ -32,15 +32,12 @@ public abstract class AbsPlayerManager implements BaseController {
         playerCallbacks.remove(callback);
     }
 
-    public abstract void surfaceCreated(SurfaceView surfaceView, SurfaceHolder holder);
-
-    public abstract void surfaceDestroyed(SurfaceView surfaceView, SurfaceHolder holder);
-
     public void setVideoView(SurfaceView surfaceView) {
         this.surfaceView = surfaceView;
         this.surfaceView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
+                LogUtil.d(TAG, "surfaceCreated: ---------");
                 mSurface = holder.getSurface();
                 isSurfaceValid = true;
                 onSurfaceCreated(holder.getSurface());
@@ -53,6 +50,7 @@ public abstract class AbsPlayerManager implements BaseController {
 
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {
+                LogUtil.d(TAG, "surfaceDestroyed: ---------");
                 mSurface = null;
                 isSurfaceValid = false;
                 onSurfaceDestroyed();
@@ -66,7 +64,7 @@ public abstract class AbsPlayerManager implements BaseController {
         this.textureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
             public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                LogUtil.d("AbsPlayerManager", "onSurfaceTextureAvailable: ---------" + width + "   " + height);
+                LogUtil.d(TAG, "onSurfaceTextureAvailable: ---------" + width + "   " + height);
                 mSurface = new Surface(surface);
                 surfaceTexture = surface;
                 isSurfaceValid = true;
@@ -75,12 +73,12 @@ public abstract class AbsPlayerManager implements BaseController {
 
             @Override
             public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-                LogUtil.d("AbsPlayerManager", "onSurfaceTextureSizeChanged: -----------------");
+                LogUtil.d(TAG, "onSurfaceTextureSizeChanged: -----------------");
             }
 
             @Override
             public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-                LogUtil.d("AbsPlayerManager", "onSurfaceTextureDestroyed: -----------------");
+                LogUtil.d(TAG, "onSurfaceTextureDestroyed: -----------------");
                 mSurface = null;
                 surfaceTexture = null;
                 isSurfaceValid = false;
