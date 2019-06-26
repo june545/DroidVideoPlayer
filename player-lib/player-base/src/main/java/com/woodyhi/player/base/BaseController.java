@@ -12,7 +12,6 @@ public interface BaseController {
     public void play();
     /** 暂停 */
     public void pause();
-    public void pause(boolean fromUser);
     /** 拖动播放 */
     public void seekTo(int msec);
     /** 快进 */

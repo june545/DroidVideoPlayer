@@ -98,8 +98,9 @@ public abstract class AbsPlayerManager implements BaseController {
     protected void onSurfaceDestroyed() {
     }
 
-    @Override
-    public void pause(boolean fromUser) {
+    public void play(boolean fromUser) {
+    }
 
+    public void pause(boolean fromUser) {
     }
 }

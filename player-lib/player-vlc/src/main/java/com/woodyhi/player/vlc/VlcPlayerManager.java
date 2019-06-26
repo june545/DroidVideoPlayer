@@ -235,6 +235,7 @@ public class VlcPlayerManager extends AbsPlayerManager {
             mediaPlayer.getVLCVout().attachViews(onNewVideoLayoutListener);
         }
         if (!endReached && !pausedFromUser) {
+            LogUtil.d(TAG, "onSurface --------------------- " + endReached + "    " + pausedFromUser);
             if (mediaPlayer != null && mediaPlayer.getPlayerState() == Media.State.Paused) {
                 play();
             } else {
@@ -314,16 +315,18 @@ public class VlcPlayerManager extends AbsPlayerManager {
     }
 
     @Override
-    public void pause(boolean fromUser) {
-        this.pausedFromUser = fromUser;
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-//            mediaPlayer.getVLCVout().detachViews();
-            mediaPlayer.pause();
+    public void play(boolean fromUser) {
+        if (fromUser || !pausedFromUser) {
+            pausedFromUser = false;
+            play();
         }
     }
 
-    public void setPausedFromUser(boolean fromUser) {
-        this.pausedFromUser = fromUser;
+    @Override
+    public void pause(boolean fromUser) {
+        if (fromUser)
+            this.pausedFromUser = fromUser;
+        pause();
     }
 
     @Override
