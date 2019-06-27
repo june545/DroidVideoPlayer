@@ -2,10 +2,10 @@ package com.woodyhi.player.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.TextureView;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.AbsPlayerView;
+import com.woodyhi.player.base.PlayerCallback;
 
 /**
  * @auth June
@@ -13,7 +13,7 @@ import com.woodyhi.player.base.AbsPlayerView;
  */
 public class TextureViewPlayer extends AbsPlayerView {
 
-    private TextureView textureView;
+    private ResizeTextureView textureView;
 
     public TextureViewPlayer(Context context) {
         this(context, null);
@@ -29,11 +29,17 @@ public class TextureViewPlayer extends AbsPlayerView {
     }
 
     private void init(Context context) {
-        textureView = new TextureView(context);
+        textureView = new ResizeTextureView(context);
         super.setVideoView(textureView);
     }
 
     public void setPlayerManager(AbsPlayerManager playerManger) {
         playerManger.setVideoView(textureView);
+        playerManger.addPlayerCallback(new PlayerCallback() {
+            @Override
+            public void onVideoSizeChanged(int width, int height) {
+                textureView.updateViewSizeByVideoSize(width, height);
+            }
+        });
     }
 }

@@ -1,10 +1,8 @@
 package com.woodyhi.player.vlc;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.Surface;
@@ -22,9 +20,6 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.util.VLCUtil;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -43,8 +38,6 @@ public class VlcPlayerManager extends AbsPlayerManager {
     private volatile int lastPosition;
     private volatile boolean seekable = true;
     private volatile boolean endReached;
-    private boolean play = true;
-    private boolean pausedFromUser;
 
     public VlcPlayerManager(Context context) {
         this.context = context;
@@ -105,7 +98,6 @@ public class VlcPlayerManager extends AbsPlayerManager {
                     LogUtil.d(TAG, "MediaPlayerEndReached");
                     mgr.onCompletion();
                     mgr.release();
-                    mgr.play = false;
                     mgr.endReached = true;
                     break;
                 case MediaPlayer.Event.EncounteredError:
@@ -178,47 +170,29 @@ public class VlcPlayerManager extends AbsPlayerManager {
     };
 
     private void loadMedia() {
-//        if (playInfo == null) {
-//            LogUtil.e(TAG, "playInfo is null");
-//            return;
-//        }
-        if (surfaceView == null && textureView == null) {
-            LogUtil.e(TAG, "video view field is null");
+        Surface sf = getSurface();
+        if (sf == null) {
+            LogUtil.d(TAG, "surface is not ready ------------");
             return;
-        }
-
-
-        if (surfaceView != null) {
-            if (!isSurfaceValid && !surfaceView.getHolder().getSurface().isValid()) {
-                LogUtil.e(TAG, "surfaceView -> surface is invalid");
-                return;
-            }
-        }
-
-        if (textureView != null) {
-            if (!isSurfaceValid && !textureView.isAvailable()) {
-                LogUtil.e(TAG, "textureView -> surface is invalid");
-                return;
-            }
         }
 
         if (mediaPlayer == null) {
             createMediaPlayer();
             mediaPlayer.getVLCVout().detachViews();
+            mediaPlayer.getVLCVout().setVideoSurface(sf, null);
+            mediaPlayer.getVLCVout().attachViews(onNewVideoLayoutListener);
+
             if (surfaceView != null) {
-                mediaPlayer.getVLCVout().setVideoView(surfaceView);
                 mediaPlayer.getVLCVout().setWindowSize(surfaceView.getWidth(), surfaceView.getHeight());
                 FrameLayout parent = (FrameLayout) surfaceView.getParent();
                 parent.removeOnLayoutChangeListener(onLayoutChangeListener);
                 parent.addOnLayoutChangeListener(onLayoutChangeListener);
             } else {
-                mediaPlayer.getVLCVout().setVideoView(textureView);
                 mediaPlayer.getVLCVout().setWindowSize(textureView.getWidth(), textureView.getHeight());
                 FrameLayout parent = (FrameLayout) textureView.getParent();
                 parent.removeOnLayoutChangeListener(onLayoutChangeListener);
                 parent.addOnLayoutChangeListener(onLayoutChangeListener);
             }
-            mediaPlayer.getVLCVout().attachViews(onNewVideoLayoutListener);
         }
 
         Media media = new Media(libVLC, Uri.parse(playInfo.path));
@@ -235,8 +209,8 @@ public class VlcPlayerManager extends AbsPlayerManager {
             mediaPlayer.getVLCVout().attachViews(onNewVideoLayoutListener);
         }
         if (!endReached && !pausedFromUser) {
-            LogUtil.d(TAG, "onSurface --------------------- " + endReached + "    " + pausedFromUser);
-            if (mediaPlayer != null && mediaPlayer.getPlayerState() == Media.State.Paused) {
+            LogUtil.d(TAG, "onSurfaceCreated: ------------ " + endReached + "    " + pausedFromUser);
+            if (mediaPlayer != null) {
                 play();
             } else {
                 loadMedia();
@@ -265,7 +239,6 @@ public class VlcPlayerManager extends AbsPlayerManager {
             this.playInfo = info;
             loadMedia();
         }
-        play = true;
         endReached = false;
     }
 
@@ -273,7 +246,6 @@ public class VlcPlayerManager extends AbsPlayerManager {
     public void play() {
         if (mediaPlayer != null && mediaPlayer.getPlayerState() == Media.State.Paused)
             mediaPlayer.play();
-        play = true;
     }
 
     @Override
@@ -281,37 +253,6 @@ public class VlcPlayerManager extends AbsPlayerManager {
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }
-//        try {
-//            Bitmap bitmap = textureView.getBitmap();
-//            saveBitmap(bitmap, context.getExternalCacheDir().getAbsolutePath() + "/shot.jpg");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-    }
-
-    public void saveBitmap(Bitmap bitmap, String path) {
-        File filePic;
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-        } else {
-            Log.d("xxx", "saveBitmap: 1return");
-            return;
-        }
-        try {
-            filePic = new File(path);
-            if (!filePic.exists()) {
-                filePic.getParentFile().mkdirs();
-                filePic.createNewFile();
-            }
-            FileOutputStream fos = new FileOutputStream(filePic);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.d("xxx", "saveBitmap: 2return");
-            return;
-        }
-        Log.d("xxx", "saveBitmap: " + filePic.getAbsolutePath());
     }
 
     @Override
@@ -375,7 +316,6 @@ public class VlcPlayerManager extends AbsPlayerManager {
             mediaPlayer.stop();
             mediaPlayer.getVLCVout().detachViews();
         }
-        play = false;
     }
 
     @Override
@@ -390,6 +330,5 @@ public class VlcPlayerManager extends AbsPlayerManager {
             libVLC.release();
             libVLC = null;
         }
-        play = false;
     }
 }

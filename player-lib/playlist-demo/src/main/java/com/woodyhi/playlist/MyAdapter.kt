@@ -11,6 +11,8 @@ import android.widget.ImageView
 import android.widget.TextView
 
 import com.bumptech.glide.Glide
+import com.woodyhi.player.internal.DefaultMediaPlayerActivity
+import com.woodyhi.player.vlc.DefaultVlcPlayerActivity
 import com.woodyhi.playlist.model.Trailer
 
 /**
@@ -32,7 +34,7 @@ class MyAdapter(private val listData: List<Trailer>) : RecyclerView.Adapter<MyAd
         holder.type.text = listData[position].type?.joinToString()
         holder.itemView.setOnClickListener {
             var ctx = holder.itemView.context
-            var intent = Intent(ctx, VideoPlayerActivity::class.java)
+            var intent = Intent(ctx, DefaultVlcPlayerActivity::class.java)
             intent.data = Uri.parse(listData[position].url)
             ctx.startActivity(intent)
         }

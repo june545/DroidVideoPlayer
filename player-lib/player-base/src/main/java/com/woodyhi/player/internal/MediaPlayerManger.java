@@ -10,8 +10,6 @@ import com.woodyhi.player.base.LogUtil;
 import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.base.PlayerCallback;
 
-import java.io.IOException;
-
 /**
  * @author June
  * @date 2019-06-07
@@ -19,20 +17,16 @@ import java.io.IOException;
 public class MediaPlayerManger extends AbsPlayerManager {
     private static final String TAG = MediaPlayerManger.class.getSimpleName();
 
-    MediaPlayer mMediaPlayer;
-    PlayInfo playInfo;
+    private MediaPlayer mMediaPlayer;
+    private PlayInfo playInfo;
     private boolean isSeekable = true;
-    private boolean isValidMediaPlayer;
+    private boolean endReached;
 
     public MediaPlayerManger() {
     }
 
-    private MediaPlayer createMediaPlayer(Surface surface) {
+    private MediaPlayer createMediaPlayer() {
         final MediaPlayer mediaPlayer = new MediaPlayer();
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mediaPlayer.setSurface(surface);
-        mediaPlayer.setScreenOnWhilePlaying(true);// works when setDisplay invoked
-
         mediaPlayer.setOnPreparedListener(mp -> {
             LogUtil.d(TAG, "onPrepared: ---------");
 //                if (lastPosition > 0) {
@@ -60,6 +54,7 @@ public class MediaPlayerManger extends AbsPlayerManager {
             for (PlayerCallback listener : playerCallbacks) {
                 listener.onCompletion();
             }
+            endReached = true;
         });
         mediaPlayer.setOnInfoListener(new MediaPlayer.OnInfoListener() {
             private boolean startFlag;
@@ -131,28 +126,34 @@ public class MediaPlayerManger extends AbsPlayerManager {
                 return false;
             }
         });
-
-        try {
-            if (playInfo.path == null) {
-                AssetFileDescriptor afd = playInfo.assetFileDescriptor;
-                mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-            } else {
-                mediaPlayer.setDataSource(playInfo.path);
-            }
-
-            mediaPlayer.prepareAsync();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         return mediaPlayer;
     }
 
-    private void loadMedia(Surface surface) {
+    private void loadMedia() {
+        Surface sf = getSurface();
+        if (sf == null) {
+            LogUtil.d(TAG, "surface is not ready ------------");
+            return;
+        }
+
         if (mMediaPlayer == null) {
-            mMediaPlayer = createMediaPlayer(surface);
+            mMediaPlayer = createMediaPlayer();
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mMediaPlayer.setSurface(sf);
+            try {
+                if (playInfo.path == null) {
+                    AssetFileDescriptor afd = playInfo.assetFileDescriptor;
+                    mMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                } else {
+                    mMediaPlayer.setDataSource(playInfo.path);
+                }
+                mMediaPlayer.prepareAsync();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             try {
-                mMediaPlayer.setSurface(surface);
+                mMediaPlayer.setSurface(sf);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -161,38 +162,40 @@ public class MediaPlayerManger extends AbsPlayerManager {
 
     @Override
     protected void onSurfaceCreated(Surface surface) {
-        if (playInfo != null)
-            loadMedia(surface);
+        if (mMediaPlayer != null) {
+            mMediaPlayer.setSurface(surface);
+        }
+        if (!endReached && !pausedFromUser) {
+            if (mMediaPlayer != null && !mMediaPlayer.isPlaying()) {
+                play();
+            } else {
+                loadMedia();
+            }
+        }
     }
 
     @Override
     protected void onSurfaceDestroyed() {
+        pause();
         if (mMediaPlayer != null) {
             mMediaPlayer.setSurface(null);
-            if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.pause();
-            }
         }
     }
 
     //-----------------------------------------Controller--------------------------------------
     public void play(PlayInfo info) {
-        this.playInfo = info;
-        if (mMediaPlayer != null) {
-            if (mMediaPlayer.isPlaying()) {
-                mMediaPlayer.stop();
-                mMediaPlayer.reset();
-            }
-            try {
-                mMediaPlayer.setDataSource(info.path);
-                mMediaPlayer.prepareAsync();
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (info == null) {
+            if (mMediaPlayer == null) {
+                loadMedia();
+            } else {
+                play();
             }
         } else {
-            if (surfaceView != null && surfaceView.getHolder().getSurface().isValid())
-                loadMedia(surfaceView.getHolder().getSurface());
+            release();
+            this.playInfo = info;
+            loadMedia();
         }
+        endReached = false;
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -63,6 +64,20 @@ public class DefaultControllerView extends FrameLayout {
         mSeekBar = view.findViewById(R.id.seekbar);
         mDurationTime = view.findViewById(R.id.video_durationtime);
         fullscreenBtn = view.findViewById(R.id.open_close_fullscreen);
+
+        this.setOnLongClickListener(v -> {
+            playerManger.takeSnapshot(getContext());
+            return true;
+        });
+        this.setOnClickListener(v -> {
+            if (player_control_bottom_bar.getVisibility() == View.VISIBLE) {
+                player_control_bottom_bar.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.bottom_slide_down));
+                player_control_bottom_bar.setVisibility(View.GONE);
+            } else {
+                player_control_bottom_bar.setAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.bottom_slide_up));
+                player_control_bottom_bar.setVisibility(View.VISIBLE);
+            }
+        });
 
         progressTimer = new ProgressTimer(this, 300);
         progressTimer.setCallback(new ProgressTimer.Callback() {
@@ -167,8 +182,9 @@ public class DefaultControllerView extends FrameLayout {
         @Override
         public void onCompletion() {
             LogUtil.d(TAG, "onCompletion: --- " + playerManger.getCurrentPosition());
-            // 矫正进度条
-//            mSeekBar.setProgress(playerManger.getDuration());
+            // 进度矫正
+            mCurrentTime.setText(Util.formatMillisTime(mSeekBar.getMax()));
+            mSeekBar.setProgress(mSeekBar.getMax());
 
             playPauseBtn.setImageResource(R.drawable.baseline_play_arrow_24);
             progressTimer.stop();

@@ -1,2 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.woodyhi.player.base" />
+    package="com.woodyhi.player.base">
+    <application>
+        <activity
+            android:name="com.woodyhi.player.internal.DefaultMediaPlayerActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+
+        </activity>
+    </application>
+</manifest>

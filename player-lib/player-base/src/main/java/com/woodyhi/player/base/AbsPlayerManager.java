@@ -1,12 +1,19 @@
 package com.woodyhi.player.base;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.SurfaceTexture;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Vector;
 
 /**
@@ -23,6 +30,7 @@ public abstract class AbsPlayerManager implements BaseController {
     protected Surface mSurface;
     protected volatile boolean isSurfaceValid;
     protected SurfaceTexture surfaceTexture;
+    protected boolean pausedFromUser;
 
     public void addPlayerCallback(PlayerCallback listener) {
         this.playerCallbacks.add(listener);
@@ -30,6 +38,23 @@ public abstract class AbsPlayerManager implements BaseController {
 
     public void removePlayerCallback(PlayerCallback callback) {
         playerCallbacks.remove(callback);
+    }
+
+    protected Surface getSurface() {
+        Surface _surface = mSurface;
+        if (_surface != null) return _surface;
+
+        if (surfaceView != null) {
+            _surface = surfaceView.getHolder().getSurface();
+            if (_surface.isValid())
+                return _surface;
+        }
+
+        if (textureView != null && textureView.isAvailable()) {
+            _surface = new Surface(textureView.getSurfaceTexture());
+            return _surface;
+        }
+        return null;
     }
 
     public void setVideoView(SurfaceView surfaceView) {
@@ -99,8 +124,51 @@ public abstract class AbsPlayerManager implements BaseController {
     }
 
     public void play(boolean fromUser) {
+        if (fromUser || !pausedFromUser) {
+            pausedFromUser = false;
+            play();
+        }
     }
 
     public void pause(boolean fromUser) {
+        if (fromUser)
+            this.pausedFromUser = fromUser;
+        pause();
+    }
+
+    public void takeSnapshot(Context context) {
+        long time = System.currentTimeMillis();
+        try {
+            Bitmap bitmap = textureView.getBitmap();
+            saveBitmap(bitmap, context.getExternalCacheDir().getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        LogUtil.d(TAG, "takeSnapshot: --------- time " + (System.currentTimeMillis() - time));
+    }
+
+    public void saveBitmap(Bitmap bitmap, String path) {
+        File filePic;
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+        } else {
+            Log.d("xxx", "saveBitmap: 1return");
+            return;
+        }
+        try {
+            filePic = new File(path);
+            if (!filePic.exists()) {
+                filePic.getParentFile().mkdirs();
+                filePic.createNewFile();
+            }
+            FileOutputStream fos = new FileOutputStream(filePic);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d("xxx", "saveBitmap: 2return");
+            return;
+        }
+        Log.d("xxx", "saveBitmap: " + filePic.getAbsolutePath());
     }
 }

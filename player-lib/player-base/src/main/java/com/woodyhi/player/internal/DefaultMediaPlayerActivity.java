@@ -1,4 +1,4 @@
-package com.woodyhi.player.vlc;
+package com.woodyhi.player.internal;
 
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -12,11 +12,11 @@ import android.view.WindowManager;
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.LogUtil;
 import com.woodyhi.player.base.PlayInfo;
-import com.woodyhi.player.internal.DefaultControllerView;
-import com.woodyhi.player.widget.SurfaceViewPlayer;
+import com.woodyhi.player.base.R;
+import com.woodyhi.player.widget.TextureViewPlayer;
 
-public class DefaultVlcPlayerActivity extends AppCompatActivity {
-
+public class DefaultMediaPlayerActivity extends AppCompatActivity {
+    private final String TAG = DefaultMediaPlayerActivity.class.getSimpleName();
     private AbsPlayerManager playerManager;
     private boolean isLandscape = false;
     private int originalSystemUiVisibility;
@@ -24,7 +24,7 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_default_vlc_player);
+        setContentView(R.layout.activity_default_media_player);
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
 //         设置状态半透明
@@ -40,17 +40,8 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
         String path = getIntent().getDataString();
         if (path == null) return;
 
-//        PlayerView playerView1 = findViewById(R.id.playerView);
-//        playerManager = new VlcPlayerManager(this);
-//        playerView1.setPlayerManager(playerManager);
-//        DefaultControllerView controllerView1 = new DefaultControllerView(this);
-//        controllerView1.setPlayerManger(playerManager);
-//        playerView1.setControllerView(controllerView1);
-//        playerManager.play(new PlayInfo(path));
-
-
-        SurfaceViewPlayer playerView1 = findViewById(R.id.playerView);
-        playerManager = new VlcPlayerManager(this);
+        TextureViewPlayer playerView1 = findViewById(R.id.playerView);
+        playerManager = new MediaPlayerManger();
         playerView1.setPlayerManager(playerManager);
         DefaultControllerView controllerView1 = new DefaultControllerView(this);
         controllerView1.setPlayerManger(playerManager);
@@ -83,13 +74,13 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        LogUtil.d(DefaultVlcPlayerActivity.class.getSimpleName(), "onStart: -------------");
+        LogUtil.d(TAG, "onStart: -------------");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        LogUtil.d(DefaultVlcPlayerActivity.class.getSimpleName(), "onResume: -------------");
+        LogUtil.d(TAG, "onResume: -------------");
         if (playerManager != null)
             playerManager.play(false);
     }
@@ -97,7 +88,7 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        LogUtil.d(DefaultVlcPlayerActivity.class.getSimpleName(), "onPause: -------------");
+        LogUtil.d(TAG, "onPause: -------------");
         if (playerManager != null)
             playerManager.pause(false);
     }
@@ -105,12 +96,13 @@ public class DefaultVlcPlayerActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        LogUtil.d(DefaultVlcPlayerActivity.class.getSimpleName(), "onStop: -------------");
+        LogUtil.d(TAG, "onStop: -------------");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        LogUtil.d(TAG, "onDestroy: -------------");
         if (playerManager != null)
             playerManager.release();
     }
