@@ -22,7 +22,6 @@ import java.util.Calendar;
 import javax.microedition.khronos.opengles.GL10;
 
 import static android.support.constraint.Constraints.TAG;
-import static org.checkerframework.checker.units.UnitsTools.h;
 
 /**
  * Created by June on 2018/5/29.

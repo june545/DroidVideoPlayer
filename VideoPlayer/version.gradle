@@ -1,12 +1,12 @@
 
 ext {
     android {
+        def signInfo = signingInfo()
+
         signingConfigs {
             debug {
-
             }
             release {
-                def signInfo = signingInfo()
                 if (signInfo != null) {
                     storeFile file(signInfo['storeFile'])
                     keyAlias signInfo['keyAlias']
@@ -21,7 +21,9 @@ ext {
                 signingConfig signingConfigs.debug
             }
             release {
-                signingConfig signingConfigs.release
+                if (signInfo != null) {
+                    signingConfig signingConfigs.release
+                }
             }
         }
     }
@@ -31,17 +33,18 @@ ext {
         def vName = generateVerName();
         println("generated VersionCode:" + vCode + ", VersionName:" + vName)
 
-        variant.outputs.all { output ->
-            output.processManifest.doLast {
-                String manifestPath = "$manifestOutputDirectory/AndroidManifest.xml"
-                def manifestContent = file(manifestPath).getText()
-                manifestContent = replaceVerName(manifestContent, vName)
-                manifestContent = replaceVerCode(manifestContent, vCode)
-                file(manifestPath).write(manifestContent)
-            }
+        variant.outputs.each { output ->
+            output.versionNameOverride = vName
+            output.versionCodeOverride = vCode
+        }
 
+        variant.outputs.all { output ->
+            boolean unsigned = false
+            if((outputFileName as String).contains('unsigned')){
+                unsigned = true
+            }
             def bTime = new Date().format("yyMMddHH")
-            outputFileName = "${project.name}-${variant.name}-${vName}-${vCode}-${bTime}.apk"
+            outputFileName = "${project.name}-${variant.name}-${vName}-${vCode}-${bTime}${unsigned ? '-unsigned' : ''}.apk"
             println("apk file name -> " + outputFileName)
         }
     }
@@ -83,6 +86,7 @@ def generateVerName(){
 // generate version code
 def generateVerCode(){
     def versionNumberCmd = 'git rev-list HEAD --count'
+    System.out.println(versionNumberCmd)
     return versionNumberCmd.execute().text.trim().toInteger()
 }
 
