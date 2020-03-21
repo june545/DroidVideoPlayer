@@ -3,7 +3,7 @@ package com.woodyhi.player.vlc;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 import android.util.Log;
 import android.view.Surface;
 import android.view.View;

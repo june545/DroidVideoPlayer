@@ -34,7 +34,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     testImplementation "junit:junit:$rootProject.ext.junit"
-    implementation "com.android.support:appcompat-v7:$rootProject.ext.support"
+    implementation 'androidx.appcompat:appcompat:1.1.0'
 
     implementation 'com.github.june545:my-droid-comm:v1.0'
     implementation 'com.github.woodyhi:floating-view:0.1.0'

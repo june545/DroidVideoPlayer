@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 import android.os.Environment;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.TextureView;
 import android.widget.Toast;
@@ -21,12 +20,12 @@ import java.util.Calendar;
 
 import javax.microedition.khronos.opengles.GL10;
 
-import static android.support.constraint.Constraints.TAG;
 
 /**
  * Created by June on 2018/5/29.
  */
 public class ScreenShot {
+    private static final String TAG = ScreenShot.class.getSimpleName();
 
     //    public String takeScreenShot(Context context, GL10 gl) {
     //        if(context == null){

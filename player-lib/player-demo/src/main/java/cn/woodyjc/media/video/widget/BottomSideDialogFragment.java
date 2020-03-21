@@ -1,8 +1,6 @@
 package cn.woodyjc.media.video.widget;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.support.v4.app.DialogFragment;
+import androidx.fragment.app.DialogFragment;
 import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;

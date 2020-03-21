@@ -2,29 +2,20 @@ package com.woodyhi.player.b;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.offline.FilteringManifestParser;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
-import com.google.android.exoplayer2.source.dash.manifest.DashManifestParser;
-import com.google.android.exoplayer2.source.dash.manifest.RepresentationKey;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistParser;
-import com.google.android.exoplayer2.source.hls.playlist.RenditionKey;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
-import com.google.android.exoplayer2.source.smoothstreaming.manifest.SsManifestParser;
-import com.google.android.exoplayer2.source.smoothstreaming.manifest.StreamKey;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
-import java.util.List;
 
 /**
  * Created by June on 2018/5/21.

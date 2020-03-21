@@ -11,7 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {
             abiFilters 'armeabi-v7a', 'x86'
@@ -34,20 +34,20 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "com.android.support:appcompat-v7:$rootProject.ext.support"
-    implementation "com.android.support:support-annotations:$rootProject.ext.support"
-    implementation "com.android.support.constraint:constraint-layout:$rootProject.ext.constraint_layout"
+    implementation "androidx.appcompat:appcompat:$rootProject.ext.versions.androidx"
+    implementation "androidx.annotation:annotation:$rootProject.ext.versions.androidx"
+    implementation "androidx.constraintlayout:constraintlayout:$rootProject.ext.versions.constraintlayout"
 
     testImplementation "junit:junit:$rootProject.ext.junit"
-    androidTestImplementation "com.android.support.test:runner:$rootProject.ext.runner"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.ext.espresso"
+    androidTestImplementation "androidx.test.ext:junit:$rootProject.ext.versions.junit"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.versions.espresso"
 
 
 //    implementation project(':media-player-base')
     implementation 'com.github.woodyhi:floating-view:0.1.0'
 
-    implementation 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    implementation 'com.jakewharton:butterknife:10.2.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
 
     implementation project(path: ':player-base')
     implementation project(path: ':player-ijk')

@@ -10,7 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
 
@@ -25,10 +25,11 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.android.support:appcompat-v7:$rootProject.ext.support"
-    testImplementation "junit:junit:$rootProject.ext.junit"
-    androidTestImplementation "com.android.support.test:runner:$rootProject.ext.runner"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.ext.espresso"
+    implementation "androidx.appcompat:appcompat:$rootProject.ext.versions.androidx"
+//    testImplementation "junit:junit:$rootProject.ext.junit"
+    androidTestImplementation "androidx.test.ext:junit:$rootProject.ext.versions.junit"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.versions.espresso"
 
     api project(':libvlc-3.0.4')
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 }

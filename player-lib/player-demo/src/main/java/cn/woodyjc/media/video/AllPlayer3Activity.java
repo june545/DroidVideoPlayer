@@ -1,6 +1,6 @@
 package cn.woodyjc.media.video;
 
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.woodyhi.player.base.AbsPlayerManager;

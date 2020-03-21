@@ -13,7 +13,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         ndk {
             abiFilters "armeabi-v7a", "x86"
@@ -35,13 +35,15 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "com.android.support:appcompat-v7:$rootProject.ext.support"
-    implementation "com.android.support:recyclerview-v7:$rootProject.ext.support"
-    implementation "com.android.support.constraint:constraint-layout:$rootProject.ext.constraint_layout"
+    implementation "androidx.appcompat:appcompat:$rootProject.ext.versions.androidx"
 
-    testImplementation "junit:junit:$rootProject.ext.junit"
-    androidTestImplementation "com.android.support.test:runner:$rootProject.ext.runner"
-    androidTestImplementation "com.android.support.test.espresso:espresso-core:$rootProject.ext.espresso"
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation "androidx.constraintlayout:constraintlayout:$rootProject.ext.versions.constraintlayout"
+
+//    testImplementation "junit:junit:$rootProject.ext.junit"
+    androidTestImplementation "androidx.test.ext:junit:$rootProject.ext.versions.junit"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.versions.espresso"
+
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 

@@ -3,7 +3,7 @@ package com.woodyhi.playlist
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +19,7 @@ import com.woodyhi.playlist.model.Trailer
  * @auth June
  * @date 2019/06/17
  */
-class MyAdapter(private val listData: List<Trailer>) : RecyclerView.Adapter<MyAdapter.VH>() {
+class MyAdapter(private val listData: List<Trailer>) : androidx.recyclerview.widget.RecyclerView.Adapter<MyAdapter.VH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_play_list, parent, false)
@@ -44,7 +44,7 @@ class MyAdapter(private val listData: List<Trailer>) : RecyclerView.Adapter<MyAd
         return listData.size
     }
 
-    inner class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class VH(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         var imageView: ImageView
         var title: TextView
         var rating: TextView
