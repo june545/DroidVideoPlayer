@@ -4,23 +4,23 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.woodyhi.player.base.AbsPlayerManager;
 import com.woodyhi.player.base.PlayInfo;
 import com.woodyhi.player.internal.SimplePlayerView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import cn.woodyjc.media.video.databinding.FragmentVideoPlayerNewBinding;
+
 
 /**
  * @author June
@@ -33,9 +33,10 @@ public class VideoPlayerFragmentNew extends Fragment {
 
     private Context mContext;
     private View rootView;
-    @BindView(R.id.video_player_view) SimplePlayerView videoPlayerView;
+    FragmentVideoPlayerNewBinding viewBinding;
+
+    SimplePlayerView videoPlayerView;
     View controllerView;
-    @BindView(R.id.open_close_fullscreen) ImageView openCloseFullscreenBtn;
 
     AbsPlayerManager playerManger;
     PlayInfo playInfo;
@@ -59,8 +60,9 @@ public class VideoPlayerFragmentNew extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_video_player_new, container, false);
-        ButterKnife.bind(this, rootView);
+        viewBinding = FragmentVideoPlayerNewBinding.inflate(inflater);
+        rootView = viewBinding.getRoot();
+        videoPlayerView = viewBinding.videoPlayerView;
         initViews(rootView);
         return rootView;
     }

@@ -3,6 +3,9 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    viewBinding {
+        enabled = true
+    }
 
     defaultConfig {
         applicationId "cn.woodyjc.media.video"
@@ -34,20 +37,17 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "androidx.appcompat:appcompat:$rootProject.ext.versions.androidx"
-    implementation "androidx.annotation:annotation:$rootProject.ext.versions.androidx"
-    implementation "androidx.constraintlayout:constraintlayout:$rootProject.ext.versions.constraintlayout"
+    implementation "androidx.appcompat:appcompat:$rootProject.ext.deps.appcompat"
+    implementation "androidx.annotation:annotation:$rootProject.ext.deps.annotation"
+    implementation "androidx.constraintlayout:constraintlayout:$rootProject.ext.deps.constraintlayout"
 
-    testImplementation "junit:junit:$rootProject.ext.junit"
-    androidTestImplementation "androidx.test.ext:junit:$rootProject.ext.versions.junit"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.versions.espresso"
+    testImplementation "junit:junit:4.12"
+    androidTestImplementation "androidx.test.ext:junit:$rootProject.ext.deps.testExtJunit"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.deps.espresso_core"
 
 
 //    implementation project(':media-player-base')
     implementation 'com.github.woodyhi:floating-view:0.1.0'
-
-    implementation 'com.jakewharton:butterknife:10.2.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
 
     implementation project(path: ':player-base')
     implementation project(path: ':player-ijk')

@@ -1,13 +1,14 @@
 package com.woodyhi.playlist
 
+import android.graphics.Rect
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.woodyhi.playlist.api.ApiManager
-import com.woodyhi.playlist.model.Trailer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_play_list.*
 
@@ -18,7 +19,7 @@ class TrailersListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_play_list)
 
-
+//        本地数据
 //        val content: String? = assets.open("trailers.json").use { it.bufferedReader().use { it.readText() } }
 //        Log.d(TAG, content)
 //        val trailerListData: TrailerListData? = Gson().fromJson(content, object : TypeToken<TrailerListData>() {}.type)
@@ -26,28 +27,29 @@ class TrailersListActivity : AppCompatActivity() {
 //            println(trailer.movieName)
 //        }
 
-
-//        recycler_view.layoutManager = LinearLayoutManager(this)
+        recycler_view.layoutManager = androidx.recyclerview.widget.GridLayoutManager(this@TrailersListActivity, 2)
+        recycler_view.addItemDecoration(object : ItemDecoration() {
+            var space = 8
+            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                outRect.left = space;
+                outRect.right = space;
+                outRect.bottom = space;
+                outRect.top = space;
+            }
+        })
 //        recycler_view.adapter = MyAdapter(trailerListData.trailers)
 
-        val disposable: Disposable = ApiManager.getInstance(this)
-                .apiService
-                .trailersData
-                .subscribeOn(Schedulers.io())
-                .map { t -> t.trailers }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        object : Consumer<List<Trailer>> {
-                            override fun accept(t: List<Trailer>?) {
-                                recycler_view.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this@TrailersListActivity)
-                                recycler_view.adapter = t?.let { MyAdapter(it) }
-                            }
-                        },
-                        object : Consumer<Throwable> {
-                            override fun accept(t: Throwable?) {
-                                t?.printStackTrace()
-                            }
-                        });
+        val disposable: Disposable? =
+                ApiManager.instance
+                        .apiService
+                        ?.getTrailersData()
+                        ?.subscribeOn(Schedulers.io())
+                        ?.map { it.trailers }
+                        ?.observeOn(AndroidSchedulers.mainThread())
+                        ?.subscribe {
+                            recycler_view.adapter = MyAdapter(it)
+                        }
+
 
     }
 

@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply from:'version.gradle'
+apply from: 'version.gradle'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -33,10 +33,12 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    testImplementation "junit:junit:$rootProject.ext.junit"
+    testImplementation "junit:junit:4.12"
     implementation 'androidx.appcompat:appcompat:1.1.0'
 
-    implementation 'com.github.june545:my-droid-comm:v1.0'
+    implementation('com.github.june545:my-droid-comm:v1.0') {
+        exclude group: 'com.google.code.gson', module: 'gson'
+    }
     implementation 'com.github.woodyhi:floating-view:0.1.0'
     implementation project(':media-player-base')
 }

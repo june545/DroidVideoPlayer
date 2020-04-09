@@ -25,10 +25,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.appcompat:appcompat:$rootProject.ext.versions.androidx"
+    implementation "androidx.appcompat:appcompat:$rootProject.ext.deps.appcompat"
 //    testImplementation "junit:junit:$rootProject.ext.junit"
-    androidTestImplementation "androidx.test.ext:junit:$rootProject.ext.versions.junit"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.versions.espresso"
+    androidTestImplementation "androidx.test.ext:junit:$rootProject.ext.deps.testExtJunit"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.deps.espresso_core"
 
     api project(':libvlc-3.0.4')
     implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'

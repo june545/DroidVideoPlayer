@@ -31,10 +31,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.appcompat:appcompat:$rootProject.ext.versions.androidx"
-    implementation "androidx.annotation:annotation:$rootProject.ext.versions.androidx"
-    implementation "androidx.constraintlayout:constraintlayout:$rootProject.ext.versions.constraintlayout"
+    implementation "androidx.appcompat:appcompat:$rootProject.ext.deps.appcompat"
+    implementation "androidx.annotation:annotation:$rootProject.ext.deps.annotation"
+    implementation "androidx.constraintlayout:constraintlayout:$rootProject.ext.deps.constraintlayout"
 
-    androidTestImplementation "androidx.test.ext:junit:$rootProject.ext.versions.junit"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.versions.espresso"
+    androidTestImplementation "androidx.test.ext:junit:$rootProject.ext.deps.testExtJunit"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.deps.espresso_core"
 }

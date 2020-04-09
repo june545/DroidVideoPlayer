@@ -29,11 +29,10 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.appcompat:appcompat:$rootProject.ext.versions.androidx"
-
-    testImplementation "junit:junit:$rootProject.ext.junit"
-    androidTestImplementation "androidx.test.ext:junit:$rootProject.ext.versions.junit"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.versions.espresso"
+    implementation "androidx.appcompat:appcompat:$rootProject.ext.deps.appcompat"
+    testImplementation "junit:junit:$rootProject.ext.deps.junit"
+    androidTestImplementation "androidx.test.ext:junit:$rootProject.ext.deps.testExtJunit"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.deps.espresso_core"
 
     api project(':player-base')
     api project(':libijk-0.8.8')

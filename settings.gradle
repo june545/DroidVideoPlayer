@@ -2,8 +2,6 @@ include ':VideoPlayer', ':media-player-base', ':media-player', ':exo-player-demo
 
 
 
-
-
 //---------------------------------------------------------------------------
 include ':player-base'
 project(':player-base').projectDir = new File(rootDir, 'player-lib/player-base')
